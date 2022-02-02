@@ -57,7 +57,7 @@ router.post('/register', function (req, res, next) {
          res.render('user-db-done', {  title: "registered", loggedIn: changeNavLoginButton(sessionExists(req)) })     
       })
     }
-  });
+});
 
   
 //adds new user to user database
@@ -107,7 +107,7 @@ router.post('/changePassword', function (req, res, next) {
         res.render('changePassword', { title: 'Log in', loggedIn: changeNavLoginButton(sessionExists(req)) });
       }     
     })
-  })
+})
 
 
   /* POST login data to validate login page */
@@ -150,6 +150,6 @@ router.post('/login', (req, res, next) => {
           res.render('failedLogin', { title: 'Log in', loggedIn: changeNavLoginButton(sessionExists(req)) });
         }       
       })   
-  })
+})
 
 //#endregion
