@@ -1,8 +1,13 @@
 import logo from './logo.svg';
 import './App.css';
-import React from "react";
+import React , { Component } from "react";
 import DocumentMeta from 'react-document-meta';
 import Button from '@mui/material/Button'
+import SignIn from './pages/SignIn';
+import NavBar from './components/navBar';
+
+
+import FeedPage from './pages/FeedPage';
 
 import {
   BrowserRouter as Router,
@@ -11,28 +16,54 @@ import {
   Link
 } from "react-router-dom";
 
+class App extends Component {
+  constructor() {
+    super();
+    this.state = {
+      input: '',
+      route: 'signin',
+      isSignedIn: false
+    }
+  }
 
+  onRouteChange = (route) => {
+    if (route === 'signout') {
+      this.setState({isSignedIn: false})
+    } else if (route === 'home') {
+      this.setState({isSignedIn: true})
+    }
+    this.setState({route: route})
+  }
 
-import renderMobileMenu from './components/navBar';
-import CirclesCard from './components/circlesCard';
-import PrimarySearchAppBar from './components/navBar';
-import BasicStack from './components/circlesCard';
-import RightBar from './components/rightBar';
-
-import FeedPage from './pages/FeedPage';
-
-function App() {
-  return (
-    <DocumentMeta >
-    
-    <div className="App"  >
-      <PrimarySearchAppBar />
-<FeedPage />
-
-    </div>
-    </DocumentMeta>
-  );
+  render() {
+    return (
+      <DocumentMeta >      
+      <div className="App"  >
+        { this.state.isSignedIn ? <div><NavBar onRouteChange={this.onRouteChange} /> <FeedPage /></div> :        
+        <SignIn onRouteChange={this.onRouteChange} route={this.state.route} />
+         }      
+      </div>
+      </DocumentMeta>
+    );
+  }
 }
+
+
+
+
+// function App() {
+//   return (
+//     <DocumentMeta >
+    
+//     <div className="App"  >
+//       <SignIn />
+//       {/* <NavBar />
+//       <FeedPage /> */}
+
+//     </div>
+//     </DocumentMeta>
+//   );
+// }
 
 export default App;
 

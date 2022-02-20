@@ -15,17 +15,15 @@ import AccountCircle from '@material-ui/icons/AccountCircle';
 import MailIcon from '@material-ui/icons/Mail';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import MoreIcon from '@material-ui/icons/MoreVert';
-import myCircleText from '../myCircleText.svg'
+import myCircleText from '../Images/myCircleText.svg'
 
 const Search = styled('div')(({ theme }) => ({
-
   position: 'relative',
   borderRadius: theme.shape.borderRadius,
   backgroundColor: alpha(theme.palette.common.white, 0.25),
   '&:hover': {
     backgroundColor: alpha(theme.palette.common.white, 0.55),
   },  
-  
   width: '100%',
   [theme.breakpoints.up('sm')]: {
     marginLeft: theme.spacing(3),
@@ -57,10 +55,9 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
- function PrimarySearchAppBar() {
+ function NavBar({ onRouteChange }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
-
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
@@ -98,8 +95,9 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
+      <MenuItem onClick={handleMenuClose}>My Profile</MenuItem>
       <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+      <MenuItem onClick={() => onRouteChange('signout')}>Sign Out</MenuItem>      
     </Menu>
   );
 
@@ -156,6 +154,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   );
 
   return (
+      <nav>
     <Box sx={{ flexGrow: 1, justifyItems: "spaceBetween" }}>
       <AppBar position="fixed">
         <Toolbar>
@@ -166,16 +165,16 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
             aria-label="open drawer"
             sx={{ mr: 2 }}
           >
-            <MenuIcon />
+            {/* <MenuIcon /> */}
           </IconButton>          
           <Typography
             variant="h6"
             noWrap
             component="div"
             sx={{ display: { xs: 'none', sm: 'block' }, ml: 6 ,width: 125, mt: 1}}
-          ><img src={myCircleText} />
+          ><a href="#"><img src={myCircleText} /></a>
           </Typography>
-          <Box sx={{ flexGrow: 1 }} />
+          <Box sx={{ flexGrow: 0.8 }} />
           <Search 
           >
             <SearchIconWrapper>
@@ -193,24 +192,12 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
                 <MailIcon />
               </Badge>
             </IconButton>
-            <IconButton
-              size="large"
-              aria-label="show 17 new notifications"
-              color="inherit"
-            >
+            <IconButton size="large" aria-label="show 17 new notifications" color="inherit">
               <Badge badgeContent={17} color="error">
                 <NotificationsIcon />
               </Badge>
             </IconButton>
-            <IconButton
-              size="large"
-              edge="end"
-              aria-label="account of current user"
-              aria-controls={menuId}
-              aria-haspopup="true"
-              onClick={handleProfileMenuOpen}
-              color="inherit"
-            >
+            <IconButton size="large" edge="end" aria-label="account of current user" aria-controls={menuId} aria-haspopup="true" onClick={handleProfileMenuOpen} color="inherit">
               <AccountCircle />
             </IconButton>
           </Box>
@@ -231,6 +218,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
       {renderMobileMenu}
       {renderMenu}
     </Box>
+    </nav>
   );
 }
-export default PrimarySearchAppBar
+export default NavBar
