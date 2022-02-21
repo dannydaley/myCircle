@@ -2,6 +2,10 @@
 var express = require('express');
 const app = express();
 var dotenv = require('dotenv').config();
+const cors = require('cors');
+var bodyParser = require('body-parser')
+app.use(cors())
+app.use(bodyParser.json())
 
 //#endregion
 var sqlite3 = require('sqlite3').verbose();
@@ -118,7 +122,44 @@ app.get('/', (req, res) => {
 })
 
 
+
+// app.get('/', (req, res, next) => {  
+//   let SQLdatabase = req.app.locals.SQLdatabase;
+//   // grab all posts
+//   SQLdatabase.all(GET_ALL_POSTS, [], (err, rows) => {
+//     if (err) {
+//       res.status(500).send(err.message);
+//       return;
+//     }    
+//     res.send(rows);
+//   })
+// })
+
+app.get('/getFeed', (req, res, next) => {  
+  let SQLdatabase = req.app.locals.SQLdatabase;
+  // grab all posts
+  SQLdatabase.all(GET_ALL_POSTS, [], (err, rows) => {
+    if (err) {
+      res.status(500).send(err.message);
+      return;
+    }    
+    console.log(rows)
+    res.send(rows);
+  })
+})
+
 // #endregion 
+
+app.post('/signin', (req, res) => {
+  console.log(req.body)
+  res.json('success')
+})
+
+app.post('/newPost', (req, res) => {
+  console.log(req.body)
+  res.json('success')
+})
+
 
 app.listen(process.env.PORT)
 console.log("server.js running on port " + process.env.PORT)

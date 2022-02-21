@@ -8,7 +8,7 @@ export default function FeedPost(props) {
     return (
         <div>
             <CardContent sx={{display: 'flex', mb: 2}}>
-                <img src={me} width="200px" height="150px" style={{ boxShadow: "1px 3px 5px 0px black", mb: 3 }} />
+                <a href={props.author} ><img src={me} width="200px" height="150px" style={{ boxShadow: "1px 3px 5px 0px black", mb: 3 }} /></a>
                 <div style={{width: '80%', marginLeft: '5%'}}>
                     <Typography variant="h5" component="div" color="white" sx={{textAlign: 'left', ml: -2, mb: 2, fontWeight: 'bold'}}>
                         <a href={props.author} style={{color: 'white'}}>{props.author}</a>

@@ -126,10 +126,12 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
         </IconButton>
         <p>Messages</p>
       </MenuItem>
-      <MenuItem>
+      <MenuItem onClick={handleProfileMenuOpen}>
         <IconButton
           size="large"
           aria-label="show 17 new notifications"
+          aria-controls="primary-search-account-menu"
+          aria-haspopup="true"
           color="inherit"
         >
           <Badge badgeContent={17} color="error">

@@ -7,6 +7,7 @@ import SignIn from './pages/SignIn';
 import NavBar from './components/navBar';
 
 
+
 import FeedPage from './pages/FeedPage';
 
 import {
@@ -15,6 +16,9 @@ import {
   Route,
   Link
 } from "react-router-dom";
+
+
+
 
 class App extends Component {
   constructor() {
@@ -25,6 +29,15 @@ class App extends Component {
       isSignedIn: false
     }
   }
+
+
+
+componentDidMount() {
+  fetch('http://localhost:3001/')
+  .then(response => response.json())
+  .then(console.log)
+}
+
 
   onRouteChange = (route) => {
     if (route === 'signout') {
