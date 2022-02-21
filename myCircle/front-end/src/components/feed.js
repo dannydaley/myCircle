@@ -194,22 +194,28 @@ import NewPost from './newPost';
   ]
 }
 
-const getFeed = () => {
-  fetch('http://localhost:3001/getFeed', {
-      method: 'get'
-      // headers: {'Content-Type': 'application/json'},
-      // body: JSON.stringify({
-      //     'email': this.state.signInEmail,
-      //     'password': this.state.signInPassword
-      // })
+// const getFeed = () => {
+//   fetch('http://localhost:3001/getFeed', {
+//       method: 'post',
+//       headers: {'Content-Type': 'application/json'},
+//       body: JSON.stringify({
+//       //     'email': this.state.signInEmail,
+//       //     'password': this.state.signInPassword
+//       // // }
      
-  }).then(console.log(Response.toString))
-  // this.props.onRouteChange('home')
-}
+//   })
+//   .then(response => response.json())
+//   .then(data => {
+//     console.log(data);
+//   })
+// })}
+//   // this.props.onRouteChange('home')
+  
 
-const feed = getFeed();
 
-console.log("FFFFFFFFFFFFFEEEEEEEEEEEEEEDDDDDDDDDDDDDDDDDDD" + feed)
+// getFeed();
+
+// console.log("FFFFFFFFFFFFFEEEEEEEEEEEEEEDDDDDDDDDDDDDDDDDDD" + feed)
 
 export default function Feed() {
   return (

@@ -135,7 +135,7 @@ app.get('/', (req, res) => {
 //   })
 // })
 
-app.get('/getFeed', (req, res, next) => {  
+app.post('/getFeed', (req, res, next) => {  
   let SQLdatabase = req.app.locals.SQLdatabase;
   // grab all posts
   SQLdatabase.all(GET_ALL_POSTS, [], (err, rows) => {
@@ -144,7 +144,7 @@ app.get('/getFeed', (req, res, next) => {
       return;
     }    
     console.log(rows)
-    res.send(rows);
+    res.json(rows);
   })
 })
 
