@@ -6,10 +6,11 @@ import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import FeedPost from './feedPost';
 import NewPost from './newPost';
+import { Button } from '@mui/material';
 
 
 
-  const posts = {
+  let posts = {
   "entries": [
     {
       "id": 17,
@@ -194,42 +195,54 @@ import NewPost from './newPost';
   ]
 }
 
-// const getFeed = () => {
+
+export default class Feed extends React.Component {
+
+  constructor(props) {
+    super();
+    this.state = {
+        circle: '',
+        posts: ''
+    }
+}
+
+
+//   getFeed = () => {
+//   fetch('http://localhost:3001/getFeed');
+// }
+
+
+// getFeed = () => {
 //   fetch('http://localhost:3001/getFeed', {
 //       method: 'post',
 //       headers: {'Content-Type': 'application/json'},
 //       body: JSON.stringify({
-//       //     'email': this.state.signInEmail,
-//       //     'password': this.state.signInPassword
-//       // // }
-     
+//           'email': this.state.signInEmail,
+//           'password': this.state.signInPassword
+//       })
+//   }).then(response => response.json())
+//   .then(data => {      
 //   })
-//   .then(response => response.json())
-//   .then(data => {
-//     console.log(data);
-//   })
-// })}
-//   // this.props.onRouteChange('home')
+//   // .then(response => response.json())
+//   // .then(console.log(data))
   
+// }
 
-
-// getFeed();
-
-// console.log("FFFFFFFFFFFFFEEEEEEEEEEEEEEDDDDDDDDDDDDDDDDDDD" + feed)
-
-export default function Feed() {
-  return (
+  render () {
+    const { onRouteChange } = this.props;    
+      return (
     <div style={{backgroundColor: '#010101', display: 'flex', justifyContent: 'space-between', paddingBottom: '100px'}}>
         <div style={{width: '30%', height: '100px'}}></div>
             <React.Fragment>
+              
                 <CssBaseline />
                 <Container maxWidth="lg" sx={{zIndex: 10, bgcolor: '#343434', borderRadius: '0px 0px 30px 30px', width: '100%', pb: 2, ml: 2, mr:2,  mt: 12}}>
-                    <NewPost />
+                    <NewPost /><p>{this.feedPosts}</p>
                     <Box sx={{ padding: 2, bgcolor: 'none'}}>
                         <Stack spacing={2} sx={{  width: '100%', margin: '50px auto 0'}}> 
                         {/* loop for displaying posts */}
                             {posts.entries.map(item => (
-                                <FeedPost author={item.author} content={item.content} />
+                                <FeedPost author={item.author} content={item.content} />                                
                             ))}
                         </Stack>
                     </Box>
@@ -241,4 +254,9 @@ export default function Feed() {
         <div style={{width: '30%', height: '100px'}}></div>
     </div>  
   );
+  }
+
+
+  
+
 }

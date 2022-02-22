@@ -3,21 +3,23 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
+// import passwordHash from './hasher';
 
-export default class SignInForm extends React.Component 
+
+const { captureRejectionSymbol } = require('events');
+
+class SignInForm extends React.Component 
 {
     constructor(props) {
         super();
         this.state = {
             signInEmail: '',
-            signInPassword: ''
+            signInPassword: ''            
         }
     }
-
     onEmailChange = (event) => {
         this.setState({signInEmail: event.target.value})
     }
-
     onPasswordChange = (event) => {
         this.setState({signInPassword: event.target.value})
     }
@@ -31,7 +33,11 @@ onSubmitSignIn = () => {
             'password': this.state.signInPassword
         })
     })
-    this.props.onRouteChange('home')
+    .then(response => response.json())
+    .then(data =>      
+        data === 'success' ? this.props.onRouteChange('home') : console.log("ERRORRRRR")
+    )
+    // .then(this.props.onRouteChange('home'))
 }
 
     render () {
@@ -73,3 +79,5 @@ onSubmitSignIn = () => {
         }
 
 }
+
+export default SignInForm;

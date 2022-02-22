@@ -16,7 +16,7 @@ export default function LeftBar() {
         <Box sx={{ padding: 2, bgcolor: 'none'}}>
             <img src={me} width="200px" height="150px" style={{ boxShadow: "1px 3px 5px 0px black", mb: 3 }} />
             <Stack spacing={2} sx={{  width: 200, margin: '50px auto 0' }}>      
-                {/* A FOR EACH LOOP LISTING A BUTTON FOR EACH CIRCLE FOLLOWED IN USER DATA */}
+               
                 <Button variant="contained" >GAMING</Button>
                 <Button variant="contained">CODING</Button>
                 <Button variant="contained">ART</Button>
