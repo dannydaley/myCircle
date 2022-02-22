@@ -46,7 +46,7 @@ onSubmitSignIn = () => {
                 <div style={{width: '30%', padding: '10ch',backgroundColor: 'white'}}>
 
                     <Box component="form" sx={{'& .MuiTextField-root': { m: 1, width: '30ch' } }} noValidate autoComplete="off">
-                        <form style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
+                        <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}} action={() => this.onSubmitSignIn()} >
                             <TextField
                             required
                             id="outlined-required"
@@ -62,13 +62,15 @@ onSubmitSignIn = () => {
                             autoComplete="current-password"
                             onChange={this.onPasswordChange}
                             />
-                            <Button variant="contained" sx={{width: '33ch'}} type="submit" value="Sign In" 
-                            // onClick={() => onRouteChange('home')}
+                            <Button variant="contained" sx={{width: '33ch'}} 
+                            // type='submit'
+                            onSubmit={()=> this.onSubmitSignIn()}
+                            
                             onClick={()=> this.onSubmitSignIn()}>
                                 Sign In
                             </Button>
                             <p><a href="#">Forgotten Password?</a></p>
-                        </form>
+                        </div>
                         <Divider variant="middle" style={{marginTop: '20px', marginBottom: '40px'}}/>
                         <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
                             <Button variant="contained" sx={{width: '33ch'}} onClick={()=>onRouteChange('signup')}>Sign Up</Button>        

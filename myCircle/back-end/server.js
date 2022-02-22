@@ -163,11 +163,9 @@ app.post('/getFeed', (req, res, next) => {
 
 // #endregion 
 
-app.post('/signin', (req, res) => {
-  console.log(req.body)
+app.post('/signin', (req, res) => {  
   if (req.body.email === Users.users[0].email &&
-    req.body.password === Users.users[0].password){
-      console.log(req.body)
+    req.body.password === Users.users[0].password){      
      res.json('success') 
     }
     else {
