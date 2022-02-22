@@ -6,6 +6,8 @@ const cors = require('cors');
 var bodyParser = require('body-parser')
 app.use(cors())
 app.use(bodyParser.json())
+var path = require('path');
+app.use("/public", express.static(path.join(__dirname, 'public')));
 
 //#endregion
 var sqlite3 = require('sqlite3').verbose();
