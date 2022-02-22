@@ -35,18 +35,16 @@ onSubmitSignIn = () => {
     })
     .then(response => response.json())
     .then(data =>      
-        data === 'success' ? this.props.onRouteChange('home') : console.log("ERRORRRRR")
+        data === 'success' ? this.props.onRouteChange('home') : console.log("ERROR LOGGING IN")
     )
-    // .then(this.props.onRouteChange('home'))
 }
 
     render () {
         const { onRouteChange } = this.props;
         return (
                 <div style={{width: '30%', padding: '10ch',backgroundColor: 'white'}}>
-
                     <Box component="form" sx={{'& .MuiTextField-root': { m: 1, width: '30ch' } }} noValidate autoComplete="off">
-                        <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}} action={() => this.onSubmitSignIn()} >
+                        <form style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}} action={() => this.onSubmitSignIn()} onSubmit={()=> this.onSubmitSignIn()}>
                             <TextField
                             required
                             id="outlined-required"
@@ -64,13 +62,12 @@ onSubmitSignIn = () => {
                             />
                             <Button variant="contained" sx={{width: '33ch'}} 
                             // type='submit'
-                            onSubmit={()=> this.onSubmitSignIn()}
-                            
+                            onSubmit={()=> this.onSubmitSignIn()}                            
                             onClick={()=> this.onSubmitSignIn()}>
                                 Sign In
                             </Button>
                             <p><a href="#">Forgotten Password?</a></p>
-                        </div>
+                        </form>
                         <Divider variant="middle" style={{marginTop: '20px', marginBottom: '40px'}}/>
                         <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
                             <Button variant="contained" sx={{width: '33ch'}} onClick={()=>onRouteChange('signup')}>Sign Up</Button>        
@@ -79,7 +76,6 @@ onSubmitSignIn = () => {
                 </div>
             );
         }
-
 }
 
 export default SignInForm;

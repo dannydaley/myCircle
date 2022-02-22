@@ -11,8 +11,7 @@ export default class NewPost extends React.Component {
     constructor(props) {
         super();
         this.state = {
-            'postContent': ''
-            
+            'postContent': ''            
         }
     }
 
