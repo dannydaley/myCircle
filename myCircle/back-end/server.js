@@ -23,7 +23,7 @@ let userDataJSON = require("./database/users.json");
 
 const GET_USER_PROFILE_INFO = "SELECT name, joined, posts, profilePicture, aboutMe, pinnedPost FROM users WHERE name = ?" // SQL command
 const GET_ALL_POSTS = "SELECT * FROM `blog` ORDER BY id DESC"; // SQL command
-const GET_ALL_POSTS_BY_RECIPIENT = "SELECT * FROM `blog` WHERE recipient = ? ORDER BY id DESC"; // SQL command
+const GET_ALL_POSTS_BY_CIRCLE = "SELECT * FROM `blog` WHERE circle = ? ORDER BY id DESC"; // SQL command
 const GET_RECENT_POSTS = "SELECT * FROM blog WHERE recipient = ? ORDER BY id DESC LIMIT 5"; // SQL command
 const BLOG_DELETE_POST = "DELETE FROM `blog` WHERE title = ? AND id = ?"; // SQL command
 const GET_POSTS_BY_AUTHOR = "SELECT * FROM `blog` WHERE author = ? AND recipient = ? ORDER BY id DESC" // SQL command
@@ -66,17 +66,17 @@ app.get('/SQLDatabaseBlogSetup', (req, res, next) => {
     //delete the table if it exists..
     SQLdatabase.run('DROP TABLE IF EXISTS `blog`');
     // create blog table
-    SQLdatabase.run('CREATE TABLE `blog` ( id INTEGER PRIMARY KEY AUTOINCREMENT, author varchar(255), title varchar(255), image varchar(255), content text, link varchar(255), date varchar(255), recipient varchar(255) )');
+    SQLdatabase.run('CREATE TABLE `blog` ( id INTEGER PRIMARY KEY AUTOINCREMENT, author varchar(255), title varchar(255), image varchar(255), content text, link varchar(255), date varchar(255), circle varchar(255), recipient varchar(255) )');
     //create base rows
     let rows = [];
     //loop through posts.json to populate rows array
     for (let i = 0; i < postDataJSON.entries.length; i++) {
-      rows[i] = [postDataJSON.entries[i].id, postDataJSON.entries[i].author, postDataJSON.entries[i].title, postDataJSON.entries[i].image, postDataJSON.entries[i].content, postDataJSON.entries[i].link, postDataJSON.entries[i].date, postDataJSON.entries[i].recipient]
+      rows[i] = [postDataJSON.entries[i].id, postDataJSON.entries[i].author, postDataJSON.entries[i].title, postDataJSON.entries[i].image, postDataJSON.entries[i].content, postDataJSON.entries[i].link, postDataJSON.entries[i].date, postDataJSON.entries[i].circle,postDataJSON.entries[i].recipient]
     }
     // populate SQL command with rows array populated from posts.json
     rows.forEach( (row) => {
       // insert rows to table
-      SQLdatabase.run('INSERT INTO `blog` VALUES(?,?,?,?,?,?,?,?)', row);
+      SQLdatabase.run('INSERT INTO `blog` VALUES(?,?,?,?,?,?,?,?,?)', row);
       // increment users post count according to author of currently processed post
       
     });
@@ -135,27 +135,29 @@ const Users = {
   }
 
 
-// app.get('/', (req, res, next) => {  
-//   let SQLdatabase = req.app.locals.SQLdatabase;
-//   // grab all posts
-//   SQLdatabase.all(GET_ALL_POSTS, [], (err, rows) => {
-//     if (err) {
-//       res.status(500).send(err.message);
-//       return;
-//     }    
-//     res.send(rows);
-//   })
-// })
+app.get('/hi', (req, res, next) => {  
+  let SQLdatabase = req.app.locals.SQLdatabase;
+  // grab all posts
+  SQLdatabase.all(GET_ALL_POSTS_BY_CIRCLE, "anime" , (err, rows) => {
+    if (err) {
+      res.status(500).send(err.message);
+      return;
+    }    
+    res.json(rows);
+  })
+})
 
-app.get('/getFeed', (req, res, next) => {  
+app.post('/getFeed', (req, res, next) => {  
   let SQLdatabase = req.app.locals.SQLdatabase;  
   // grab all posts
-  SQLdatabase.all(GET_ALL_POSTS, [], (err, rows) => {
+  console.log(req.body)
+  SQLdatabase.all(GET_ALL_POSTS_BY_CIRCLE, [ req.body.circle ], (err, rows) => {
     if (err) {
       console.log("errorrrrr")
       res.status(500).send(err.message);
       return;
-    }       
+    }  
+    console.log(req.body.circle)     
     res.json(rows);
   })
 })

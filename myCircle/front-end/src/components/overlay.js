@@ -1,20 +1,22 @@
+import * as React from 'react';
 import RightBar from "./rightBar";
-// import useMediaQuery from '@mui/material/useMediaQuery';
 import LeftBar from "./LeftBar";
-
-
-// const isCollapsed = useMediaQuery(theme.breakpoints.down('sm'));
-            //  {{ if (isCollapsed) {
-            //     <RightBar />
-            //  } }}
-
             
-export default function Overlay() {
-    return (
-        <div style={{width: '100vw', display: 'flex', justifyContent: 'space-between', flexDirection: 'row'}}>            
-            <RightBar />
-            <LeftBar />
-        </div>
+export default class  Overlay extends React.Component {
+    constructor(props) {
+        super();
+    }    
 
-    )
+    render () {
+        const { changeCircle } = this.props;
+        return (
+            <div style={{width: '100vw', display: 'flex', justifyContent: 'space-between', flexDirection: 'row'}}>            
+                <RightBar />
+                
+                <LeftBar changeCircle={changeCircle}  />
+            </div>
+
+        )       
+    }
+
 }

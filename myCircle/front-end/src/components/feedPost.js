@@ -5,7 +5,6 @@ import Divider from '@mui/material/Divider';
 import me from '../Images/me.jpg'
 
 export default function FeedPost(props) {
-    console.log(process.env.SERVER + process.env.SERVERPUBLICDIRECTORY + props.profilePicture)
     return (
         <div>
             <CardContent sx={{display: 'flex', mb: 2}}>
