@@ -20,7 +20,9 @@ export default class App extends Component {
     this.state = {
       input: '',
       route: 'signin',
-      isSignedIn: false
+      isSignedIn: false,
+      mailNotifications: 10,
+      alertNotifications: 50
     }
   }
 
@@ -37,7 +39,7 @@ export default class App extends Component {
     return (
       <DocumentMeta >      
       <div className="App"  >
-        { this.state.isSignedIn === true ? <div><NavBar onRouteChange={this.onRouteChange} /> <FeedPage /></div> :        
+        { this.state.isSignedIn === true ? <div><NavBar onRouteChange={this.onRouteChange} mailNotifications={this.state.mailNotifications} alertNotifications={this.state.alertNotifications} /> <FeedPage /></div> :        
         <SignIn onRouteChange={this.onRouteChange} route={this.state.route} />
          }      
       </div>

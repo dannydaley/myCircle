@@ -55,7 +55,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
- function NavBar({ onRouteChange }) {
+ function NavBar({ onRouteChange, alertNotifications, mailNotifications }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
   const isMenuOpen = Boolean(anchorEl);
@@ -120,7 +120,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     >
       <MenuItem>
         <IconButton size="large" aria-label="show 4 new mails" color="inherit">
-          <Badge badgeContent={4} color="error">
+          <Badge badgeContent={2} color="error">
             <MailIcon />
           </Badge>
         </IconButton>
@@ -129,12 +129,12 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
       <MenuItem onClick={handleProfileMenuOpen}>
         <IconButton
           size="large"
-          aria-label="show 17 new notifications"
+          aria-label="show 16 new notifications"
           aria-controls="primary-search-account-menu"
           aria-haspopup="true"
           color="inherit"
         >
-          <Badge badgeContent={17} color="error">
+          <Badge badgeContent={1000} color="error">
             <NotificationsIcon />
           </Badge>
         </IconButton>
@@ -214,12 +214,12 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
           <Box sx={{ flexGrow: 1 }} />
           <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
             <IconButton size="large" aria-label="show 4 new mails" color="inherit">
-              <Badge badgeContent={4} color="error">
+              <Badge badgeContent={mailNotifications} color="error">
                 <MailIcon />
               </Badge>
             </IconButton>
             <IconButton size="large" aria-label="show 17 new notifications" color="inherit">
-              <Badge badgeContent={17} color="error">
+              <Badge badgeContent={alertNotifications} color="error">
                 <NotificationsIcon />
               </Badge>
             </IconButton>

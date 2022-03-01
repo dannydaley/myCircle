@@ -6,6 +6,7 @@ import ImageIcon from '@mui/icons-material/Image';
 import SendIcon from '@mui/icons-material/Send';
 import Divider from '@mui/material/Divider';
 import LoadingButton from '@mui/lab/LoadingButton';
+import NavBar from './navBar';
 
 export default class NewPost extends React.Component { 
     constructor(props) {
@@ -28,6 +29,7 @@ export default class NewPost extends React.Component {
             })
         })
         this.props.onRouteChange('home')
+        this.props.setState({mailNotifications: 0})
     }
 
         // const [loading, setLoading] = React.useState(false);

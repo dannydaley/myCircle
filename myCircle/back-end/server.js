@@ -151,16 +151,30 @@ app.post('/getFeed', (req, res, next) => {
   let SQLdatabase = req.app.locals.SQLdatabase;  
   // grab all posts
   console.log(req.body)
-  SQLdatabase.all(GET_ALL_POSTS_BY_CIRCLE, [ req.body.circle ], (err, rows) => {
-    if (err) {
-      console.log("errorrrrr")
-      res.status(500).send(err.message);
-      return;
-    }  
-    console.log(req.body.circle)     
-    res.json(rows);
+    if (req.body.circle === 'general') {
+      SQLdatabase.all(GET_ALL_POSTS, [  ], (err, rows) => {
+        if (err) {
+          console.log("errorrrrr")
+          res.status(500).send(err.message);
+          return;
+        }  
+        console.log(req.body.circle)     
+        res.json(rows);
+      })
+    } else {
+      SQLdatabase.all(GET_ALL_POSTS_BY_CIRCLE, [ req.body.circle ], (err, rows) => {
+        if (err) {
+          console.log("errorrrrr")
+          res.status(500).send(err.message);
+          return;
+        }  
+        console.log(req.body.circle)     
+        res.json(rows);
+      })
+    }
   })
-})
+
+
 
 // #endregion 
 
