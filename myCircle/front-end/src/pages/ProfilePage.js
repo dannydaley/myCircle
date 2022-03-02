@@ -13,9 +13,11 @@ export default class ProfilePage extends React.Component {
 
      render()
      {
+          const { userFirstName, userLastName } = this.props
           // changeMailNotifications = this.props;
                return (
-                    <div ><ProfileOverlay />
+                    <div >
+                         <ProfileOverlay userFirstName={userFirstName} userLastName={userLastName} />
                          <ProfileHeader  />  
                          
                          <ProfileFeed />

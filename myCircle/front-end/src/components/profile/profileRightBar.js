@@ -6,6 +6,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
+import Grid from '@mui/material/Grid';
 
 import me from '../../Images/me.jpg'
 
@@ -17,6 +18,40 @@ export default function ProfileRightBar() {
       <Container  maxWidth="sm" sx={{float: 'right',  bgcolor: '#343434', height: '80vh', width: 300, mr: 4 ,mt: 16, justifyContent: 'flex-start', alignItems: 'center'}} >
         <Box sx={{ paddingTop: 1, bgcolor: 'none' }}>
             <Typography variant="h6" component="div" color="white" sx={{textAlign: 'center', mt: 2}}>Users images</Typography>
+              <Grid container spacing={2}>
+                <Grid item xs={3} md={8}>
+                  <img src={me} width="50px"/>
+                  <img src={me} width="50px"/>
+                  <img src={me} width="50px"/>
+                  <img src={me} width="50px"/>
+                  <img src={me} width="50px"/>
+                  <img src={me} width="50px"/>
+                  <img src={me} width="50px"/>
+                  <img src={me} width="50px"/>
+                  <img src={me} width="50px"/>
+                  <img src={me} width="50px"/>
+                  <img src={me} width="50px"/>
+                  <img src={me} width="50px"/>
+                  <img src={me} width="50px"/>
+                  <img src={me} width="50px"/>
+                  <img src={me} width="50px"/>
+                  <img src={me} width="50px"/>
+                  <img src={me} width="50px"/>
+                  <img src={me} width="50px"/>
+
+                </Grid>
+                <Grid item xs={6} md={3}>
+                <img src={me} width="50px"/>
+                </Grid>
+                <Grid item xs={6} md={4}>
+                <img src={me} width="50px"/>
+                </Grid>
+                <Grid item xs={6} md={8}>
+                <img src={me} width="50px"/>
+                </Grid>
+              </Grid>
+              
+            
             <Stack spacing={1} sx={{  width: 250, margin: '50px auto 0'       }}>      
                 
                 {/* <Button variant="contained" sx={{ display: 'flex', justifyContent: 'space-between', width: '100%'}}>

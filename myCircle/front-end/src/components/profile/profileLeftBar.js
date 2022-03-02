@@ -13,7 +13,7 @@ export default class ProfileLeftBar extends React.Component  {
     super();
   } 
   render () {
-    
+    const { userFirstName, userLastName } = this.props
     return (
       <div>
         <React.Fragment>
@@ -21,7 +21,7 @@ export default class ProfileLeftBar extends React.Component  {
         <Container position="fixed" maxWidth="sm" sx={{ position: 'fixed', bgcolor: '#343434', border: '', height: '80vh', width: 300, ml: 2, mr:2,  mt: 16, justifyContent: 'flex-start', alignItems: 'center'}} >
           <Box sx={{ padding: 2, bgcolor: 'none'}}>
               <img src={me} width="200px" height="150px" style={{ boxShadow: "1px 3px 5px 0px black", mb: 3 }} />
-              <Typography variant="h6" component="div" color="white" sx={{textAlign: 'center', mt: 2}}>Users name</Typography>
+              <Typography variant="h5" component="div" color="white" sx={{textAlign: 'center', mt: 2}}>{userFirstName} {userLastName}</Typography>
               {/* <Stack spacing={2} sx={{  width: 200, margin: '50px auto 0' }}>
                   <Button variant="contained" onClick={()=>changeCircle('general')}>GENERAL</Button>
                   <Button variant="contained" onClick={()=>changeCircle('gaming')}>GAMING</Button>

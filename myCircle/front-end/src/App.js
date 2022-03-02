@@ -23,7 +23,9 @@ export default class App extends Component {
       route: 'signin',
       isSignedIn: false,
       mailNotifications: 0,
-      alertNotifications: 0
+      alertNotifications: 0,
+      userFirstName: '',
+      userLastName: ''
     }
   }
 
@@ -36,6 +38,9 @@ export default class App extends Component {
     this.setState({route: route})
   }
 
+  updateSession = (firstName, lastName) => {
+    this.setState({ userFirstName: firstName, userLastName: lastName })
+  }
 
   // THESE FUNCTIONS HANDLE INCREMENTING THE NOTIFICATIONS. THESE ARE CURRENTLY PASSED INTO THE NAV BAR
   changeMailNotifications = (mailNotifications) => {    
@@ -48,7 +53,7 @@ export default class App extends Component {
   router = (route) => {
     switch (route) {
       case 'home' : return <FeedPage changeMailNotifications={this.changeMailNotifications}  onRouteChange={this.onRouteChange}/>;
-      case 'profile' : return <ProfilePage />;
+      case 'profile' : return <ProfilePage userFirstName={this.state.userFirstName} userLastName={this.state.userLastName}/>;
       default: return <FeedPage />
   }
 }
@@ -56,23 +61,14 @@ export default class App extends Component {
     return (
       <DocumentMeta >      
       <div className="App"  >
-
-
         { this.state.isSignedIn === true ? 
             <div>
-              <NavBar onRouteChange={this.onRouteChange} mailNotifications={this.state.mailNotifications} changeMailNotifications={this.changeMailNotifications} changeAlertNotifications={this.changeAlertNotifications} alertNotifications={this.state.alertNotifications} />
-
-              
+              <NavBar onRouteChange={this.onRouteChange} mailNotifications={this.state.mailNotifications} changeMailNotifications={this.changeMailNotifications} changeAlertNotifications={this.changeAlertNotifications} alertNotifications={this.state.alertNotifications} />              
               {this.router(this.state.route)}
-
-              
-
             </div> 
           :        
-            <SignIn onRouteChange={this.onRouteChange} route={this.state.route} />
-         }      
-
-
+            <SignIn onRouteChange={this.onRouteChange} route={this.state.route} updateSession={this.updateSession} />
+         }  
       </div>
       </DocumentMeta>
     );

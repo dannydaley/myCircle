@@ -35,13 +35,18 @@ onSubmitSignIn = () => {
     })
     .then(response => response.json())
     .then(data =>      
-        data === 'success' ? this.props.onRouteChange('home') : console.log("ERROR LOGGING IN")
-    )
+        {if (data.status === 'success') {
+            this.props.updateSession(data.firstName, data.lastName);
+            this.props.onRouteChange('home')}
+             else {
+               console.log(data)  
+             } 
+            })
 }
 
     render () {
  
-        const { onRouteChange } = this.props;
+        const { onRouteChange, updateSession } = this.props;
         return (
                 <div style={{width: '30%', padding: '10ch',backgroundColor: 'white'}}>
                     <Box component="form" sx={{'& .MuiTextField-root': { m: 1, width: '30ch' } }} noValidate autoComplete="off">
