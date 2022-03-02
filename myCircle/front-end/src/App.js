@@ -6,6 +6,7 @@ import Button from '@mui/material/Button'
 import SignIn from './pages/SignIn';
 import NavBar from './components/navBar';
 import FeedPage from './pages/FeedPage';
+import ProfilePage from './pages/ProfilePage'
 
 import {
   BrowserRouter as Router,
@@ -21,8 +22,8 @@ export default class App extends Component {
       input: '',
       route: 'signin',
       isSignedIn: false,
-      mailNotifications: 10,
-      alertNotifications: 50
+      mailNotifications: 0,
+      alertNotifications: 0
     }
   }
 
@@ -35,17 +36,43 @@ export default class App extends Component {
     this.setState({route: route})
   }
 
-  changeMailNotifications = (mailNotifications) => {
-    this.setState({mailNotifications: mailNotifications ++})
+
+  // THESE FUNCTIONS HANDLE INCREMENTING THE NOTIFICATIONS. THESE ARE CURRENTLY PASSED INTO THE NAV BAR
+  changeMailNotifications = (mailNotifications) => {    
+    this.setState({mailNotifications: this.state.mailNotifications+=1})
+  }
+  changeAlertNotifications = (mailNotifications) => {    
+    this.setState({alertNotifications: this.state.alertNotifications+=1})
   }
 
+  router = (route) => {
+    switch (route) {
+      case 'home' : return <FeedPage changeMailNotifications={this.changeMailNotifications}  onRouteChange={this.onRouteChange}/>;
+      case 'profile' : return <ProfilePage />;
+      default: return <FeedPage />
+  }
+}
   render() {
     return (
       <DocumentMeta >      
       <div className="App"  >
-        { this.state.isSignedIn === true ? <div><NavBar onRouteChange={this.onRouteChange} mailNotifications={this.state.mailNotifications} alertNotifications={this.state.alertNotifications} /> <FeedPage changeMailNotifications={this.changeMailNotifications}/></div> :        
-        <SignIn onRouteChange={this.onRouteChange} route={this.state.route} />
+
+
+        { this.state.isSignedIn === true ? 
+            <div>
+              <NavBar onRouteChange={this.onRouteChange} mailNotifications={this.state.mailNotifications} changeMailNotifications={this.changeMailNotifications} changeAlertNotifications={this.changeAlertNotifications} alertNotifications={this.state.alertNotifications} />
+
+              
+              {this.router(this.state.route)}
+
+              
+
+            </div> 
+          :        
+            <SignIn onRouteChange={this.onRouteChange} route={this.state.route} />
          }      
+
+
       </div>
       </DocumentMeta>
     );

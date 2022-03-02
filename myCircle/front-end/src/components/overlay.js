@@ -8,12 +8,12 @@ export default class  Overlay extends React.Component {
     }    
 
     render () {
-        const { changeCircle } = this.props;
+        const { onRouteChange, changeCircle } = this.props;
         return (
             <div style={{width: '100vw', display: 'flex', justifyContent: 'space-between', flexDirection: 'row'}}>            
                 <RightBar />
                 
-                <LeftBar changeCircle={changeCircle}  />
+                <LeftBar changeCircle={changeCircle} onRouteChange={onRouteChange} />
             </div>
 
         )       

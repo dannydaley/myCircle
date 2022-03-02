@@ -26,7 +26,8 @@ const GET_ALL_POSTS = "SELECT * FROM `blog` ORDER BY id DESC"; // SQL command
 const GET_ALL_POSTS_BY_CIRCLE = "SELECT * FROM `blog` WHERE circle = ? ORDER BY id DESC"; // SQL command
 const GET_RECENT_POSTS = "SELECT * FROM blog WHERE recipient = ? ORDER BY id DESC LIMIT 5"; // SQL command
 const BLOG_DELETE_POST = "DELETE FROM `blog` WHERE title = ? AND id = ?"; // SQL command
-const GET_POSTS_BY_AUTHOR = "SELECT * FROM `blog` WHERE author = ? AND recipient = ? ORDER BY id DESC" // SQL command
+const GET_POSTS_BY_AUTHOR = "SELECT * FROM `blog` WHERE author = ? ORDER BY id DESC" // SQL command
+const GET_POSTS_BY_AUTHOR_BY_CIRCLE = "SELECT * FROM `blog` WHERE author = ? AND circle = ? ORDER BY id DESC" // SQL command
 const GET_RECENT_POSTS_BY_AUTHOR = "SELECT * FROM blog WHERE author = ? AND recipient = ? ORDER BY id DESC LIMIT 5"; // SQL command
 const SQL_ADD_BLOG_POST = "INSERT INTO `blog` (author, title, image, content, link, date, recipient) VALUES(?,?,?,?,?,?,?)" // 
 const SQL_UPDATE_BLOG =  "UPDATE `blog` SET title = ?, image = ?, link = ?, author = ?, content = ? WHERE id = ?" //SQL command
@@ -174,7 +175,32 @@ app.post('/getFeed', (req, res, next) => {
     }
   })
 
-
+  app.post('/getFeedByUser', (req, res, next) => {  
+    let SQLdatabase = req.app.locals.SQLdatabase;  
+    // grab all posts
+    console.log(req.body)
+      if (req.body.circle === 'general') {
+        SQLdatabase.all(GET_POSTS_BY_AUTHOR, [ req.body.user ], (err, rows) => {
+          if (err) {
+            console.log("errorrrrr")
+            res.status(500).send(err.message);
+            return;
+          }  
+          console.log(req.body.circle)     
+          res.json(rows);
+        })
+      } else {
+        SQLdatabase.all(GET_POSTS_BY_AUTHOR_BY_CIRCLE, [ req.body.user, req.body.circle ], (err, rows) => {
+          if (err) {
+            console.log("errorrrrr")
+            res.status(500).send(err.message);
+            return;
+          }  
+          console.log(req.body.circle)     
+          res.json(rows);
+        })
+      }
+    })
 
 // #endregion 
 

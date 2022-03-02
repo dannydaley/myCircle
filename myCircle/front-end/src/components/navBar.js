@@ -55,7 +55,13 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
- function NavBar({ onRouteChange, alertNotifications, mailNotifications }) {
+const delay = ms => new Promise(res => setTimeout(res, ms));
+
+const delayFunction = async () => {
+  await this.delay(1000);
+  console.log("LOADING FEED");
+};
+ function NavBar({ onRouteChange, alertNotifications, mailNotifications, changeMailNotifications,changeAlertNotifications }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
   const isMenuOpen = Boolean(anchorEl);
@@ -70,6 +76,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   };
 
   const handleMenuClose = () => {
+    delayFunction();
     setAnchorEl(null);
     handleMobileMenuClose();
   };
@@ -79,6 +86,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   };
 
   const menuId = 'primary-search-account-menu';
+  //DESKTOP MENU!!
   const renderMenu = (
     <Menu
       anchorEl={anchorEl}
@@ -95,13 +103,16 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={handleMenuClose}>My Profile</MenuItem>
+      <MenuItem onClick={
+        
+        ()=>onRouteChange('profile')}>My Profile</MenuItem>
       <MenuItem onClick={handleMenuClose}>My account</MenuItem>
       <MenuItem onClick={() => onRouteChange('signout')}>Sign Out</MenuItem>      
     </Menu>
   );
 
   const mobileMenuId = 'primary-search-account-menu-mobile';
+      //MOBILE MENU!!
   const renderMobileMenu = (
     <Menu
     anchorEl={mobileMoreAnchorEl}
@@ -120,7 +131,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     >
       <MenuItem>
         <IconButton size="large" aria-label="show 4 new mails" color="inherit">
-          <Badge badgeContent={2} color="error">
+          <Badge badgeContent={mailNotifications} color="error">
             <MailIcon />
           </Badge>
         </IconButton>
@@ -134,7 +145,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
           aria-haspopup="true"
           color="inherit"
         >
-          <Badge badgeContent={1000} color="error">
+          <Badge badgeContent={alertNotifications} color="error">
             <NotificationsIcon />
           </Badge>
         </IconButton>
@@ -152,7 +163,9 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
         </IconButton>
         <p>My Account</p>
       </MenuItem>
-      <MenuItem onClick={handleProfileMenuOpen}>
+      <MenuItem 
+      >
+      
         <IconButton
           size="large"
           aria-label="account of current user"
@@ -162,7 +175,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
         >
           <AccountCircle />
         </IconButton>
-        <p>My Profile</p>
+        <p onClick={()=>onRouteChange('profile')}>My Profile</p>
       </MenuItem>
       <MenuItem onClick={handleProfileMenuOpen}>
         <IconButton
@@ -198,7 +211,9 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
             noWrap
             component="div"
             sx={{ display: { xs: 'none', sm: 'block' }, ml: 6 ,width: 125, mt: 1}}
-          ><a href="#"><img src={myCircleText} /></a>
+            onClick={()=>onRouteChange('home')}
+          >
+            <img src={myCircleText} />
           </Typography>
           <Box sx={{ flexGrow: 0.8 }} />
           <Search 
@@ -213,12 +228,12 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
           </Search>
           <Box sx={{ flexGrow: 1 }} />
           <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-            <IconButton size="large" aria-label="show 4 new mails" color="inherit">
+            <IconButton size="large" aria-label="show 4 new mails" color="inherit" onClick={changeMailNotifications}>
               <Badge badgeContent={mailNotifications} color="error">
                 <MailIcon />
               </Badge>
             </IconButton>
-            <IconButton size="large" aria-label="show 17 new notifications" color="inherit">
+            <IconButton size="large" aria-label="show 17 new notifications" color="inherit" onClick={changeAlertNotifications}>
               <Badge badgeContent={alertNotifications} color="error">
                 <NotificationsIcon />
               </Badge>
