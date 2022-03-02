@@ -13,7 +13,7 @@ export default class FeedPage extends React.Component {
      render() {
                return (
                     <div >
-                         <Feed circle={this.state.circle} changeCircle={this.changeCircle} />  
+                         <Feed circle={this.state.circle} changeCircle={this.changeCircle} changeMailNotifications={this.props.changeMailNotifications}/>  
                     </div>
                )    
           } 

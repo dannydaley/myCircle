@@ -35,11 +35,15 @@ export default class App extends Component {
     this.setState({route: route})
   }
 
+  changeMailNotifications = (mailNotifications) => {
+    this.setState({mailNotifications: mailNotifications ++})
+  }
+
   render() {
     return (
       <DocumentMeta >      
       <div className="App"  >
-        { this.state.isSignedIn === true ? <div><NavBar onRouteChange={this.onRouteChange} mailNotifications={this.state.mailNotifications} alertNotifications={this.state.alertNotifications} /> <FeedPage /></div> :        
+        { this.state.isSignedIn === true ? <div><NavBar onRouteChange={this.onRouteChange} mailNotifications={this.state.mailNotifications} alertNotifications={this.state.alertNotifications} /> <FeedPage changeMailNotifications={this.changeMailNotifications}/></div> :        
         <SignIn onRouteChange={this.onRouteChange} route={this.state.route} />
          }      
       </div>

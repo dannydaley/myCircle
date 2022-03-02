@@ -61,7 +61,7 @@ export default class Feed extends React.Component {
   }
 
   render () {   
-    const { onRouteChange } = this.props; 
+    const { onRouteChange, changeMailNotifications } = this.props; 
     //SETTING UP ACCESS TO THE STATE VARIABLES   
     const { circle, posts, dataIsLoaded } = this.state;
     // IF THE DATA ISNT LOADED YET, LOAD AN ALTERNATIVE WHILE WE WAIT   
@@ -106,7 +106,8 @@ export default class Feed extends React.Component {
                             {/* .MAP IS OUR FOR EACH LOOP, 'ITEM' IS JUST WHAT WE CALL EACH ELEMENT IN THE LIST SO IS INTERCHANGEABLE */}
                                 {this.state.posts.map(item => (                              
                                   /* RENDER THE COMPONENT WITH PROPS PASSED IN FROM THE SPECIFIC ITEM WERE CURRENTLY ON FOR EACH ITEM PASSED OVER BY THE .MAP */
-                                    <FeedPost author={item.author} content={item.content} profilePicture={item.image} />                           
+                                    <FeedPost author={item.author} content={item.content} profilePicture={item.image} /> 
+                                    changeMailNotifications()
                                 ))}
                             </Stack>
                         </Box>
