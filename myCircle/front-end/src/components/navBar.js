@@ -91,8 +91,8 @@ const delayFunction = async () => {
     <Menu
       anchorEl={anchorEl}
       anchorOrigin={{
-        vertical: 'top',
-        horizontal: 'right',
+      vertical: 'top',
+      horizontal: 'right',
       }}
       id={menuId}
       keepMounted
@@ -103,10 +103,8 @@ const delayFunction = async () => {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={
-        
-        ()=>onRouteChange('profile')}>My Profile</MenuItem>
-      <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+      <MenuItem onClick={()=>onRouteChange('profile')}>My Profile</MenuItem>
+      <MenuItem onClick={()=>onRouteChange('myAccount')}>My account</MenuItem>
       <MenuItem onClick={() => onRouteChange('signout')}>Sign Out</MenuItem>      
     </Menu>
   );

@@ -10,7 +10,7 @@ import Grid from '@mui/material/Grid';
 
 import me from '../../Images/me.jpg'
 
-export default class ProfileRightBar extends React.Component {
+export default class MyAccountRightBar extends React.Component {
   
   render () {
   const { userFirstName, userLastName } = this.props

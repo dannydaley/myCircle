@@ -11,7 +11,7 @@ export default class  ProfileOverlay extends React.Component {
         const { userFirstName, userLastName } = this.props
         return (
             <div style={{width: '100vw', display: 'flex', justifyContent: 'space-between', flexDirection: 'row'}}>            
-                <ProfileRightBar />
+                <ProfileRightBar userFirstName={userFirstName} userLastName={userLastName}/>
                 
                 <ProfileLeftBar userFirstName={userFirstName} userLastName={userLastName}/>
             </div>

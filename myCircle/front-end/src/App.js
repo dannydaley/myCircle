@@ -7,6 +7,7 @@ import SignIn from './pages/SignIn';
 import NavBar from './components/navBar';
 import FeedPage from './pages/FeedPage';
 import ProfilePage from './pages/ProfilePage'
+import MyAccountPage from './pages/myAccountPage'
 
 import {
   BrowserRouter as Router,
@@ -54,9 +55,11 @@ export default class App extends Component {
     switch (route) {
       case 'home' : return <FeedPage changeMailNotifications={this.changeMailNotifications}  onRouteChange={this.onRouteChange}/>;
       case 'profile' : return <ProfilePage userFirstName={this.state.userFirstName} userLastName={this.state.userLastName}/>;
+      case 'myAccount' :return <MyAccountPage />
       default: return <FeedPage />
   }
 }
+
   render() {
     return (
       <DocumentMeta >      
