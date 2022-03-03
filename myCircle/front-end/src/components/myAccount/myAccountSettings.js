@@ -10,6 +10,12 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { Button } from '@mui/material';
 import Divider from '@mui/material/Divider';
 import MyAccountOverlay from './myAccountOverlay'
+import TextField from '@mui/material/TextField';
+
+import MyInformation from './settingsGroups/myInformation'
+import MyLoginInfo from './settingsGroups/myLoginInfo'
+import MyCircles from './settingsGroups/myCircles'
+import MyFriends from './settingsGroups/myFriends'
 
 export default class MyAccountSettings extends React.Component {
 
@@ -63,6 +69,16 @@ export default class MyAccountSettings extends React.Component {
     this.componentDidMount(newSettings); 
   }
 
+  settingsGroup = (selection) => {
+    switch (selection) {
+      case 'My information' : return <MyInformation settings={this.state.settings}/>;
+      case 'My Circles' : return <MyCircles settings={this.state.settings}/>;
+      case 'My friends' :return <MyFriends settings={this.state.settings}/>
+      case 'My login info' :return <MyLoginInfo settings={this.state.settings}/>
+      default: return <MyInformation settings={this.state.settings}/>
+  }
+}
+
   render () {   
     const { onRouteChange, changeMailNotifications } = this.props; 
     //SETTING UP ACCESS TO THE STATE VARIABLES   
@@ -79,7 +95,7 @@ export default class MyAccountSettings extends React.Component {
             <Container maxWidth="lg" sx={{zIndex: 10, bgcolor: '#343434', borderRadius: '0px 0px 30px 30px', width: '100%', pb: 2, ml: 2, mr:2,  mt: 12}}>
                 {/* <NewPost /> */}
 
-                <Typography variant="h3" component="div" color="white" sx={{textAlign: 'center', mt: 2, paddingTop: 1, paddingBottom: 2, bgcolor: 'none' }}>{this.state.settings}</Typography>
+                
                 <Box sx={{ padding: 2, bgcolor: 'none', display: 'flex', justifyContent: 'center', mt: 2}}>
                     <CircularProgress />                    
                 </Box>
@@ -104,18 +120,20 @@ export default class MyAccountSettings extends React.Component {
                 <React.Fragment>              
                     <CssBaseline />
                     <Container maxWidth="lg" sx={{zIndex: 10, bgcolor: '#343434', borderRadius: '0px 0px 30px 30px', width: '100%', pb: 2, ml: 2, mr:2,  mt: 12}}>
-                    <Typography variant="h3" component="div" color="white" sx={{textAlign: 'center', mt: 2, paddingTop: 1, paddingBottom: 2, bgcolor: 'none' }}>{this.state.settings}</Typography>
+                    
                         {/* <NewPost /> */}
-                        <p>{this.feedPosts}</p>
+                        {/* <p>{this.feedPosts}</p>
                         <Box sx={{ padding: 2, bgcolor: 'none'}}>
-                            <Stack spacing={2} sx={{  width: '100%', margin: '50px auto 0'}}>
-                            {/* .MAP IS OUR FOR EACH LOOP, 'ITEM' IS JUST WHAT WE CALL EACH ELEMENT IN THE LIST SO IS INTERCHANGEABLE */}
-                                {this.state.posts.map(item => (                                                             
-                                  /* RENDER THE COMPONENT WITH PROPS PASSED IN FROM THE SPECIFIC ITEM WERE CURRENTLY ON FOR EACH ITEM PASSED OVER BY THE .MAP */
-                                    <FeedPost author={item.author} content={item.content} profilePicture={item.image} />                                     
-                                ))}
-                            </Stack>
-                        </Box>
+                        <TextField
+                            id="outlined-multiline-static"
+                            label="Multiline"
+                            multiline
+                            rows={4}
+                            defaultValue="Default Value"
+                          />
+                            
+                        </Box> */}
+                        {this.settingsGroup(this.state.settings)}
                         <Typography sx={{ mb: 1.5 }} color="white" sx={{ fontSize: 16 }}>
                             End of posts
                         </Typography>
