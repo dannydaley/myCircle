@@ -9,7 +9,7 @@ import me from '../../Images/me.jpg'
 
 export default class MyAccountLeftBar extends React.Component  {
 
-  constructor(props) {
+  constructor() {
     super();
   } 
   render () {

@@ -129,10 +129,14 @@ const Users = {
       {
         "firstName": 'Danny',
         "lastName": 'Daley',
-          "username": "Daley90210",
-          "email": "danny@email.com",
-          "password": "pass",
-          "passwordSalt": "859fe9e3fa07cb9cc81bbd1d58da2747d4282c4d9abbf2f372a8c73f68b7ef323a08b98da1401d8b639b1310f8094c7a1950e4a85300f70f7a92536b4b1a860bf759128ac9632b807100f48af7f906fbf14d27f4a16293eccb024f5182db76f356a3644a4c542ff35a17bd3a7b19a757a2fa318fbd3a45e62129a10fa481503233e9a998518b91430244157e328e7129c84a0d478e7d3c2360f0357d5b1a64d0d70de494436dcb84798bf8b629ee2089683e1b5d4faca23b1c5c43d031928684be00ce96b42a73269ddadf688c6737458642b5100d9db29be6594f327f4b44234786ecd407b2c98e52d766439e7742ac937ca58811b284c",
+        "username": "Daley90210",
+        "email": "danny@email.com",
+        "password": "pass",
+        "passwordSalt": "859fe9e3fa07cb9cc81bbd1d58da2747d4282c4d9abbf2f372a8c73f68b7ef323a08b98da1401d8b639b1310f8094c7a1950e4a85300f70f7a92536b4b1a860bf759128ac9632b807100f48af7f906fbf14d27f4a16293eccb024f5182db76f356a3644a4c542ff35a17bd3a7b19a757a2fa318fbd3a45e62129a10fa481503233e9a998518b91430244157e328e7129c84a0d478e7d3c2360f0357d5b1a64d0d70de494436dcb84798bf8b629ee2089683e1b5d4faca23b1c5c43d031928684be00ce96b42a73269ddadf688c6737458642b5100d9db29be6594f327f4b44234786ecd407b2c98e52d766439e7742ac937ca58811b284c",
+        "aboutMe" : "This is my about me text, this would have a rough paragraph about myself",
+        "location" : "Falmouth, UK",
+        "education" : "Falmouth University",
+        "work": "Full time student"
       }
     ]
   }
@@ -205,6 +209,17 @@ app.post('/getFeed', (req, res, next) => {
     })
 
 // #endregion 
+
+
+app.post('/getUserGeneralInfo', (req, res) => {
+  console.log(req.body)
+  if (req.body.user === 'DannyDaley') {
+    console.log("Match")
+    console.log(Users.users[0])
+    res.json(Users.users[0])
+
+  }
+})
 
 app.post('/signin', (req, res) => {  
   if (req.body.email === Users.users[0].email &&

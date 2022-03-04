@@ -2,6 +2,7 @@ import * as React from 'react';
 import Stack from '@mui/material/Stack';
 import CssBaseline from '@mui/material/CssBaseline';
 import Box from '@mui/material/Box';
+
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import FeedPost from '../feedPost';
@@ -19,7 +20,7 @@ import MyFriends from './settingsGroups/myFriends'
 
 export default class MyAccountSettings extends React.Component {
 
-  constructor(props) {
+  constructor() {
     super();
     this.state = {
       settings: 'My information',
@@ -80,14 +81,15 @@ export default class MyAccountSettings extends React.Component {
 }
 
   render () {   
-    const { onRouteChange, changeMailNotifications } = this.props; 
+    
+    const { onRouteChange,  userFirstName, userLastName } = this.props; 
     //SETTING UP ACCESS TO THE STATE VARIABLES   
     const { circle, posts, dataIsLoaded } = this.state;
     // IF THE DATA ISNT LOADED YET, LOAD AN ALTERNATIVE WHILE WE WAIT   
     if (!dataIsLoaded) {
       return (
       <div>
-        <MyAccountOverlay changeSettings={this.changeSettings}/>        
+        <MyAccountOverlay changeSettings={this.changeSettings} userFirstName={userFirstName} userLastName={userLastName}/>        
         <div style={{backgroundColor: '#010101', display: 'flex', justifyContent: 'space-between', paddingBottom: '100px', minHeight: '100vh'}}>          
           <div style={{width: '30%', height: '100px'}}></div>
             <React.Fragment>              
@@ -114,29 +116,15 @@ export default class MyAccountSettings extends React.Component {
     // OTHERWISE RUN THE GOOD STUFF
       return (
         <div>
-          <MyAccountOverlay changeSettings={this.changeSettings}/>
+          <MyAccountOverlay changeSettings={this.changeSettings} userFirstName={userFirstName} userLastName={userLastName} />
           <div style={{backgroundColor: '#010101', display: 'flex', justifyContent: 'space-between', paddingBottom: '100px', minHeight: '100vh'}}>
             <div style={{width: '30%', height: '100px'}}></div>
                 <React.Fragment>              
                     <CssBaseline />
-                    <Container maxWidth="lg" sx={{zIndex: 10, bgcolor: '#343434', borderRadius: '0px 0px 30px 30px', width: '100%', pb: 2, ml: 2, mr:2,  mt: 12}}>
-                    
-                        {/* <NewPost /> */}
-                        {/* <p>{this.feedPosts}</p>
-                        <Box sx={{ padding: 2, bgcolor: 'none'}}>
-                        <TextField
-                            id="outlined-multiline-static"
-                            label="Multiline"
-                            multiline
-                            rows={4}
-                            defaultValue="Default Value"
-                          />
-                            
-                        </Box> */}
+                    <Container xs={12}maxWidth="lg" sx={{zIndex: 10, bgcolor: '#343434', borderRadius: '0px 0px 30px 30px', width: '100%', pb: 2, ml: 2, mr:2,  mt: 12}}>
+
                         {this.settingsGroup(this.state.settings)}
-                        {/* <Typography sx={{ mb: 1.5 }} color="white" sx={{ fontSize: 16 }}>
-                            End of posts
-                        </Typography> */}
+
                     </Container>
                 </React.Fragment>
             <div style={{width: '30%', height: '100px'}}></div>

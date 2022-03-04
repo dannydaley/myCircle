@@ -3,7 +3,7 @@ import MyAccountRightBar from "./myAccountRightBar";
 import MyAccountLeftBar from "./myAccountLeftBar";
             
 export default class  MyAccountOverlay extends React.Component {
-    constructor(props) {
+    constructor() {
         super();
     }    
 
