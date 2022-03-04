@@ -10,7 +10,8 @@ export default class RightBarImages extends React.Component {
   constructor () {
     super();
     this.state = {
-      imagesAreLoaded: false           
+      imagesAreLoaded: false
+              
   }
   }
 srcset(image, size, rows = 1, cols = 1) {
@@ -31,67 +32,57 @@ dataStream = [
   {
     img: 'http://dd252935.kemeneth.net:9000/images/profilePictures/Daley-update-profile-picture-1640184634605-875098110.png',
   },
-  {
-    
+  {    
     img: 'http://dd252935.kemeneth.net:9000/images/uploads/Daley-change-image-1646316286161-6705357.png',
-
   },
   {
     img: 'http://dd252935.kemeneth.net:9000/images/uploads/Daley-change-image-1646316964040-95055731.png',
-
   },
   {
-    img: 'http://dd252935.kemeneth.net:9000/images/uploads/Daley-change-image-1640179029181-482976704.png',
- 
+    img: 'http://dd252935.kemeneth.net:9000/images/uploads/Daley-change-image-1640179029181-482976704.png', 
   },
   {
     img: 'http://dd252935.kemeneth.net:9000/images/uploads/Daley-change-image-1640179165255-630471660.png',
-
   },
   {
     img: 'http://dd252935.kemeneth.net:9000/images/uploads/Daley-change-image-1640179018916-921668712.png',
-
   },
   {
     img: 'http://dd252935.kemeneth.net:9000/images/default-post-image.png',
-
   },
   {
     img: 'http://dd252935.kemeneth.net:9000/images/uploads/Daley-change-image-1640179095807-279606443.png',
-
-    },
+  },
   {
     img: 'http://dd252935.kemeneth.net:9000/images/uploads/Daley-change-image-1640179006546-678218855.png',
-
   },
   {
     img: 'http://dd252935.kemeneth.net:9000/images/uploads/Daley-change-image-1640178791499-982229389.png',
-
   },
 ]
-counter = 2;
+
 
 images = []
 
 formatPictures = () => {
+  let counter = 2;
   this.dataStream.forEach(element => {
-    if (this.counter === 2) {
+    if (counter === 2) {
       this.images.push(  {
         img: element.img,      
         rows: 2,
         cols: 4
       })
-      this.counter = 0;  
+      counter = 0;  
     } else {
       this.images.push(  {
         img: element.img,     
         rows: 1,
         cols: 2
       })
-      this.counter++
+      counter++
     }
   });  
-  
 }
 
 componentDidMount = () => {
@@ -99,23 +90,26 @@ componentDidMount = () => {
   this.setState({imagesAreLoaded: true})
 }
 
+
   render() {
     const { imagesAreLoaded } = this.state
     if (!imagesAreLoaded) {
       return(
+
         <ImageList
         sx={{ width: 260, height: '65vh', display: 'flex', justifyContent: 'center' }}
         variant="quilted"
         cols={1}
         rowHeight={121}
         >
+          
           <CircularProgress />  
         </ImageList>
       )
     } else {
       return (
         <ImageList
-          sx={{ width: 260, height: '65vh' }}
+          sx={{ width: 260, height: '65vh'}}
           variant="quilted"
           cols={4}
           rowHeight={121}

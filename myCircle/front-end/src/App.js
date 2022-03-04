@@ -16,6 +16,10 @@ import {
   Link
 } from "react-router-dom";
 
+
+
+
+
 export default class App extends Component {
   constructor() {
     super();
@@ -26,7 +30,8 @@ export default class App extends Component {
       mailNotifications: 0,
       alertNotifications: 0,
       userFirstName: '',
-      userLastName: ''
+      userLastName: '',
+      UIColor: ''
     }
   }
 
@@ -51,6 +56,19 @@ export default class App extends Component {
     this.setState({alertNotifications: this.state.alertNotifications+=1})
   }
 
+  onColorChange = (event) => {
+    this.setState({color: event.target.value})
+    console.log(this.state.color)
+  }
+  /*
+CUSTOM COLOR CHANGER FOR UI
+onColorChange = (event) => {
+  this.setState({color: event.target.value})
+  console.log(this.state.color)
+}
+<input type="color" onChange={this.onColorChange}/>
+*/
+
   router = (route) => {
     switch (route) {
       case 'home' : return <FeedPage changeMailNotifications={this.changeMailNotifications}  onRouteChange={this.onRouteChange}/>;
@@ -66,7 +84,7 @@ export default class App extends Component {
       <div className="App"  >
         { this.state.isSignedIn === true ? 
             <div>
-              <NavBar onRouteChange={this.onRouteChange} mailNotifications={this.state.mailNotifications} changeMailNotifications={this.changeMailNotifications} changeAlertNotifications={this.changeAlertNotifications} alertNotifications={this.state.alertNotifications} />              
+              <NavBar onRouteChange={this.onRouteChange} onColorChange={this.onColorChange} UIColor={this.state.UIColor} mailNotifications={this.state.mailNotifications} changeMailNotifications={this.changeMailNotifications} changeAlertNotifications={this.changeAlertNotifications} alertNotifications={this.state.alertNotifications} />              
               {this.router(this.state.route)}
             </div> 
           :        

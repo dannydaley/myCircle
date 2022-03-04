@@ -61,7 +61,8 @@ const delayFunction = async () => {
   await this.delay(1000);
   console.log("LOADING FEED");
 };
- function NavBar({ onRouteChange, alertNotifications, mailNotifications, changeMailNotifications,changeAlertNotifications }) {
+
+ function NavBar({ onRouteChange, alertNotifications, mailNotifications, changeMailNotifications,changeAlertNotifications, onColorChange, UIColor }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
   const isMenuOpen = Boolean(anchorEl);
@@ -190,10 +191,12 @@ const delayFunction = async () => {
     </Menu>
   );
 
+
   return (
       <nav>
     <Box sx={{ flexGrow: 1, justifyItems: "spaceBetween" }}>
-      <AppBar position="fixed">
+      <AppBar position="fixed" sx={{backgroundColor: UIColor}}>
+      
         <Toolbar>
           <IconButton
             size="large"
