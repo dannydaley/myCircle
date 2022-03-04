@@ -208,7 +208,7 @@ const delayFunction = async () => {
             variant="h6"
             noWrap
             component="div"
-            sx={{ display: { xs: 'none', sm: 'block' }, ml: 6 ,width: 125, mt: 1}}
+            sx={{ display: { xs: 'none', sm: 'block' }, ml: 6 ,width: 125, mt: 1, ":hover": { cursor: 'pointer' } }}
             onClick={()=>onRouteChange('home')}
           >
             <img src={myCircleText} />

@@ -101,9 +101,9 @@ export default class MyAccountSettings extends React.Component {
                 </Box>
                 <h1 style={{ color: 'white' }}>loading {this.state.settings}</h1>
                 <Divider variant="middle" sx={{mt: 1.5, mb: 1.5}} />                
-                <Typography sx={{ mb: 1.5 }} color="white" sx={{ fontSize: 16 }}>
+                {/* <Typography sx={{ mb: 1.5 }} color="white" sx={{ fontSize: 16 }}>
                     End of posts
-                </Typography>
+                </Typography> */}
               </Container>
             </React.Fragment>
           <div style={{width: '30%', height: '100px'}}></div>
@@ -134,9 +134,9 @@ export default class MyAccountSettings extends React.Component {
                             
                         </Box> */}
                         {this.settingsGroup(this.state.settings)}
-                        <Typography sx={{ mb: 1.5 }} color="white" sx={{ fontSize: 16 }}>
+                        {/* <Typography sx={{ mb: 1.5 }} color="white" sx={{ fontSize: 16 }}>
                             End of posts
-                        </Typography>
+                        </Typography> */}
                     </Container>
                 </React.Fragment>
             <div style={{width: '30%', height: '100px'}}></div>

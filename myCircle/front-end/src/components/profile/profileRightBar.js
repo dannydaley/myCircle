@@ -7,6 +7,7 @@ import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
+import RightBarImages from './rightBarImages';
 
 import me from '../../Images/me.jpg'
 
@@ -22,7 +23,7 @@ export default class ProfileRightBar extends React.Component {
       <Typography variant="h6" component="div" color="white" sx={{textAlign: 'center', mt: 2, paddingTop: 1, paddingBottom: 2, bgcolor: 'none' }}>{userFirstName}'s images</Typography>
         <Box sx={{ bgcolor: 'none'}}>
             {/* FOREACH HERE FOR USERS PICTURES */}
-              <Grid container spacing={1}>
+              {/* <Grid container spacing={1}>
                 <Grid item xs={6} md={4} style={{display:'flex'}}>
                   <img src={me} style={{width: '100%'}}/>
                 </Grid>
@@ -44,8 +45,8 @@ export default class ProfileRightBar extends React.Component {
                 <Grid item xs={6} md={4} style={{display:'flex'}}>
                   <img src={me} style={{width: '100%'}}/>
                 </Grid>
-              </Grid>
-              
+              </Grid> */}
+              <RightBarImages />
             
             {/* <Stack spacing={1} sx={{  width: 250, margin: '50px auto 0'       }}>      
                 
