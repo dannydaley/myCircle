@@ -8,7 +8,8 @@ import NavBar from './components/navBar';
 import FeedPage from './pages/FeedPage';
 import ProfilePage from './pages/ProfilePage'
 import MyAccountPage from './pages/myAccountPage'
-
+import theme from './theme'
+import { ThemeProvider } from '@material-ui/core/styles'
 import {
   BrowserRouter as Router,
   Routes,
@@ -80,6 +81,7 @@ onColorChange = (event) => {
 
   render() {
     return (
+      <ThemeProvider theme={theme} >
       <DocumentMeta >      
       <div className="App"  >
         { this.state.isSignedIn === true ? 
@@ -92,6 +94,9 @@ onColorChange = (event) => {
          }  
       </div>
       </DocumentMeta>
+
+      </ThemeProvider>
+
     );
   }
 }

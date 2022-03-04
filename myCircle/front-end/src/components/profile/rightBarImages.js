@@ -97,7 +97,7 @@ componentDidMount = () => {
       return(
 
         <ImageList
-        sx={{ width: 260, height: '65vh', display: 'flex', justifyContent: 'center' }}
+        sx={{ width: 260, height: '100%', display: 'flex', justifyContent: 'center' }}
         variant="quilted"
         cols={1}
         rowHeight={121}
@@ -108,8 +108,9 @@ componentDidMount = () => {
       )
     } else {
       return (
+        
         <ImageList
-          sx={{ width: 260, height: '65vh'}}
+          sx={{ width: 260, height: '100%', pb: 3}}
           variant="quilted"
           cols={4}
           rowHeight={121}

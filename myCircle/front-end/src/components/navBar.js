@@ -195,7 +195,9 @@ const delayFunction = async () => {
   return (
       <nav>
     <Box sx={{ flexGrow: 1, justifyItems: "spaceBetween" }}>
-      <AppBar position="fixed" sx={{backgroundColor: UIColor}}>
+      <AppBar position="fixed" 
+      // sx={{backgroundColor: UIColor}}
+      >
       
         <Toolbar>
           <IconButton
