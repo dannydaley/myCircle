@@ -24,6 +24,7 @@ export default class MyInformation extends React.Component {
             location : "Falmouth, UK",
             education : '',
             work: '',
+            profilePicture : '',
             dataIsLoaded: false
         }
 
@@ -54,6 +55,7 @@ export default class MyInformation extends React.Component {
             location : data.location,
             education : data.education,
             work: data.work,
+            profilePicture: data.profilePicture,
             dataIsLoaded: true
           });
         })
@@ -61,7 +63,7 @@ export default class MyInformation extends React.Component {
 
     render() {
         const { settings } = this.props; 
-        const { firstName,lastName, aboutMe,location,education, work, dataIsLoaded } = this.state
+        const { firstName,lastName, aboutMe,location,education, work, profilePicture, dataIsLoaded } = this.state
         if (!dataIsLoaded) {
             return(
                 <Box sx={{ padding: 2, bgcolor: 'none', display: 'flex', justifyContent: 'center', mt: 2}}>
@@ -74,8 +76,19 @@ export default class MyInformation extends React.Component {
                 <div style={{height: '100%'}}>
                     <Typography variant="h3" component="div" color="white" sx={{textAlign: 'center', mt: 2, paddingTop: 1, paddingBottom: 2, bgcolor: 'none' }}>{settings}</Typography>                    
                     <div style={{marginTop: '30px', display: 'block'}}>
-                        
-                 
+                        <div style={{marginBottom: '50px', display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                            <img 
+                            src={
+                                'http://localhost:3001/public/' + profilePicture
+                                // process.env.SERVER + process.env.SERVERPUBLICDIRECTORY + props.profilePicture 
+
+                                } width="200px" height="150px" style={{ boxShadow: "1px 3px 5px 0px black", mb: 3 }}
+                                // onClick={()=>this.props.onRouteChange('profile')}
+                                /> 
+                                <a href="">Change profile picture</a>
+                            </div>   
+  
+                    {/* images/profilePictures/Daley-update-profile-picture-1640184634605-875098110.png */}
                     <PersonIcon sx={{mr: 2, color: 'rgba(255, 255, 255, 0.7)'}} /> 
                     <TextField
                         sx={{mr: '5%' ,maxWidth: '30%', width: '25%', borderColor: 'red', backgroundColor: 'rgba(255, 255, 255, 0.7)', borderRadius: '4px'}}

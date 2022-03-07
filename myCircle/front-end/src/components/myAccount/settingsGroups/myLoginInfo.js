@@ -18,8 +18,19 @@ export default class MyLoginInfo extends React.Component {
 
     constructor(props) {
         super();
+        this.state={
+            changePassword: '',
+            changePasswordConfirm: ''     
+        }
 
       }
+
+      onPasswordChange = (event) => {
+        this.setState({changePassword: event.target.value})
+    }
+    onPasswordChangeConfirm = (event) => {
+        this.setState({changePasswordConfirm: event.target.value})
+    }
 
     render() {
         const { settings } = this.props; 
@@ -55,6 +66,7 @@ export default class MyLoginInfo extends React.Component {
                     id="outlined-password-input"
                     label="New password"
                     type="password"
+                    onChange={this.onPasswordChange}
                     />
                     <DoneIcon sx={{color: 'lightGreen', position: 'absolute'}} />
                 </div>
@@ -65,8 +77,11 @@ export default class MyLoginInfo extends React.Component {
                         id="outlined-password-input"
                         label="Confirm password"
                         type="password"
-                    />
-                    <DoneAllIcon variant="success" sx={{color: 'lightGreen', position: 'absolute'}} />                                        
+                        onChange={this.onPasswordChangeConfirm}
+                    />              
+                  <DoneAllIcon variant="success" sx={{color: 'lightGreen', position: 'absolute'}} />
+                    
+                                                          
                 </div>
             </form>
         )

@@ -136,7 +136,8 @@ const Users = {
         "aboutMe" : "This is my about me text, this would have a rough paragraph about myself",
         "location" : "Falmouth, UK",
         "education" : "Falmouth University",
-        "work": "Full time student"
+        "work": "Full time student",
+        "profilePicture": "images/profilePictures/Daley-update-profile-picture-1640184634605-875098110.png"
       }
     ]
   }
