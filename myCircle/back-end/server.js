@@ -29,7 +29,7 @@ const BLOG_DELETE_POST = "DELETE FROM `blog` WHERE title = ? AND id = ?"; // SQL
 const GET_POSTS_BY_AUTHOR = "SELECT * FROM `blog` WHERE author = ? ORDER BY id DESC" // SQL command
 const GET_POSTS_BY_AUTHOR_BY_CIRCLE = "SELECT * FROM `blog` WHERE author = ? AND circle = ? ORDER BY id DESC" // SQL command
 const GET_RECENT_POSTS_BY_AUTHOR = "SELECT * FROM blog WHERE author = ? AND recipient = ? ORDER BY id DESC LIMIT 5"; // SQL command
-const SQL_ADD_BLOG_POST = "INSERT INTO `blog` (author, title, image, content, link, date, recipient) VALUES(?,?,?,?,?,?,?)" // 
+const SQL_ADD_BLOG_POST = "INSERT INTO `blog` (author, image,  link, circle, content,date, recipient) VALUES(?,?,?,?,?,?,?)" // 
 const SQL_UPDATE_BLOG =  "UPDATE `blog` SET title = ?, image = ?, link = ?, author = ?, content = ? WHERE id = ?" //SQL command
 const SQL_UPDATE_USER_PROFILE = "UPDATE users SET profilePicture = ?, aboutMe = ? WHERE name = ?" // SQL command
 const SQL_UPDATE_USERS_PINNED_POST = "UPDATE users SET pinnedPost = ? WHERE name = ?" // SQL command
@@ -284,8 +284,28 @@ app.post('/signin', (req, res) => {
 
 app.post('/newPost', (req, res) => {
   console.log(req.body)
-  res.json('success')
-})
+  let SQLdatabase = req.app.locals.SQLdatabase;
+
+  SQLdatabase.run(SQL_ADD_BLOG_POST, [
+      req.body.postData.author,
+      req.body.postData.image,
+      req.body.postData.link,
+      req.body.postData.circle,
+      req.body.postData.postContent,
+      req.body.postData.data,
+      req.body.postData.recipient
+    ],  (err, rows) => {
+      if (err) {
+        console.log("errorrrrr")
+        res.status(500).send(err.message);
+        return;
+      }  
+      console.log(req.body.postData)          
+      res.json('success');
+    })
+  }
+  );
+
 
 
 app.listen(process.env.PORT)

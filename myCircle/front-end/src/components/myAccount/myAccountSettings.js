@@ -91,7 +91,7 @@ export default class MyAccountSettings extends React.Component {
       <div>
         <MyAccountOverlay changeSettings={this.changeSettings} userFirstName={userFirstName} userLastName={userLastName}/>        
         <div style={{backgroundColor: '#010101', display: 'flex', justifyContent: 'space-between', paddingBottom: '100px', minHeight: '100vh'}}>          
-          <div style={{width: '30%', height: '100px'}}></div>
+          <div style={{width: '30%'}}></div>
             <React.Fragment>              
             <CssBaseline />
             <Container maxWidth="lg" sx={{zIndex: 10, bgcolor: '#343434', borderRadius: '0px 0px 30px 30px', width: '100%', pb: 2, ml: 2, mr:2,  mt: 12}}>

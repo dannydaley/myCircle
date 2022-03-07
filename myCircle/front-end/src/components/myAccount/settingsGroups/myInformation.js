@@ -76,7 +76,7 @@ export default class MyInformation extends React.Component {
                 <div style={{height: '100%'}}>
                     <Typography variant="h3" component="div" color="white" sx={{textAlign: 'center', mt: 2, paddingTop: 1, paddingBottom: 2, bgcolor: 'none' }}>{settings}</Typography>                    
                     <div style={{marginTop: '30px', display: 'block'}}>
-                        <div style={{marginBottom: '50px', display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
                             <img 
                             src={
                                 'http://localhost:3001/public/' + profilePicture
@@ -85,7 +85,7 @@ export default class MyInformation extends React.Component {
                                 } width="200px" height="150px" style={{ boxShadow: "1px 3px 5px 0px black", mb: 3 }}
                                 // onClick={()=>this.props.onRouteChange('profile')}
                                 /> 
-                                <a href="">Change profile picture</a>
+                                <Typography variant="h6" component="div" color="blue" sx={{textAlign: 'center', mt: 2, paddingTop: 1, paddingBottom: 3, bgcolor: 'none' }}>Change profile picture</Typography>
                             </div>   
   
                     {/* images/profilePictures/Daley-update-profile-picture-1640184634605-875098110.png */}

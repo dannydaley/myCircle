@@ -10,12 +10,17 @@ import NavBar from './navBar';
 
 export default class NewPost extends React.Component { 
     constructor(props) {
-        super();
+        super(props);
         this.state = {
-            'postContent': ''            
+            'author': this.props.userFirstName + this.props.userLastName,
+            'image': '/images/uploads/Daley-change-image-1640178860940-706035700.png',
+            "link":"https://dannydaley.github.io/eightBall/",
+            "circle": this.props.circle,
+            'postContent': '',
+            "date":"28-12-2019",
+            "recipient":null            
         }
-    }
-
+    }       
     onContentChange = (event) => {
         this.setState({postContent: event.target.value})
     }
@@ -25,24 +30,21 @@ export default class NewPost extends React.Component {
             method: 'post',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({
-                'content': this.state.postContent,                
+                'postData': this.state                
             })
+        }).then(response => response.json())
+        .then(data =>      
+            {if (data === 'success') {              
+                this.props.changeCircle(this.state.circle) 
+            } else {
+                console.log(data)  
+            } 
         })
-        this.props.onRouteChange('home')
-        this.props.setState({mailNotifications: 0})
     }
 
-        // const [loading, setLoading] = React.useState(false);
-        // const handleChange = (event) => {
-        //     setValue(event.target.value);
-        //   };
-        //   const [value, setValue] = React.useState('Controlled');
-        //   function handleClick() {
-        //       setLoading(true);
-        //   }
 
     render () {
-        const { onRouteChange } = this.props;    
+        const { onRouteChange, userFirstName, userLastName } = this.props;    
         return (
             <div style={{marginTop: '20px'}}>
                 <label for="file-input">

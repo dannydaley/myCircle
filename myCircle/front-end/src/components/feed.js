@@ -14,9 +14,9 @@ import Overlay from './overlay'
 export default class Feed extends React.Component {
 
   constructor(props) {
-    super();
+    super(props);
     this.state = {
-      circle: props.circle,
+      circle: this.props.circle,
         posts: [],
         dataIsLoaded: false
     }
@@ -61,7 +61,7 @@ export default class Feed extends React.Component {
   }
 
   render () {   
-    const { onRouteChange, changeMailNotifications } = this.props; 
+    const { onRouteChange, changeMailNotifications, userFirstName, userLastName } = this.props; 
     //SETTING UP ACCESS TO THE STATE VARIABLES   
     const { circle, posts, dataIsLoaded } = this.state;
     // IF THE DATA ISNT LOADED YET, LOAD AN ALTERNATIVE WHILE WE WAIT   
@@ -74,7 +74,7 @@ export default class Feed extends React.Component {
             <React.Fragment>              
             <CssBaseline />
             <Container maxWidth="lg" sx={{zIndex: 10, bgcolor: '#343434', borderRadius: '0px 0px 30px 30px', width: '100%', pb: 2, ml: 2, mr:2,  mt: 12}}>
-                <NewPost />
+                <NewPost userFirstName={userFirstName} userLastName={userLastName} circle={circle} />
                 <Box sx={{ padding: 2, bgcolor: 'none', display: 'flex', justifyContent: 'center', mt: 2}}>
                     <CircularProgress />                    
                 </Box>
@@ -99,7 +99,9 @@ export default class Feed extends React.Component {
                 <React.Fragment>              
                     <CssBaseline />
                     <Container maxWidth="lg" sx={{zIndex: 10, bgcolor: '#343434', borderRadius: '0px 0px 30px 30px', width: '100%', pb: 2, ml: 2, mr:2,  mt: 12}}>
-                        <NewPost />
+                        <NewPost
+                         changeCircle={this.changeCircle}
+                         />
                         <p>{this.feedPosts}</p>
                         <Box sx={{ padding: 2, bgcolor: 'none'}}>
                             <Stack spacing={2} sx={{  width: '100%', margin: '50px auto 0'}}>
