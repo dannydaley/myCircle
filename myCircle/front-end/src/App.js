@@ -73,7 +73,7 @@ onColorChange = (event) => {
   router = (route) => {
     switch (route) {
       case 'home' : return <FeedPage changeMailNotifications={this.changeMailNotifications}  onRouteChange={this.onRouteChange} userFirstName={this.state.userFirstName} userLastName={this.state.userLastName}/>;
-      case 'profile' : return <ProfilePage userFirstName={this.state.userFirstName} userLastName={this.state.userLastName}/>;
+      case 'profile' : return <ProfilePage userFirstName={this.state.userFirstName} userLastName={this.state.userLastName} changeAlertNotifications={this.changeAlertNotifications}/>;
       case 'myAccount' :return <MyAccountPage />
       default: return <FeedPage />
   }

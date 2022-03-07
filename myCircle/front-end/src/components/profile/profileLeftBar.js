@@ -11,11 +11,11 @@ import PersonAddIcon from '@mui/icons-material/PersonAdd';
 
 export default class ProfileLeftBar extends React.Component  {
 
-  constructor() {
-    super();
+  constructor(props, changeAlertNotifications) {
+    super(props);
   } 
   render () {
-    const { userFirstName, userLastName } = this.props
+    const { userFirstName, userLastName, changeAlertNotifications } = this.props
     return (
       <div>
         <React.Fragment>
@@ -24,7 +24,7 @@ export default class ProfileLeftBar extends React.Component  {
           <Box sx={{ padding: 2, bgcolor: 'none'}}>
               <img src={me} width="200px" height="150px" style={{ boxShadow: "1px 3px 5px 0px black", mb: 3, ":hover": { cursor: 'pointer' } }} />
               <Typography variant="h5" component="div" color="white" sx={{textAlign: 'center', mt: 2}}>{userFirstName} {userLastName}</Typography>
-              <Button variant="contained"  startIcon={<PersonAddIcon />} sx={{textTransform: 'none'}}>Add Friend</Button>
+              <Button variant="contained"  startIcon={<PersonAddIcon />} sx={{textTransform: 'none'}} onClick={() => changeAlertNotifications}>Add Friend</Button>
               {/* <Stack spacing={2} sx={{  width: 200, margin: '50px auto 0' }}>
                   <Button variant="contained" onClick={()=>changeCircle('general')}>GENERAL</Button>
                   <Button variant="contained" onClick={()=>changeCircle('gaming')}>GAMING</Button>

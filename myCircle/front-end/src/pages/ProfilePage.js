@@ -4,8 +4,8 @@ import ProfileFeed from '../components/profile/profileFeed'
 import * as React from 'react';
 
 export default class ProfilePage extends React.Component {    
-     constructor({  }) {
-        super();
+     constructor(props) {
+        super(props);
         this.state = {
              circle: 'general'   
           }
@@ -13,11 +13,11 @@ export default class ProfilePage extends React.Component {
 
      render()
      {
-          const { userFirstName, userLastName } = this.props
+          const { userFirstName, userLastName, changeAlertNotifications } = this.props
           // changeMailNotifications = this.props;
                return (
                     <div >
-                         <ProfileOverlay userFirstName={userFirstName} userLastName={userLastName} />
+                         <ProfileOverlay userFirstName={userFirstName} userLastName={userLastName} changeAlertNotifications={changeAlertNotifications} />
                          <ProfileHeader  />  
                          
                          <ProfileFeed />
