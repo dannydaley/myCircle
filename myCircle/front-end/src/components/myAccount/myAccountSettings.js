@@ -20,8 +20,8 @@ import MyFriends from './settingsGroups/myFriends'
 
 export default class MyAccountSettings extends React.Component {
 
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       settings: 'My information',
         posts: [],
@@ -48,7 +48,7 @@ export default class MyAccountSettings extends React.Component {
       method: 'post',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
-        user: 'Daley',
+        user: this.props.userUserName,
         settings: newSettings
       })    
     })
@@ -66,13 +66,12 @@ export default class MyAccountSettings extends React.Component {
   }
 
   changeSettings = (newSettings) => { 
-    console.log("clicckeeedddd")
     this.componentDidMount(newSettings); 
   }
 
   settingsGroup = (selection) => {
     switch (selection) {
-      case 'My information' : return <MyInformation settings={this.state.settings}/>;
+      case 'My information' : return <MyInformation settings={this.state.settings} userUserName={this.props.userUserName}/>;
       case 'My Circles' : return <MyCircles settings={this.state.settings}/>;
       case 'My friends' :return <MyFriends settings={this.state.settings}/>
       case 'My login info' :return <MyLoginInfo settings={this.state.settings}/>
@@ -82,14 +81,14 @@ export default class MyAccountSettings extends React.Component {
 
   render () {   
     
-    const { onRouteChange,  userFirstName, userLastName } = this.props; 
+    const { onRouteChange,  userFirstName, userLastName,userProfilePicture, userUserName } = this.props; 
     //SETTING UP ACCESS TO THE STATE VARIABLES   
     const { circle, posts, dataIsLoaded } = this.state;
     // IF THE DATA ISNT LOADED YET, LOAD AN ALTERNATIVE WHILE WE WAIT   
     if (!dataIsLoaded) {
       return (
       <div>
-        <MyAccountOverlay changeSettings={this.changeSettings} userFirstName={userFirstName} userLastName={userLastName}/>        
+        <MyAccountOverlay changeSettings={this.changeSettings} userFirstName={userFirstName} userLastName={userLastName} userProfilePicture={userProfilePicture}/>        
         <div style={{backgroundColor: '#010101', display: 'flex', justifyContent: 'space-between', paddingBottom: '100px', minHeight: '100vh'}}>          
           <div style={{width: '30%'}}></div>
             <React.Fragment>              
@@ -116,7 +115,7 @@ export default class MyAccountSettings extends React.Component {
     // OTHERWISE RUN THE GOOD STUFF
       return (
         <div>
-          <MyAccountOverlay changeSettings={this.changeSettings} userFirstName={userFirstName} userLastName={userLastName} />
+          <MyAccountOverlay changeSettings={this.changeSettings} userFirstName={userFirstName} userLastName={userLastName} userProfilePicture={userProfilePicture}/>
           <div style={{backgroundColor: '#010101', display: 'flex', justifyContent: 'space-between', paddingBottom: '100px', minHeight: '100vh'}}>
             <div style={{width: '30%', height: '100px'}}></div>
                 <React.Fragment>              

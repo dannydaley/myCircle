@@ -11,10 +11,10 @@ export default class MyAccountPage extends React.Component {
 
 
     render() {
-        const { userFirstName, userLastName } = this.props
+        const { userFirstName, userLastName, userProfilePicture, userUserName } = this.props
         return (
             <div>
-                <MyAccountSettings userFirstName={userFirstName} userLastName={userLastName} />
+                <MyAccountSettings userFirstName={userFirstName} userLastName={userLastName} userProfilePicture={userProfilePicture} userUserName={userUserName}/>
             </div>
 
 

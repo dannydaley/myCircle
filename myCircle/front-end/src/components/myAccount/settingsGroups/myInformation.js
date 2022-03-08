@@ -21,7 +21,7 @@ export default class MyInformation extends React.Component {
             firstName: '',
             lastName: '',            
             aboutMe : '',
-            location : "Falmouth, UK",
+            location : "",
             education : '',
             work: '',
             profilePicture : '',
@@ -29,9 +29,7 @@ export default class MyInformation extends React.Component {
         }
 
       }
-      text = "This is my about me section and this is dummy text, This is my about me section and this is dummy text, This is my about me section and this is dummy text, This is my about me section and this is dummy text, This is my about me section and this is dummy text, This is my about me section and this is dummy text, This is my about me section and this is dummy text, This is my about me section and this is dummy text, "
-
-      componentDidMount = async (newCircle) => {
+            componentDidMount = async (newCircle) => {
         if (!newCircle) {
           newCircle = 'general'
         }  
@@ -41,7 +39,7 @@ export default class MyInformation extends React.Component {
           method: 'post',
           headers: {'Content-Type': 'application/json'},
           body: JSON.stringify({
-          user: 'DannyDaley'
+          user: this.props.userUserName
           })    
         })
         //TURN THE RESPONSE INTO A JSON OBJECT
@@ -85,7 +83,7 @@ export default class MyInformation extends React.Component {
                                 } width="200px" height="150px" style={{ boxShadow: "1px 3px 5px 0px black", mb: 3 }}
                                 // onClick={()=>this.props.onRouteChange('profile')}
                                 /> 
-                                <Typography variant="h6" component="div" color="blue" sx={{textAlign: 'center', mt: 2, paddingTop: 1, paddingBottom: 3, bgcolor: 'none' }}>Change profile picture</Typography>
+                                <Typography variant="h6" component="div" sx={{textAlign: 'center', mt: 2, paddingTop: 1, paddingBottom: 3, bgcolor: 'none' }}>Change profile picture</Typography>
                             </div>   
   
                     {/* images/profilePictures/Daley-update-profile-picture-1640184634605-875098110.png */}

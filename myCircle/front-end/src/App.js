@@ -1,6 +1,9 @@
 import logo from './logo.svg';
 import './App.css';
+
 import React , { Component } from "react";
+import * as ReactDOM from "react-dom";
+import { BrowserRouter } from "react-router-dom";
 import DocumentMeta from 'react-document-meta';
 import Button from '@mui/material/Button'
 import SignIn from './pages/SignIn';
@@ -76,8 +79,8 @@ onColorChange = (event) => {
   router = (route) => {
     switch (route) {
       case 'home' : return <FeedPage changeMailNotifications={this.changeMailNotifications}  onRouteChange={this.onRouteChange} userFirstName={this.state.userFirstName} userLastName={this.state.userLastName} userUserName={this.state.userUserName} userProfilePicture={this.state.userProfilePicture} />;
-      case 'profile' : return <ProfilePage userFirstName={this.state.userFirstName} userLastName={this.state.userLastName} userUserName={this.state.userUserName} changeAlertNotifications={this.changeAlertNotifications}/>;
-      case 'myAccount' :return <MyAccountPage />
+      case 'profile' : return <ProfilePage userFirstName={this.state.userFirstName} userLastName={this.state.userLastName} userUserName={this.state.userUserName} changeAlertNotifications={this.changeAlertNotifications} userProfilePicture={this.state.userProfilePicture}/>;
+      case 'myAccount' :return <MyAccountPage userFirstName={this.state.userFirstName} userProfilePicture={this.state.userProfilePicture} userUserName={this.state.userUserName} />
       default: return <FeedPage />
   }
 }

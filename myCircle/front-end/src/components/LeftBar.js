@@ -27,8 +27,6 @@ export default class LeftBar extends React.Component  {
                   <Button variant="contained" onClick={()=>changeCircle('general')}>GENERAL</Button>
                   <Button variant="contained" onClick={()=>changeCircle('gaming')}>GAMING</Button>
                   <Button variant="contained" onClick={()=>changeCircle('coding')}>CODING</Button>
-                  <Button variant="contained">ART</Button>
-                  <Button variant="contained">ANIME</Button>
               </Stack>
             </Box>
           </Container>
