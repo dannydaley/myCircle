@@ -69,8 +69,7 @@ export default class ProfileFeed extends React.Component {
     // IF THE DATA ISNT LOADED YET, LOAD AN ALTERNATIVE WHILE WE WAIT   
     if (!dataIsLoaded) {
       return (
-      <div>
-        {/* <ProfileOverlay changeCircle={this.changeCircle}/>         */}
+      <div>        
         <div style={{backgroundColor: '#010101', display: 'flex', justifyContent: 'space-between', paddingBottom: '100px', minHeight: '100vh'}}>          
           <div style={{width: '30%', height: '100px'}}></div>
             <React.Fragment>              
@@ -95,7 +94,6 @@ export default class ProfileFeed extends React.Component {
     // OTHERWISE RUN THE GOOD STUFF
       return (
         <div>
-          {/* <ProfileOverlay changeCircle={this.changeCircle}/> */}
           <div style={{backgroundColor: '#010101', display: 'flex', justifyContent: 'space-between', paddingBottom: '100px', minHeight: '100vh'}}>
             <div style={{width: '30%', height: '100px'}}></div>
                 <React.Fragment>              

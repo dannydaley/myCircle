@@ -8,7 +8,7 @@ import me from '../Images/me.jpg'
 export default class FeedPost extends React.Component  {
     
     constructor(props) {
-        super();
+        super(props);
 
     }
 
@@ -22,9 +22,8 @@ export default class FeedPost extends React.Component  {
             <CardContent sx={{display: 'flex', mb: 2}}>
                 {/* <a href={author} > */}
                     <img src={
-                    'http://localhost:3001/public' + profilePicture
-                    // process.env.SERVER + process.env.SERVERPUBLICDIRECTORY + props.profilePicture 
-
+                    'http://localhost:3001/public/' + profilePicture
+                    // process.env.SERVER + process.env.SERVERPUBLICDIRECTORY + props.profilePicture
                     } width="200px" height="150px" style={{ boxShadow: "1px 3px 5px 0px black", mb: 3 }}
                     onClick={()=>this.props.onRouteChange('profile')}
                      />
@@ -40,9 +39,5 @@ export default class FeedPost extends React.Component  {
             </CardContent>
             <Divider variant="middle" />
         </div>
-    )
-    }
-    
-
-
+    )}
 }

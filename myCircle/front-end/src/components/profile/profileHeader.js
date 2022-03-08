@@ -18,11 +18,9 @@ export default class ProfileHeader extends React.Component {
 
   constructor(props) {
     super();
-    this.state = {
- 
+    this.state = { 
     }
   }
-
 
   render () {   
       return(

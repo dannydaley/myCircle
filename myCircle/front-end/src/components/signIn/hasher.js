@@ -10,9 +10,7 @@
     const hashAlgorithm = 'sha256';
     
     // create a hash salt/pepper
-    const generatePepper = crypto.randomBytes(256).toString('hex');
-    
-    
+    const generatePepper = crypto.randomBytes(256).toString('hex');    
     
     //this function returns a hash of the password, combined with the pepper and the salt.
     export default function passwordHash(thePassword, theSalt) {  

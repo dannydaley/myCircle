@@ -9,49 +9,50 @@ export default function SignUpForm({ onRouteChange }) {
     <div style={{width: '30%', padding: '10ch',backgroundColor: 'white'}}>
         <Box component="form" sx={{'& .MuiTextField-root': { m: 1, width: '30ch' } }} noValidate autoComplete="off">
             <form style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
-            <TextField
+              <TextField
                 required
                 id="outlined-required"
                 type="email"
                 label="Email Address"
                 placeholder="Email Address"
-                />  
-                <TextField
+              />  
+              <TextField
                 required
                 id="outlined-required"
                 type="text"
                 label="Username"
                 placeholder="Username"
-                />                 
-                <TextField
+              />                 
+              <TextField
                 required
                 id="outlined-required"
                 type="text"
                 label="First name"
                 placeholder="Email Address"
-                />
-                <TextField
+              />
+              <TextField
                 required
                 id="outlined-required"
                 type="text"
                 label="Last name"
                 placeholder="Email Address"
-                />
-                <TextField
+              />
+              <TextField
                 id="outlined-password-input"
                 label="Password"
                 type="password"
                 autoComplete="off"
-                />
-                <TextField
+              />
+              <TextField
                 id="outlined-password-input"
                 label="Confirm Password"
                 type="password"
                 autoComplete="off"
-                />
-                <Button variant="contained" sx={{width: '33ch', marginTop: '20px'}} type="submit" value="Sign In" 
+              />
+              <Button variant="contained" sx={{width: '33ch', marginTop: '20px'}} type="submit" value="Sign In" 
                 onClick={() => onRouteChange('home')}
-                >Sign Up</Button>
+                >Sign Up
+              </Button>
             </form>
             <Divider variant="middle" style={{marginTop: '20px', marginBottom: '40px'}}/>
             <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>

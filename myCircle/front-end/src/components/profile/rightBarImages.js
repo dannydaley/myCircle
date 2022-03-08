@@ -10,9 +10,8 @@ export default class RightBarImages extends React.Component {
   constructor () {
     super();
     this.state = {
-      imagesAreLoaded: false
-              
-  }
+      imagesAreLoaded: false              
+    }
   }
 srcset(image, size, rows = 1, cols = 1) {
   return {
@@ -107,8 +106,7 @@ componentDidMount = () => {
         </ImageList>
       )
     } else {
-      return (
-        
+      return (        
         <ImageList
           sx={{ width: 260, height: '100%', pb: 3}}
           variant="quilted"

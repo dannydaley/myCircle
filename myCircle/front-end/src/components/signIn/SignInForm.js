@@ -34,18 +34,18 @@ onSubmitSignIn = () => {
         })
     })
     .then(response => response.json())
-    .then(data =>      
-        {if (data.status === 'success') {
-            this.props.updateSession(data.firstName, data.lastName);
+    .then(data => {
+        if (data.status === 'success') {            
+            this.props.updateSession(data.firstName, data.lastName, data.username);
             this.props.onRouteChange('home')}
              else {
                console.log(data)  
-             } 
-            })
+            } 
+        }
+    )
 }
 
-    render () {
- 
+    render () { 
         const { onRouteChange, updateSession } = this.props;
         return (
                 <div style={{width: '30%', padding: '10ch',backgroundColor: 'white'}}>

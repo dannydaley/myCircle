@@ -11,14 +11,14 @@ export default class FeedPage extends React.Component {
      }
 
      render()   {  
-     const { onRouteChange, userFirstName, userLastName } = this.props;
+     const { onRouteChange, userFirstName, userLastName, userUserName } = this.props;
      
           // changeMailNotifications = this.props;
                return (
                     <div >
                          <Feed
                           circle={this.state.circle}
-                            changeMailNotifications={this.changeMailNotifications} onRouteChange={onRouteChange} userFirstName={userFirstName} userLastName={userLastName}/>  
+                            changeMailNotifications={this.changeMailNotifications} onRouteChange={onRouteChange} userFirstName={userFirstName} userLastName={userLastName} userUserName={userUserName}/>  
                     </div>
                )    
           } 

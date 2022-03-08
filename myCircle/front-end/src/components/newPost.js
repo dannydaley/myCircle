@@ -12,10 +12,9 @@ export default class NewPost extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            'author': this.props.userFirstName + this.props.userLastName,
+            'author': '',
             'image': '/images/uploads/Daley-change-image-1640178860940-706035700.png',
-            "link":"https://dannydaley.github.io/eightBall/",
-            "circle": this.props.circle,
+            "link":"https://dannydaley.github.io/eightBall/",            
             'postContent': '',
             "date":"28-12-2019",
             "recipient":null            
@@ -26,25 +25,27 @@ export default class NewPost extends React.Component {
     }
 
     onPostSubmit = () => {
+        this.state.author = this.props.userUserName
+        console.log(this.state)
         fetch('http://localhost:3001/newPost', {
             method: 'post',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({
-                'postData': this.state                
+                'postData': this.state,
+                'circle' : this.props.circle                
             })
         }).then(response => response.json())
         .then(data =>      
             {if (data === 'success') {              
-                this.props.changeCircle(this.state.circle) 
+                this.props.changeCircle(this.props.circle) 
             } else {
                 console.log(data)  
             } 
         })
     }
 
-
     render () {
-        const { onRouteChange, userFirstName, userLastName } = this.props;    
+        const { onRouteChange, userFirstName, userLastName, userUserName, circle } = this.props;           
         return (
             <div style={{marginTop: '20px'}}>
                 <label for="file-input">
@@ -61,7 +62,6 @@ export default class NewPost extends React.Component {
                 <LoadingButton                
                 onClick={()=> this.onPostSubmit()}                
                     endIcon={<SendIcon />}
-                    // loading={loading}
                     loadingPosition="end" 
                     variant="contained"
                     sx={{mb: 3}}

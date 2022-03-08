@@ -26,7 +26,6 @@ export default class Feed extends React.Component {
 
   delayFunction = async () => {
     await this.delay(1000);
-    console.log("LOADING FEED");
   };
 
   //COMPONENT DID MOUNT IS BUILT IN AND RUNS WHEN THE COMPONENT MOUNTS
@@ -61,7 +60,7 @@ export default class Feed extends React.Component {
   }
 
   render () {   
-    const { onRouteChange, changeMailNotifications, userFirstName, userLastName } = this.props; 
+    const { onRouteChange, changeMailNotifications, userFirstName, userLastName, userUserName } = this.props; 
     //SETTING UP ACCESS TO THE STATE VARIABLES   
     const { circle, posts, dataIsLoaded } = this.state;
     // IF THE DATA ISNT LOADED YET, LOAD AN ALTERNATIVE WHILE WE WAIT   
@@ -74,7 +73,7 @@ export default class Feed extends React.Component {
             <React.Fragment>              
             <CssBaseline />
             <Container maxWidth="lg" sx={{zIndex: 10, bgcolor: '#343434', borderRadius: '0px 0px 30px 30px', width: '100%', pb: 2, ml: 2, mr:2,  mt: 12}}>
-                <NewPost userFirstName={userFirstName} userLastName={userLastName} circle={circle} />
+                <NewPost userFirstName={userFirstName} userLastName={userLastName} userUserName={userUserName} circle={circle} />
                 <Box sx={{ padding: 2, bgcolor: 'none', display: 'flex', justifyContent: 'center', mt: 2}}>
                     <CircularProgress />                    
                 </Box>
@@ -100,7 +99,11 @@ export default class Feed extends React.Component {
                     <CssBaseline />
                     <Container maxWidth="lg" sx={{zIndex: 10, bgcolor: '#343434', borderRadius: '0px 0px 30px 30px', width: '100%', pb: 2, ml: 2, mr:2,  mt: 12}}>
                         <NewPost
+                        circle={circle}
                          changeCircle={this.changeCircle}
+                         userFirstName={userFirstName}
+                         userLastName={userLastName}
+                         userUserName={userUserName}
                          />
                         <p>{this.feedPosts}</p>
                         <Box sx={{ padding: 2, bgcolor: 'none'}}>
