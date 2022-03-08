@@ -36,7 +36,8 @@ onSubmitSignIn = () => {
     .then(response => response.json())
     .then(data => {
         if (data.status === 'success') {            
-            this.props.updateSession(data.firstName, data.lastName, data.username);
+            this.props.updateSession(data.firstName, data.lastName, data.username, data.profilePicture);
+            console.log(data)
             this.props.onRouteChange('home')}
              else {
                console.log(data)  

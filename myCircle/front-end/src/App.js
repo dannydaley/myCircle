@@ -33,6 +33,7 @@ export default class App extends Component {
       userFirstName: '',
       userLastName: '',
       userUserName: '',
+      userProfilePicture: '',
       UIColor: ''
     }
   }
@@ -46,9 +47,9 @@ export default class App extends Component {
     this.setState({route: route})
   }
 
-  updateSession = (firstName, lastName, userName) => {
+  updateSession = (firstName, lastName, userName, userProfilePicture) => {
     console.log(firstName + lastName + userName)
-    this.setState({ userFirstName: firstName, userLastName: lastName, userUserName: userName })
+    this.setState({ userFirstName: firstName, userLastName: lastName, userUserName: userName, userProfilePicture: userProfilePicture })
   }
 
   // THESE FUNCTIONS HANDLE INCREMENTING THE NOTIFICATIONS. THESE ARE CURRENTLY PASSED INTO THE NAV BAR
@@ -74,7 +75,7 @@ onColorChange = (event) => {
 
   router = (route) => {
     switch (route) {
-      case 'home' : return <FeedPage changeMailNotifications={this.changeMailNotifications}  onRouteChange={this.onRouteChange} userFirstName={this.state.userFirstName} userLastName={this.state.userLastName} userUserName={this.state.userUserName}/>;
+      case 'home' : return <FeedPage changeMailNotifications={this.changeMailNotifications}  onRouteChange={this.onRouteChange} userFirstName={this.state.userFirstName} userLastName={this.state.userLastName} userUserName={this.state.userUserName} userProfilePicture={this.state.userProfilePicture} />;
       case 'profile' : return <ProfilePage userFirstName={this.state.userFirstName} userLastName={this.state.userLastName} userUserName={this.state.userUserName} changeAlertNotifications={this.changeAlertNotifications}/>;
       case 'myAccount' :return <MyAccountPage />
       default: return <FeedPage />

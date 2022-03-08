@@ -60,14 +60,14 @@ export default class Feed extends React.Component {
   }
 
   render () {   
-    const { onRouteChange, changeMailNotifications, userFirstName, userLastName, userUserName } = this.props; 
+    const { onRouteChange, changeMailNotifications, userFirstName, userLastName, userUserName, userProfilePicture } = this.props; 
     //SETTING UP ACCESS TO THE STATE VARIABLES   
     const { circle, posts, dataIsLoaded } = this.state;
     // IF THE DATA ISNT LOADED YET, LOAD AN ALTERNATIVE WHILE WE WAIT   
     if (!dataIsLoaded) {
       return (
       <div>
-        <Overlay changeCircle={this.changeCircle}/>        
+        <Overlay changeCircle={this.changeCircle} userProfilePicture={userProfilePicture} />        
         <div style={{backgroundColor: '#010101', display: 'flex', justifyContent: 'space-between', paddingBottom: '100px', minHeight: '100vh'}}>          
           <div style={{width: '30%', height: '100px'}}></div>
             <React.Fragment>              
@@ -92,7 +92,7 @@ export default class Feed extends React.Component {
     // OTHERWISE RUN THE GOOD STUFF
       return (
         <div>
-          <Overlay changeCircle={this.changeCircle} onRouteChange={onRouteChange}/>
+          <Overlay changeCircle={this.changeCircle} onRouteChange={onRouteChange} userProfilePicture={userProfilePicture}/>
           <div style={{backgroundColor: '#010101', display: 'flex', justifyContent: 'space-between', paddingBottom: '100px', minHeight: '100vh'}}>
             <div style={{width: '30%', height: '100px'}}></div>
                 <React.Fragment>              

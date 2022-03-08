@@ -230,7 +230,8 @@ app.post('/signin', (req, res) => {
       status: 'success',
      firstName: Users.users[0].firstName,
      lastName: Users.users[0].lastName,
-     username: Users.users[0].username
+     username: Users.users[0].username,
+     profilePicture: Users.users[0].profilePicture
     }) 
     }
     else {

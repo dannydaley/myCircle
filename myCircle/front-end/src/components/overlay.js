@@ -4,16 +4,16 @@ import LeftBar from "./LeftBar";
             
 export default class  Overlay extends React.Component {
     constructor(props) {
-        super();
+        super(props);
     }    
 
     render () {
-        const { onRouteChange, changeCircle } = this.props;
+        const { onRouteChange, changeCircle, userProfilePicture } = this.props;
         return (
             <div style={{width: '100vw', display: 'flex', justifyContent: 'space-between', flexDirection: 'row'}}>            
                 <RightBar />
                 
-                <LeftBar changeCircle={changeCircle} onRouteChange={onRouteChange} />
+                <LeftBar changeCircle={changeCircle} onRouteChange={onRouteChange} userProfilePicture={userProfilePicture} />
             </div>
 
         )       
