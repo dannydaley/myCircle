@@ -14,7 +14,7 @@ import ProfileOverlay from './profileOverlay'
 export default class ProfileFeed extends React.Component {
 
   constructor(props) {
-    super();
+    super(props);
     this.state = {
       circle: props.circle,
         posts: [],
@@ -35,13 +35,14 @@ export default class ProfileFeed extends React.Component {
     if (!newCircle) {
       newCircle = 'general'
     }  
+    console.log(this.props.userUserName)
     this.setState({ dataIsLoaded: false, circle: newCircle })   
     //FETCH IS A GET REQUEST BY DEFAULT, POINT IT TO THE ENDPOINT ON THE BACKEND
     fetch('http://localhost:3001/getFeedByUser', {
       method: 'post',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
-        user: 'Daley',
+        user: this.props.userUserName,
         circle: newCircle
       })    
     })
@@ -63,7 +64,7 @@ export default class ProfileFeed extends React.Component {
   }
 
   render () {   
-    const { onRouteChange, changeMailNotifications } = this.props; 
+    const { onRouteChange, changeMailNotifications, userUserName } = this.props; 
     //SETTING UP ACCESS TO THE STATE VARIABLES   
     const { circle, posts, dataIsLoaded } = this.state;
     // IF THE DATA ISNT LOADED YET, LOAD AN ALTERNATIVE WHILE WE WAIT   

@@ -6,6 +6,7 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import me from '../../Images/me.jpg'
+import { Routes, Route, Link } from "react-router-dom";
 
 export default class MyAccountLeftBar extends React.Component  {
 
@@ -20,7 +21,9 @@ export default class MyAccountLeftBar extends React.Component  {
         <CssBaseline />
         <Container position="fixed" maxWidth="sm" sx={{ position: 'fixed', bgcolor: '#343434', border: '', height: '80vh', width: 300, ml: 2, mr:2,  mt: 16, justifyContent: 'flex-start', alignItems: 'center'}} >
           <Box sx={{ padding: 2, bgcolor: 'none'}}>
+            <Link to="/myProfile">
               <img src={'http://localhost:3001/public/' + userProfilePicture} width="200px" height="150px" style={{ boxShadow: "1px 3px 5px 0px black", mb: 3 }} />
+            </Link>              
               <Typography variant="h5" component="div" color="white" sx={{textAlign: 'center', mt: 2}}>{userFirstName}'s settings</Typography>
               <Stack spacing={2} sx={{  width: 200, margin: '50px auto 0' }}>
                   <Button variant="contained" sx={{textTransform: 'none'}} onClick={()=>changeSettings('My information')}>General</Button>

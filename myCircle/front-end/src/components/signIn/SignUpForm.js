@@ -4,53 +4,135 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
 
-export default function SignUpForm({ onRouteChange }) {
+
+
+
+
+
+  const { captureRejectionSymbol } = require('events');
+
+export default class SignUpForm extends React.Component 
+  {
+      constructor(props) {
+          super();
+          this.state = {
+              signUpEmail: '',
+              signUpUserName: '',
+              signUpFirstName: '',
+              signUpLastName: '',
+              signUpPassword: '',
+              confirmSignUpPassword: ''            
+          }
+      }
+      onEmailChange = (event) => {
+        this.setState({signUpEmail: event.target.value})
+      }
+      onUserNameChange = (event) => {
+        this.setState({signUpUserName: event.target.value})
+      }
+      onFirstNameChange = (event) => {
+        this.setState({signUpFirstName: event.target.value})
+      }
+      onLastNameChange = (event) => {
+        this.setState({signUpLastName: event.target.value})
+      }
+      onPasswordChange = (event) => {
+        this.setState({signUpPassword: event.target.value})
+      }
+      onPasswordConfirmChange = (event) => {
+        this.setState({confirmSignUpPassword: event.target.value})
+      }
+  
+  onSubmitSignUp = () => {
+      fetch('http://localhost:3001/signUp', {
+          method: 'post',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({
+              'signUpEmail': this.state.signUpEmail,
+              'signUpUserName': this.state.signUpUserName,
+              'signUpFirstName': this.state.signUpFirstName,
+              'signUpLastName': this.state.signUpLastName,
+              'signUpPassword': this.state.signUpPassword,
+              'confirmSignUpPassword': this.state.confirmSignUpPassword   
+          })
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log(data)
+          if (data.status === 'success') {            
+              this.props.updateSession(data.firstName, data.lastName, data.username, data.profilePicture);
+              console.log(data)
+              this.props.onRouteChange('home')
+            }
+               else {
+                 console.log(data)  
+              } 
+          }
+      )
+  }
+
+
+render() {
+  const { onRouteChange } = this.props
   return (
     <div style={{width: '30%', padding: '10ch',backgroundColor: 'white'}}>
         <Box component="form" sx={{'& .MuiTextField-root': { m: 1, width: '30ch' } }} noValidate autoComplete="off">
-            <form style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
+            <form style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}} >
               <TextField
                 required
+                name="email"
                 id="outlined-required"
                 type="email"
                 label="Email Address"
                 placeholder="Email Address"
+                onChange={this.onEmailChange}
               />  
               <TextField
                 required
+                name="username"
                 id="outlined-required"
                 type="text"
                 label="Username"
                 placeholder="Username"
+                onChange={this.onUserNameChange}
               />                 
               <TextField
                 required
+                name="firstName"
                 id="outlined-required"
                 type="text"
                 label="First name"
                 placeholder="Email Address"
+                onChange={this.onFirstNameChange}
               />
               <TextField
                 required
+                name="lastName"
                 id="outlined-required"
                 type="text"
                 label="Last name"
                 placeholder="Email Address"
+                onChange={this.onLastNameChange}
               />
               <TextField
+                name="password"
                 id="outlined-password-input"
                 label="Password"
                 type="password"
                 autoComplete="off"
+                onChange={this.onPasswordChange}
               />
               <TextField
+              name="confirmPassword"
                 id="outlined-password-input"
                 label="Confirm Password"
                 type="password"
                 autoComplete="off"
+                onChange={this.onPasswordConfirmChange}
               />
-              <Button variant="contained" sx={{width: '33ch', marginTop: '20px'}} type="submit" value="Sign In" 
-                onClick={() => onRouteChange('home')}
+              <Button variant="contained" sx={{width: '33ch', marginTop: '20px'}}  value="Sign Up" 
+                // onClick={() => onRouteChange('home')}
+                onClick={() => this.onSubmitSignUp()}
                 >Sign Up
               </Button>
             </form>
@@ -61,4 +143,8 @@ export default function SignUpForm({ onRouteChange }) {
         </Box>
     </div>
   );
+
+  }
+
+
 }

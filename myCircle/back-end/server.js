@@ -12,6 +12,7 @@ app.use("/public", express.static(path.join(__dirname, 'public')));
 
 
 
+
 // set up crypto middleware
 let crypto = require('crypto');
 const { captureRejectionSymbol } = require('events');
@@ -36,18 +37,22 @@ function passwordHash(thePassword, theSalt) {
 
 
 //#endregion
-var sqlite3 = require('sqlite3').verbose();
-let SQLdatabase = new sqlite3.Database('./database/SQLdatabase.db');
-app.locals.SQLdatabase = SQLdatabase;
 
+let defaultProfilePicture = "images/defaultUser.png"
 
 //#region SQL DATABASE STUFF 
 //get the saved post information from external JSON file
 // mainly for keeping up to date when new post are created etc
+
+var sqlite3 = require('sqlite3').verbose();
+let SQLdatabase = new sqlite3.Database('./database/SQLdatabase.db');
+app.locals.SQLdatabase = SQLdatabase;
+
 let postDataJSON = require("./database/posts.json");
 let userDataJSON = require("./database/users.json");
 const { Console } = require('console');
 
+const SIGN_UP_USER = "INSERT INTO users (email, username, firstName,lastName, password, passwordSalt, profilePicture) VALUES(?,?,?,?,?,?,?)"
 const GET_USER_PROFILE_INFO = "SELECT name, joined, posts, profilePicture, aboutMe, pinnedPost FROM users WHERE name = ?" // SQL command
 const GET_ALL_POSTS = "SELECT * FROM `blog` ORDER BY id DESC"; // SQL command
 const GET_ALL_POSTS_BY_CIRCLE = "SELECT * FROM `blog` WHERE circle = ? ORDER BY id DESC"; // SQL command
@@ -63,8 +68,7 @@ const SQL_UPDATE_USERS_PINNED_POST = "UPDATE users SET pinnedPost = ? WHERE name
 const GET_ALL_USERS = "SELECT * FROM users"; // SQL command
 
 /* Database setup endpoint */
-app.get('/SQLDatabaseUserSetup', (req, res, next) => {
-  let SQLdatabase = req.app.locals.SQLdatabase;
+app.get('/SQLDatabaseUserSetup', (req, res, next) => {  
   //these queries must run one by one - dont try and delete and create tables at the same time.
   SQLdatabase.serialize( () => {
     //delete the table if it exists..
@@ -87,8 +91,7 @@ app.get('/SQLDatabaseUserSetup', (req, res, next) => {
   res.send("user-db-done");
 })
 // set up blog table in database
-app.get('/SQLDatabaseBlogSetup', (req, res, next) => {
-  let SQLdatabase = req.app.locals.SQLdatabase;
+app.get('/SQLDatabaseBlogSetup', (req, res, next) => {  
   //these queries must run one by one - dont try and delete and create tables at the same time.
   SQLdatabase.serialize( () => {
     //delete the table if it exists..
@@ -105,8 +108,7 @@ app.get('/SQLDatabaseBlogSetup', (req, res, next) => {
     rows.forEach( (row) => {
       // insert rows to table
       SQLdatabase.run('INSERT INTO `blog` VALUES(?,?,?,?,?,?,?,?,?)', row);
-      // increment users post count according to author of currently processed post
-      
+      // increment users post count according to author of currently processed post      
     });
   })
   // render success page
@@ -117,7 +119,6 @@ app.get('/SQLDatabaseBlogSetup', (req, res, next) => {
 /*==============================DEBUGGING AND TESTING ENDPOINTS========================*/
 /* GET all users */
 app.get('/getAllUsers', (req, res, next) => {
-  let SQLdatabase = req.app.locals.SQLdatabase;
   // grab all user data
   SQLdatabase.all(GET_ALL_USERS, [], (err, rows) => {
     if (err) {
@@ -130,7 +131,6 @@ app.get('/getAllUsers', (req, res, next) => {
 
 /* GET all blog posts */
 app.get('/getAllPosts', (req, res, next) => {  
-  let SQLdatabase = req.app.locals.SQLdatabase;
   // grab all posts
   SQLdatabase.all(GET_ALL_POSTS, [], (err, rows) => {
     if (err) {
@@ -146,163 +146,135 @@ app.get('/getAllPosts', (req, res, next) => {
 
 
 //#region endpoints
+
 app.get('/', (req, res) => {
     console.log("port" + process.env.PORT + " '/' visited")
     res.send("BACK END IS LISTENING ON PORT " + process.env.PORT)
 })
 
-app.post('/getFeed', (req, res, next) => {  
-  let SQLdatabase = req.app.locals.SQLdatabase;  
-  // grab all posts
-    if (req.body.circle === 'general') {
-      SQLdatabase.all(GET_ALL_POSTS, [  ], (err, rows) => {
-        if (err) {
-          console.log("errorrrrr")
-          res.status(500).send(err.message);
-          return;
-        }  
-        console.log(req.body.circle)     
-        res.json(rows);
-      })
-    } else {
-      SQLdatabase.all(GET_ALL_POSTS_BY_CIRCLE, [ req.body.circle ], (err, rows) => {
-        if (err) {
-          console.log("errorrrrr")
-          res.status(500).send(err.message);
-          return;
-        }  
-        console.log(req.body.circle)     
-        res.json(rows);
-      })
-    }
-  })
-
-  app.post('/getFeedByUser', (req, res, next) => {  
-    let SQLdatabase = req.app.locals.SQLdatabase;  
-    // grab all posts
-      if (req.body.circle === 'general') {
-        SQLdatabase.all(GET_POSTS_BY_AUTHOR, [ req.body.user ], (err, rows) => {
-          if (err) {
-            console.log("errorrrrr")
-            res.status(500).send(err.message);
-            return;
-          }  
-          res.json(rows);
-        })
-      } else {
-        SQLdatabase.all(GET_POSTS_BY_AUTHOR_BY_CIRCLE, [ req.body.user, req.body.circle ], (err, rows) => {
-          if (err) {
-            console.log("errorrrrr")
-            res.status(500).send(err.message);
-            return;
-          }  
-          console.log(req.body.circle)     
-          res.json(rows);
-        })
+//#region SIGN UP & SIGN IN 
+app.post('/signUp', (req, res) => {
+  let SQLdatabase = req.app.locals.SQLdatabase;    
+  let { signUpEmail, signUpUserName,signUpFirstName, signUpLastName, signUpPassword, confirmSignUpPassword } = req.body;
+  if (signUpPassword === confirmSignUpPassword) {
+    let passwordSalt = generatePepper;
+    let storePassword = passwordHash(confirmSignUpPassword, passwordSalt);
+    let profilePicture = defaultProfilePicture;
+    SQLdatabase.run(SIGN_UP_USER, [ signUpEmail, signUpUserName, signUpFirstName, signUpLastName, storePassword, passwordSalt, profilePicture ], (err, rows) => {
+      if (err) {
+        console.log("failed to add user to database")
+        if (err.message === "SQLITE_CONSTRAINT: UNIQUE constraint failed: users.username") {
+          console.log("USERNAME ALREADY EXISTS")
+          res.json("duplicate username")
+          return
+        }
+        if (err.message === "SQLITE_CONSTRAINT: UNIQUE constraint failed: users.email") {
+          console.log("EMAIL ALREADY EXISTS")
+          res.json("duplicate email")
+          return
+          // res.render("registrationError", { cause: "email", loggedIn: changeNavLoginButton(sessionExists(req)) })
+        }
+        res.status(500).send(err.message);
+        return
       }
-    })
-
-// #endregion 
-
-
-app.post('/getUserGeneralInfo', (req, res) => {
-  let SQLdatabase = req.app.locals.SQLdatabase;  
-  SQLdatabase.get("SELECT firstName, lastName, aboutMe, location, education, work, profilePicture FROM users WHERE username = ?", req.body.user, (err, rows) => {
-    if (err) {
-      console.log("ERROR GETTING INFO")
-      res.status(500).send(err)
-    }
-    res.json(rows)
+      res.json('sign up success');   
+    })    
+  } else {
+    res.json("PASSWORDS DONT MATCH")
   }
-)})
+})
 
 app.post('/signin', (req, res) => {  
-    //ready the data
-    let data = req.body;
-    // init database
-    let SQLdatabase = req.app.locals.SQLdatabase;
-    // rename for easier access
-    const FIND_USER = "SELECT * FROM users WHERE email = ?" 
-    SQLdatabase.get(FIND_USER, data.email, (err, rows) => {
-      if (err) {
-        console.log(ERRROORRRRRRR);
-        res.status(500).send(err)
-      }
-      let salt = generatePepper;
-
-      console.log(salt)
-      console.log("break")
-      console.log(passwordHash(data.password, salt))
-      // console.log(passwordHash(data.password, ))
-      let user = rows
-      console.log(rows.email)
-      if (user!== undefined && user.password === passwordHash(data.password, user.passwordSalt)) {
-        res.json({
-          status: 'success',
-          firstName: rows.firstName,
-          lastName: rows.lastName,
-          username: rows.username,
-          profilePicture: rows.profilePicture
-        }) 
-
-      }
-    else {
-      console.log("WRONG INFOOOOOOOOOO")
+  //ready the data
+  let data = req.body;
+  // init database
+  let SQLdatabase = req.app.locals.SQLdatabase;
+  // rename for easier access
+  const FIND_USER = "SELECT * FROM users WHERE email = ?" 
+  SQLdatabase.get(FIND_USER, data.email, (err, rows) => {
+    if (err) {
+      console.log("error at database");
+      res.status(500).send(err)
+    }
+    let user = rows
+    if (user!== undefined && user.password === passwordHash(data.password, user.passwordSalt)) {
       res.json({
-        status: 'failed',
-        message: 'incorrect email or password'
+        status: 'success',
+        firstName: rows.firstName,
+        lastName: rows.lastName,
+        username: rows.username,
+        profilePicture: rows.profilePicture
+      })
+    } else {
+      console.log("invalid user credentials")
+      res.json({
+      status: 'failed',
+      message: 'incorrect email or password'
       })
     }  
-    })
-    }
-)
+  })
+})
 
-/* POST login data to validate login page */
-// router.post('/login', (req, res, next) => {
-//   //ready the data
-//   let data = req.body;
-//   // init database
-//   let SQLdatabase = req.app.locals.SQLdatabase;
-//   // rename for easier access
-//   let db = SQLdatabase;
-//   // set up command, select all from user database with THIS email
-//   const FIND_USER = "SELECT * FROM users WHERE email = ?"  
-//   // run the command with the email being passed in 
-//     db.query(FIND_USER, [data.email], (err, rows) => {  
-//       if (err) {  
-//         // if user not found respond with an error      
-//         found = false;
-//         res.status(500).send(err);               
-//       }
-//       let user = rows[0]
-//       /* if we get a user back, and the stored password matches the output of running the hashing
-//        function on what the user entered along with the stored password salt, set up the session
-//        variables and log the user in   */
-//         if (user !== undefined && user.password === passwordHash(data.password, user.passwordSalt)){
-//         //create the session data
-//         req.session.userData = {
-//         };
-//         // add user data to the session for referencing across the site 
-//         req.session.userData.sessionUsername = user.name;         
-//         req.session.userData.sessionUserPosts = user.posts;
-//         req.session.userData.sessionUserDateJoined = user.joined;
-//         req.session.userData.sessionUserProfilePicture = user.profilePicture;
-//         req.session.userData.sessionUserAboutMe = user.aboutMe;
-//         req.session.userData.sessionUserIsLoggedIn = true; 
-//         res.render('loggedIn', { name: req.session.userData.sessionUsername, posts: req.session.userData.sessionUserPosts, dateJoined: req.session.userData.sessionUserDateJoined, profilePicture: req.session.userData.sessionUserProfilePicture, title: 'You are logged in!', loggedIn: changeNavLoginButton(sessionExists(req)) });  
-//       }
-//       // otherwise invalid user or pass
-//       else {
-//         found = false;      
-//         res.render('failedLogin', { title: 'Log in', loggedIn: changeNavLoginButton(sessionExists(req)) });
-//       }       
-//     })   
-// })
+//#endregion SIGN UP & SIGN IN 
+
+
+app.post('/getFeed', (req, res, next) => {  
+  // grab all posts
+  if (req.body.circle === 'general') {
+    SQLdatabase.all(GET_ALL_POSTS, [  ], (err, rows) => {
+      if (err) {
+        console.log("error at database")
+        res.status(500).send(err.message);
+        return;
+      }     
+      res.json(rows);
+    })
+  } else {
+    SQLdatabase.all(GET_ALL_POSTS_BY_CIRCLE, [ req.body.circle ], (err, rows) => {
+      if (err) {
+        console.log("error at database")
+        res.status(500).send(err.message);
+        return;
+      }  
+      res.json(rows);
+    })
+  }
+})
+
+app.post('/getFeedByUser', (req, res, next) => {  
+  // grab all posts
+  if (req.body.circle === 'general') {
+    SQLdatabase.all(GET_POSTS_BY_AUTHOR, [ req.body.user ], (err, rows) => {
+      if (err) {
+        console.log("error at database")
+        res.status(500).send(err.message);
+        return;
+      }  
+      res.json(rows);
+    })
+  } else {
+    SQLdatabase.all(GET_POSTS_BY_AUTHOR_BY_CIRCLE, [ req.body.user, req.body.circle ], (err, rows) => {
+      if (err) {
+        console.log("error at database")
+        res.status(500).send(err.message);
+        return;
+      }   
+      res.json(rows);
+    })
+  }
+})
+
+app.post('/getUserGeneralInfo', (req, res) => {
+  SQLdatabase.get("SELECT firstName, lastName, aboutMe, location, education, work, profilePicture FROM users WHERE username = ?", req.body.user, (err, rows) => {
+    if (err) {
+      console.log("error getting general user info")
+      res.status(500).send(err)
+      }
+      res.json(rows)
+  })
+})
 
 app.post('/newPost', (req, res) => {
-  console.log(req.body)
-  let SQLdatabase = req.app.locals.SQLdatabase;
-console.log(req.body.postData)
   SQLdatabase.get("SELECT profilePicture FROM users WHERE username = ?", [ req.body.postData.author ], (err, profilePicture) => {
     if (err) {
       console.log("failed on profile pic grab")
@@ -310,17 +282,8 @@ console.log(req.body.postData)
       res.status(500).send(err.message);
       return;
     } 
-    console.log(profilePicture)
     req.body.postData.image = profilePicture
-     SQLdatabase.run(SQL_ADD_BLOG_POST, [
-      req.body.postData.author,
-      req.body.postData.image.profilePicture,
-      req.body.postData.link,
-      req.body.circle,
-      req.body.postData.postContent,
-      req.body.postData.data,
-      req.body.postData.recipient
-    ],  (err, rows) => {
+    SQLdatabase.run(SQL_ADD_BLOG_POST, [ req.body.postData.author, req.body.postData.image.profilePicture, req.body.postData.link, req.body.circle, req.body.postData.postContent,req.body.postData.data, req.body.postData.recipient],  (err, rows) => {
       if (err) {
         console.log("errorrrrr")
         res.status(500).send(err.message);
@@ -329,11 +292,12 @@ console.log(req.body.postData)
       console.log(req.body.postData)          
       res.json('success');
     })
-  }
-  )
+  })
+});
 
-  }
-  );
+// #endregion 
+
+
 
 
 

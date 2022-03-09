@@ -13,12 +13,17 @@ import ProfilePage from './pages/ProfilePage'
 import MyAccountPage from './pages/myAccountPage'
 import theme from './theme'
 import { ThemeProvider } from '@material-ui/core/styles'
+import Counter from './features/counter/counter'
+
+import { Provider } from 'react-redux'
 import {
   BrowserRouter as Router,
   Routes,
   Route,
   Link
 } from "react-router-dom";
+
+// import store from '../src/app/store'
 
 
 
@@ -68,13 +73,13 @@ export default class App extends Component {
     console.log(this.state.color)
   }
   /*
-CUSTOM COLOR CHANGER FOR UI
-onColorChange = (event) => {
-  this.setState({color: event.target.value})
-  console.log(this.state.color)
-}
-<input type="color" onChange={this.onColorChange}/>
-*/
+  CUSTOM COLOR CHANGER FOR UI
+  onColorChange = (event) => {
+    this.setState({color: event.target.value})
+    console.log(this.state.color)
+  }
+  <input type="color" onChange={this.onColorChange}/>
+  */
 
   router = (route) => {
     switch (route) {
@@ -82,10 +87,11 @@ onColorChange = (event) => {
       case 'profile' : return <ProfilePage userFirstName={this.state.userFirstName} userLastName={this.state.userLastName} userUserName={this.state.userUserName} changeAlertNotifications={this.changeAlertNotifications} userProfilePicture={this.state.userProfilePicture}/>;
       case 'myAccount' :return <MyAccountPage userFirstName={this.state.userFirstName} userProfilePicture={this.state.userProfilePicture} userUserName={this.state.userUserName} />
       default: return <FeedPage />
+    }
   }
-}
 
   render() {
+    // console.log(store.state)
     return (
       <ThemeProvider theme={theme} >
       <DocumentMeta >      
@@ -93,7 +99,14 @@ onColorChange = (event) => {
         { this.state.isSignedIn === true ? 
             <div>
               <NavBar onRouteChange={this.onRouteChange} onColorChange={this.onColorChange} UIColor={this.state.UIColor} mailNotifications={this.state.mailNotifications} changeMailNotifications={this.changeMailNotifications} changeAlertNotifications={this.changeAlertNotifications} alertNotifications={this.state.alertNotifications} />              
-              {this.router(this.state.route)}
+              {/* {this.router(this.state.route)} */}
+              
+              <Routes>
+                <Route path="/" element={<FeedPage changeMailNotifications={this.changeMailNotifications}  onRouteChange={this.onRouteChange} userFirstName={this.state.userFirstName} userLastName={this.state.userLastName} userUserName={this.state.userUserName} userProfilePicture={this.state.userProfilePicture}/>} />
+                <Route path="myProfile" element={<ProfilePage userFirstName={this.state.userFirstName} userLastName={this.state.userLastName} userUserName={this.state.userUserName} changeAlertNotifications={this.changeAlertNotifications} userProfilePicture={this.state.userProfilePicture}/>} />
+                <Route path="myAccount" element={<MyAccountPage userFirstName={this.state.userFirstName} userProfilePicture={this.state.userProfilePicture} userUserName={this.state.userUserName}/>} />
+              </Routes>
+              {/* <Counter /> */}
             </div> 
           :        
             <SignIn onRouteChange={this.onRouteChange} route={this.state.route} updateSession={this.updateSession} />

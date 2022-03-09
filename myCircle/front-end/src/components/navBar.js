@@ -17,6 +17,8 @@ import NotificationsIcon from '@material-ui/icons/Notifications';
 import MoreIcon from '@material-ui/icons/MoreVert';
 import myCircleText from '../Images/myCircleText.svg'
 
+import { Routes, Route, Link } from "react-router-dom";
+
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
   borderRadius: theme.shape.borderRadius,
@@ -103,9 +105,18 @@ const delayFunction = async () => {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={()=>onRouteChange('profile')}>My Profile</MenuItem>
-      <MenuItem onClick={()=>onRouteChange('myAccount')}>My account</MenuItem>
-      <MenuItem onClick={() => onRouteChange('signout')}>Sign Out</MenuItem>      
+      <MenuItem
+      //  onClick={()=>onRouteChange('profile')}
+       ><Link to="/myProfile">My Profile</Link>
+       </MenuItem>
+      <MenuItem
+      //  onClick={()=>onRouteChange('myAccount')}
+       ><Link to="/myAccount">My account</Link>
+       </MenuItem>
+      <MenuItem
+       onClick={() => onRouteChange('signout')}
+       >Sign Out
+       </MenuItem>      
     </Menu>
   );
 
@@ -159,7 +170,7 @@ const delayFunction = async () => {
         >
           <AccountCircle />
         </IconButton>
-        <p>My Account</p>
+        <p><Link to="/myProfile">My Profile</Link></p>
       </MenuItem>
       <MenuItem 
       >
@@ -173,7 +184,9 @@ const delayFunction = async () => {
         >
           <AccountCircle />
         </IconButton>
-        <p onClick={()=>onRouteChange('profile')}>My Profile</p>
+        <p 
+        // onClick={()=>onRouteChange('profile')}
+        ><Link to="/myProfile">My Profile</Link></p>
       </MenuItem>
       <MenuItem onClick={handleProfileMenuOpen}>
         <IconButton
@@ -215,7 +228,9 @@ const delayFunction = async () => {
             sx={{ display: { xs: 'none', sm: 'block' }, ml: 6 ,width: 125, mt: 1, ":hover": { cursor: 'pointer' } }}
             onClick={()=>onRouteChange('home')}
           >
-            <img src={myCircleText} />
+            <Link to="/">
+              <img src={myCircleText} />
+            </Link>
           </Typography>
           <Box sx={{ flexGrow: 0.8 }} />
           <Search 
