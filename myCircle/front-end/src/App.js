@@ -15,7 +15,9 @@ import theme from './theme'
 import { ThemeProvider } from '@material-ui/core/styles'
 import Counter from './features/counter/counter'
 
-import { Provider } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
+import { signIn } from './actions';
+
 import {
   BrowserRouter as Router,
   Routes,
@@ -45,6 +47,7 @@ export default class App extends Component {
       UIColor: ''
     }
   }
+  // const isLoggedIn = useSelector(state => state.isLoggedIn),
 
   onRouteChange = (route) => {
     if (route === 'signout') {
@@ -91,7 +94,9 @@ export default class App extends Component {
   }
 
   render() {
-    // console.log(store.state)
+    
+
+   
     return (
       <ThemeProvider theme={theme} >
       <DocumentMeta >      
