@@ -74,7 +74,7 @@ export default class MyAccountSettings extends React.Component {
       case 'My information' : return <MyInformation settings={this.state.settings} userUserName={this.props.userUserName}/>;
       case 'My Circles' : return <MyCircles settings={this.state.settings}/>;
       case 'My friends' :return <MyFriends settings={this.state.settings}/>
-      case 'My login info' :return <MyLoginInfo settings={this.state.settings}/>
+      case 'My login info' :return <MyLoginInfo settings={this.state.settings} mountComponent={this.componentDidMount}/>
       default: return <MyInformation settings={this.state.settings}/>
   }
 }

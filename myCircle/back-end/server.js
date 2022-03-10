@@ -38,6 +38,46 @@ function passwordHash(thePassword, theSalt) {
 
 //#endregion
 
+//#region IMAGE UPLOAD HANDLING
+
+//set up multer middleware for image uploads
+var multer  = require('multer');
+
+//set up storage location
+const storage = multer.diskStorage({
+  
+  //set up save destination
+  destination: function (req, file, cb) {     
+     cb(null, 'public/images/uploads') 
+  }, //set up filename
+  filename: function (req, file, cb) {
+    if (file.fieldname !== undefined) {
+      // delete the attached image
+    }  
+    //create unique suffix for naming
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
+    if (req.body.context === "blogPost") {
+      // create filename (author + filename + unique suffix + filetype)
+      cb(null, req.body.author + '-' + file.fieldname + '-' + uniqueSuffix + '.png')
+      // reset the request.body.image field with the image location + new filename to be put in the database as a link
+      req.body.image = "/images/uploads/" + req.body.author + '-' + file.fieldname + '-' + uniqueSuffix + '.png'
+    }    
+    // if upload image field on form is left blank..
+    else {
+      console.log("file fieldname is undefined")
+      return
+    }
+  }
+})
+
+// set upload storage to the previously set up desitnation
+const upload = multer({ storage: storage });
+/* END OF IMAGE UPLOAD HANDLING */
+
+
+
+//#endregion IMAGE UPLAOD HANDLING
+
 let defaultProfilePicture = "images/defaultUser.png"
 
 //#region SQL DATABASE STUFF 
@@ -50,12 +90,14 @@ app.locals.SQLdatabase = SQLdatabase;
 
 let postDataJSON = require("./database/posts.json");
 let userDataJSON = require("./database/users.json");
+let imagesDataJSON = require("./database/images.json");
 const { Console } = require('console');
 
 const SIGN_UP_USER = "INSERT INTO users (email, username, firstName,lastName, password, passwordSalt, profilePicture) VALUES(?,?,?,?,?,?,?)"
 const GET_USER_PROFILE_INFO = "SELECT name, joined, posts, profilePicture, aboutMe, pinnedPost FROM users WHERE name = ?" // SQL command
 const GET_ALL_POSTS = "SELECT * FROM `blog` ORDER BY id DESC"; // SQL command
 const GET_ALL_POSTS_BY_CIRCLE = "SELECT * FROM `blog` WHERE circle = ? ORDER BY id DESC"; // SQL command
+const GET_ALL_IMAGES_BY_USER = "SELECT * FROM images WHERE ownerUsername = ? ORDER BY postId DESC"
 const GET_RECENT_POSTS = "SELECT * FROM blog WHERE recipient = ? ORDER BY id DESC LIMIT 5"; // SQL command
 const BLOG_DELETE_POST = "DELETE FROM `blog` WHERE title = ? AND id = ?"; // SQL command
 const GET_POSTS_BY_AUTHOR = "SELECT * FROM `blog` WHERE author = ? ORDER BY id DESC" // SQL command
@@ -116,6 +158,32 @@ app.get('/SQLDatabaseBlogSetup', (req, res, next) => {
   res.send("blog-db-done");
 })
 
+// set up blog table in database
+app.get('/SQLDatabaseImagesSetup', (req, res, next) => {  
+  //these queries must run one by one - dont try and delete and create tables at the same time.
+  SQLdatabase.serialize( () => {
+    //delete the table if it exists..
+    SQLdatabase.run('DROP TABLE IF EXISTS `images`');
+    // create blog table
+    SQLdatabase.run('CREATE TABLE `images` ( ownerUsername varchar(255), imageLocation varchar(255), postId int)');
+    //create base rows
+    let rows = [];
+    //loop through posts.json to populate rows array
+    for (let i = 0; i < imagesDataJSON.entries.length; i++) {
+      rows[i] = [imagesDataJSON.entries[i].ownerUsername, imagesDataJSON.entries[i].imageLocation, imagesDataJSON.entries[i].postId]
+    }
+    // populate SQL command with rows array populated from posts.json
+    rows.forEach( (row) => {
+      // insert rows to table
+      SQLdatabase.run('INSERT INTO `images` VALUES(?,?,?)', row);
+      // increment users post count according to author of currently processed post      
+    });
+  })
+  // render success page
+  console.log("image table built");
+  res.send("image-db-done");
+})
+
 /*==============================DEBUGGING AND TESTING ENDPOINTS========================*/
 /* GET all users */
 app.get('/getAllUsers', (req, res, next) => {
@@ -128,6 +196,18 @@ app.get('/getAllUsers', (req, res, next) => {
     res.send(rows);
   })
 })
+
+app.post('/getAllImagesByUser', (req, res, next) => {
+  // grab all user data
+  SQLdatabase.all(GET_ALL_IMAGES_BY_USER, [ req.body.user ], (err, rows) => {
+    if (err) {
+      res.status(500).send(err.message);
+      return;
+    }
+    res.send(rows);
+  })
+})
+
 
 /* GET all blog posts */
 app.get('/getAllPosts', (req, res, next) => {  
@@ -217,6 +297,73 @@ app.post('/signin', (req, res) => {
 
 //#endregion SIGN UP & SIGN IN 
 
+//#region UPDATE ACCOUNT INFO
+
+app.post('/updateUserGeneralInfo', (req, res) => {
+  const { firstName, lastName, aboutMe, location, education, work, username  } = req.body;
+  SQLdatabase.run("UPDATE users SET firstName = ?, lastName = ?, aboutMe = ?, location = ?, education = ?, work = ? WHERE username = ?", firstName, lastName, aboutMe, location, education, work, username, (err, rows) => {
+    if (err){
+      console.log("error at database")
+      res.json("ERROR AT DATABASE")
+    }
+    console.log("success at database")
+    res.json("success at database")
+  })
+})
+
+app.post('/updateUserLoginInfo', (req, res) => {
+  let { email, password, changeEmail, changePassword, changePasswordConfirm  } = req.body;
+  const FIND_USER = "SELECT * FROM users WHERE email = ?" 
+  SQLdatabase.get(FIND_USER, email, (err, rows) => {
+    if (err) {
+      console.log("error at database");
+      res.status(500).send(err)
+    }
+    let user = rows
+    if (user!== undefined && user.password === passwordHash(password, user.passwordSalt)) {
+      if (changePassword) {
+        if (changePassword === changePasswordConfirm) {      
+          let passwordSalt = generatePepper;
+          let storePassword = passwordHash(changePassword, passwordSalt);
+          SQLdatabase.run("UPDATE users SET password = ?, passwordSalt = ? WHERE email = ?", [ storePassword, passwordSalt, email ], (err, rows) => {
+            if (err){
+              console.log("error at database with password")          
+            }
+            console.log("success with changing password")
+          })
+        }
+        if (changeEmail) {
+          SQLdatabase.get("SELECT email FROM users WHERE email = ?", email, (err, rows) => {
+            if (err){
+              console.log(err)
+            }
+            if (!rows) {
+                console.log("current email not in database")
+              return
+            }
+            else {
+              SQLdatabase.run("UPDATE users SET email = ? WHERE email = ?", [ changeEmail, email], (err, rows)=> {
+              if (err){
+                console.log("error at database changing email")
+                return
+              }   
+              console.log("success with changes in email")        
+              })
+            }
+          })
+        }
+      }
+  res.json("success with changes")
+    } else {
+      console.log("incorrect validation")
+      res.json("incorrect validation")
+    }  
+  })
+})
+
+
+//#endregion UPDATE ACCOUNT INFO END
+
 
 app.post('/getFeed', (req, res, next) => {  
   // grab all posts
@@ -242,6 +389,29 @@ app.post('/getFeed', (req, res, next) => {
 })
 
 app.post('/getFeedByUser', (req, res, next) => {  
+  // grab all posts
+  if (req.body.circle === 'general') {
+    SQLdatabase.all(GET_POSTS_BY_AUTHOR, [ req.body.user ], (err, rows) => {
+      if (err) {
+        console.log("error at database")
+        res.status(500).send(err.message);
+        return;
+      }  
+      res.json(rows);
+    })
+  } else {
+    SQLdatabase.all(GET_POSTS_BY_AUTHOR_BY_CIRCLE, [ req.body.user, req.body.circle ], (err, rows) => {
+      if (err) {
+        console.log("error at database")
+        res.status(500).send(err.message);
+        return;
+      }   
+      res.json(rows);
+    })
+  }
+})
+
+app.post('/getImagesByUser', (req, res, next) => {  
   // grab all posts
   if (req.body.circle === 'general') {
     SQLdatabase.all(GET_POSTS_BY_AUTHOR, [ req.body.user ], (err, rows) => {
@@ -296,10 +466,6 @@ app.post('/newPost', (req, res) => {
 });
 
 // #endregion 
-
-
-
-
 
 app.listen(process.env.PORT)
 console.log("server.js running on port " + process.env.PORT)

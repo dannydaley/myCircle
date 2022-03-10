@@ -19,14 +19,19 @@ export default class NewPost extends React.Component {
             "date":"28-12-2019",
             "recipient":null            
         }
-    }       
+    }
+    
+    
     onContentChange = (event) => {
         this.setState({postContent: event.target.value})
     }
 
     onPostSubmit = () => {
-        this.state.author = this.props.userUserName
-        console.log(this.state)
+        this.state.author = this.props.userUserName   
+        if (this.state.postContent.length < 5) {
+            console.log("post not long enough")
+            return
+        }  
         fetch('http://localhost:3001/newPost', {
             method: 'post',
             headers: {'Content-Type': 'application/json'},
@@ -35,11 +40,11 @@ export default class NewPost extends React.Component {
                 'circle' : this.props.circle                
             })
         }).then(response => response.json())
-        .then(data =>      
-            {if (data === 'success') {              
+        .then(data => {
+            if (data === 'success') {              
                 this.props.changeCircle(this.props.circle) 
             } else {
-                console.log(data)  
+                console.log(data)
             } 
         })
     }
