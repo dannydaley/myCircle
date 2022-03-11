@@ -1,19 +1,19 @@
 {
-    "users" : [
-        
+    "users" : [        
         {
-            "id": 1,
-            "username": "Daley",
-            "firstName": "Danny",
-            "lastName": "Daley",
-            "email": "dannydaley@outlook.com",
-            "password": "aa0e1c7076abce09598f148308eb6095f58e94ccdd0f60f9d4ff5ec8a4234118352528e9d7de8b8ab47e4802cbf174326a923fbffe7c7183ba9d8cd26efafed0",
-            "passwordSalt": "773165d06ba18a57bd75738be32584942e69083901eba381ed953f0cd9fe336313b55254d820450d8e99d57442e9223f860f191f8413601b290331ba60b9010448561c210f84ff64bc2dde9433f1e88b2a654c450e03d725b75c40508cf776ddcf7a1bddfd352d33534af1f6639eaac2d075cd75dacc4e4ea2ad16e901974d0b40e48433145661ffe8e0ef3a3449578a52fa28a7a32ba28494e38ae7d1ee9d061443122c4e65302b08afd256c2d261a3f52ec3c46b4bf51cf5b98f9598e7e2141f12c2519f8f77ad682a3949a4980956d283c1ce3f76ddfa788b68a2cdd954a9267ef6bf108d8eabb6e17a88ea43362daedd63ef17be452827acd18e5b4f6717",
-            "aboutMe" : "This is my about me text, this would have a rough paragraph about myself",
-            "location" : "Falmouth, UK",
-            "education" : "Falmouth University",
-            "work": "Full time student",
-            "profilePicture": "images/profilePictures/Daley-update-profile-picture-1640184634605-875098110.png"
+            "id":1,
+            "username":"Daley",
+            "firstName":"Danny",
+            "lastName":"Daley",
+            "email":"dannydaley@outlook.com",
+            "password":"f4716f1bde7e4021ccc8f31a1e4430212a480777f7b2f475995f717a69c2adc7c54658db6e17bbc306149994a6d622c601f42ae5e1bf16a1eafc202c618c547e",
+            "passwordSalt":"bad08c4152e80bdde48cb8fd8efd48728d6a7861e4470010d10f5296f9dceea798c91c7e0320aed20546a132539922bd7d26a5466ae26c926995a7fa7e1c9d360811679e76cccd5f1ea9dc20d5150bcb75fb4c08cd79fdba7a2f8ae2f13b091efc61ec7241c103de7d500adb1679cb2c6dce670e9153d279a1092712cb57494915e6a27c636fb425824c986e63beca8140fc09c3ec485863aec0c8137db52e1a56f5c1eebafa471a6683c060b5ba69ea75a11c1d02644e47b1d778e025d811e259ecc0a091d91e89e064cb5f1a09197a158a01a9c29f078e9f203dd988cd4a79a8dab9a784f228c4b692edc36c8cc41a020a8397e1308b730f78af9e0de7b985",
+            "aboutMe":"This is my about me text, this would have a rough paragraph about myself!!",
+            "location":"Falmouth, UK",
+            "education":"Falmouth University",
+            "work":"Full time student",
+            "profilePicture": "images/profilePictures/Daley-update-profile-picture-1640184634605-875098110.png",
+            "coverPicture": "images/uploads/hero.jpg"
         },
         {
             "id": 2,
@@ -27,7 +27,8 @@
             "location" : "",
             "education" : "",
             "work": "",
-            "profilePicture": "images/defaultUser.png"
+            "profilePicture": "images/uploads/defaultUser.png",
+            "coverPicture": ""
         },
         {
             "id": 3,
@@ -41,21 +42,23 @@
             "location" : "",
             "education" : "",
             "work": "",
-            "profilePicture": "images/defaultUser.png"
+            "profilePicture": "images/uploads/defaultUser.png",
+            "coverPicture": ""
         },
         {
             "id": 4,
             "firstName": "",
             "lastName": "",
-            "username": "newUser123",
-            "email": "newuser123@email.com",
+            "username": "newUser1234",
+            "email": "newuser1234@email.com",
             "password": "ad335a73c47ec0c81be71d4e0f806fc46fe183f7631addbf20eef13893dfc96e02b4c14e08ba45547f9337c551c310babe9afa4e007fa666c2dfc88c108402a1",
             "passwordSalt": "c5109e558e19775ea2d159533e400fc4e8c2d588d7721a0151cc1e368eada652567546523c7ee34938bedb11a04d3c4bd94005d6d9fca91aaf31dc376a1529d5a23816b16b92ebc48f46ff88239290adbeb188955b5f531d7ada1feac933cfdaa5c5c5d1338dcd3c16f792bbd33fdd12b3f6a809f276ef27e40d769e357ff594fe7251df5762920b8874b9c3776d14fdfa3bc5cba37460395b3334c03fee44c9ed768ed63e7e605f571f6ee4a8642ce5ba281053c4805f203f66a0de4b4a3cb7965fc58679e5a133e435a79c0d2cbf3ad08c58baead990df3da59eebcfb361c874ce63ec82bf8d09674690d7abf088fff2878859644275e5c7da5ebbfbc5a8eb",
             "aboutMe": "",
             "location" : "",
             "education" : "",
             "work": "",
-            "profilePicture": "images/defaultUser.png"
+            "profilePicture": "images/uploads/defaultUser.png",
+            "coverPicture": ""
         },
         {
             "id": 5,
@@ -69,7 +72,8 @@
             "location" : "the code",
             "education" : "the code",
             "work": "I am the code",
-            "profilePicture": "images/defaultUser.png"
+            "profilePicture": "images/uploads/defaultUser.png",
+            "coverPicture": ""
         },
         {
             "id": 6,
@@ -83,7 +87,8 @@
             "location" : "Huddinge, Sweden",
             "education" : "Mortimer Wilson School, Alfreton",
             "work": "A school in Sweden",
-            "profilePicture": "images/defaultUser.png"
+            "profilePicture": "images/uploads/defaultUser.png",
+            "coverPicture": ""
         },
         {
             "id": 7,
@@ -97,7 +102,8 @@
             "location" : "Alfreton, UK",
             "education" : "",
             "work": "Eurocell",
-            "profilePicture": "images/defaultUser.png"
+            "profilePicture": "images/uploads/defaultUser.png",
+            "coverPicture": ""
         },
         {
             "id": 8,
@@ -111,7 +117,8 @@
             "location" : "Alfreton, UK",
             "education" : "Mortimer wilson school, Alfreton",
             "work": "ROYAL MARINES",
-            "profilePicture": "images/defaultUser.png"
+            "profilePicture": "images/uploads/defaultUser.png",
+            "coverPicture": ""
         },
         {
             "id": 9,
@@ -125,7 +132,8 @@
             "location" : "Alfreton, UK",
             "education" : "NV3 LVL3+ Chesterfirld College",
             "work": "M.A Autos, Alfreton",
-            "profilePicture": "images/profilePictures/mjpswanwick-update-profile-picture-1641157595596-588140937.png"
+            "profilePicture": "images/profilePictures/mjpswanwick-update-profile-picture-1641157595596-588140937.png",
+            "coverPicture": ""
         },
         {
             "id": 10,
@@ -139,7 +147,8 @@
             "location" : "",
             "education" : "",
             "work": "",
-            "profilePicture": "images/profilePictures/tester-update-profile-picture-1643116188746-79637386.png"
+            "profilePicture": "images/profilePictures/tester-update-profile-picture-1643116188746-79637386.png",
+            "coverPicture": ""
         },
         {
             "id": 11,
@@ -153,7 +162,8 @@
             "location" : "Alfreton, UK",
             "education" : "Falmouth University",
             "work": "Full time student",
-            "profilePicture": "images/uploads/Daley-change-image-1640183949137-977696531.png"
+            "profilePicture": "images/uploads/Daley-change-image-1640183949137-977696531.png",
+            "coverPicture": "images/uploads/life-cycle-facebook-cover.jpg"
         }            
     ]
 }

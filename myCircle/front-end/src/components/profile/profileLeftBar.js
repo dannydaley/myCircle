@@ -18,6 +18,7 @@ export default class ProfileLeftBar extends React.Component  {
 
   render () {
     const { userFirstName, userLastName, changeAlertNotifications, userProfilePicture } = this.props
+    console.log(userProfilePicture)
     return (
       <div>
         <React.Fragment>

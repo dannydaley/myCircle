@@ -117,15 +117,28 @@ app.get('/SQLDatabaseUserSetup', (req, res, next) => {
     SQLdatabase.run('DROP TABLE IF EXISTS `users`');
     //recreate the users table
     // SQLdatabase.query('CREATE TABLE `users` (id INTEGER PRIMARY KEY AUTOINCREMENT, name varchar(255) UNIQUE COLLATE NOCASE, email varchar(255) UNIQUE, password varchar(255), passwordSalt varchar(512), posts int, joined varchar(255), profilePicture varchar(255), aboutMe text, pinnedPost INTEGER)');
-    SQLdatabase.run('CREATE TABLE `users` (id INTEGER PRIMARY KEY AUTOINCREMENT, username varchar(255) UNIQUE, firstName varchar(255), lastName varchar(255), email varchar(255) UNIQUE, password varchar(255), passwordSalt varchar(512), aboutMe text, location varchar(255), education varchar(255), work varchar(255), profilePicture varchar(255))');
+    SQLdatabase.run('CREATE TABLE `users` (id INTEGER PRIMARY KEY AUTOINCREMENT, username varchar(255) UNIQUE, firstName varchar(255), lastName varchar(255), email varchar(255) UNIQUE, password varchar(255), passwordSalt varchar(512), aboutMe text, location varchar(255), education varchar(255), work varchar(255), profilePicture varchar(255), coverPicture varchar(255))');
     //create test rows
     let rows = []    
     for (let i = 0; i < userDataJSON.users.length; i++) {
-      rows[i] = [userDataJSON.users[i].username, userDataJSON.users[i].firstName, userDataJSON.users[i].lastName, userDataJSON.users[i].email, userDataJSON.users[i].password, userDataJSON.users[i].passwordSalt, userDataJSON.users[i].aboutMe, userDataJSON.users[i].location, userDataJSON.users[i].education, userDataJSON.users[i].work, userDataJSON.users[i].profilePicture]
+      rows[i] = [
+        userDataJSON.users[i].username,
+        userDataJSON.users[i].firstName,
+        userDataJSON.users[i].lastName,
+        userDataJSON.users[i].email,
+        userDataJSON.users[i].password,
+        userDataJSON.users[i].passwordSalt,
+        userDataJSON.users[i].aboutMe,
+        userDataJSON.users[i].location,
+        userDataJSON.users[i].education,
+        userDataJSON.users[i].work,
+        userDataJSON.users[i].profilePicture,
+        userDataJSON.users[i].coverPicture
+    ]
     }
     // add rows to database
     rows.forEach( (row) => {
-      SQLdatabase.run('INSERT INTO `users` (username, firstName, lastName, email, password, passwordSalt, aboutMe, location, education, work, profilePicture) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ? ,?, ?)', row);
+      SQLdatabase.run('INSERT INTO `users` (username, firstName, lastName, email, password, passwordSalt, aboutMe, location, education, work, profilePicture, coverPicture) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ? ,?, ?, ?)', row);
     });
   })
   //render success page
@@ -277,6 +290,7 @@ app.post('/signin', (req, res) => {
       res.status(500).send(err)
     }
     let user = rows
+    
     if (user!== undefined && user.password === passwordHash(data.password, user.passwordSalt)) {
       res.json({
         status: 'success',
@@ -285,7 +299,7 @@ app.post('/signin', (req, res) => {
         username: rows.username,
         profilePicture: rows.profilePicture
       })
-    } else {
+    } else {     
       console.log("invalid user credentials")
       res.json({
       status: 'failed',
@@ -464,6 +478,19 @@ app.post('/newPost', (req, res) => {
     })
   })
 });
+
+app.post('/getUserProfile', (req, res) => {
+  console.log(req.body)
+  SQLdatabase.get("SELECT firstName, lastName, aboutMe, profilePicture, coverPicture FROM users WHERE username = ?", req.body.user, (err, rows) => {
+    if (err) {
+      console.log("error at database")
+      res.json("error at db")
+      return
+    }
+    console.log(rows)
+    res.json(rows)
+  })
+})
 
 // #endregion 
 

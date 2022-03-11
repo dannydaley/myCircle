@@ -8,6 +8,7 @@ export default class  ProfileOverlay extends React.Component {
     }    
 
     render () {
+        console.log(this.props.userProfilePicture)
         const { userFirstName, userLastName, userUserName, changeAlertNotifications, userProfilePicture } = this.props
         return (
             <div style={{width: '100vw', display: 'flex', justifyContent: 'space-between', flexDirection: 'row'}}>            

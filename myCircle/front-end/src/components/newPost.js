@@ -23,7 +23,7 @@ export default class NewPost extends React.Component {
     
     
     onContentChange = (event) => {
-        this.setState({postContent: event.target.value})
+        this.setState({postContent: event.target.value})        
     }
 
     onPostSubmit = () => {
@@ -62,7 +62,7 @@ export default class NewPost extends React.Component {
                     label="New Post"
                     placeholder="I've got something to say!"
                     multiline
-                    onChange={this.onContentChange}
+                    onChange={this.onContentChange}                    
                 />
                 <LoadingButton                
                 onClick={()=> this.onPostSubmit()}                

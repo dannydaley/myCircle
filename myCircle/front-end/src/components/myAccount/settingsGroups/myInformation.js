@@ -97,7 +97,7 @@ export default class MyInformation extends React.Component {
         .then(data => {    
           this.setState({ 
             firstName: data.firstName,
-            lastName: data.lastName,            
+            lastName: data.lastName,
             aboutMe : data.aboutMe,
             location : data.location,
             education : data.education,

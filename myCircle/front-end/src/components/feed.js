@@ -99,11 +99,11 @@ export default class Feed extends React.Component {
                     <CssBaseline />
                     <Container maxWidth="lg" sx={{zIndex: 10, bgcolor: '#343434', borderRadius: '0px 0px 30px 30px', width: '100%', pb: 2, ml: 2, mr:2,  mt: 12}}>
                         <NewPost
-                        circle={circle}
-                         changeCircle={this.changeCircle}
-                         userFirstName={userFirstName}
-                         userLastName={userLastName}
-                         userUserName={userUserName}
+                          circle={circle}
+                          changeCircle={this.changeCircle}
+                          userFirstName={userFirstName}
+                          userLastName={userLastName}
+                          userUserName={userUserName}
                          />
                         <p>{this.feedPosts}</p>
                         <Box sx={{ padding: 2, bgcolor: 'none'}}>

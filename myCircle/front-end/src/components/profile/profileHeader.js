@@ -17,14 +17,14 @@ import hero from '../../Images/hero.jpg'
 export default class ProfileHeader extends React.Component {
 
   constructor(props) {
-    super();
-    this.state = { 
-    }
+    super(props);
   }
 
-  render () {   
+  render () { 
+    const coverPicture = this.props
+    console.log(this.props.coverPicture)     
       return(
-     <div style={{height: '50vh', backgroundImage: `url(${hero})`}}></div>     
+     <div style={{height: '50vh', backgroundImage: `url(http://localhost:3001/public/${this.props.coverPicture})`}}></div>     
       )    
   } 
 }

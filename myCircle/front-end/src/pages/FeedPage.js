@@ -17,8 +17,12 @@ export default class FeedPage extends React.Component {
                return (
                     <div >
                          <Feed
-                          circle={this.state.circle}
-                            changeMailNotifications={this.changeMailNotifications} onRouteChange={onRouteChange} userFirstName={userFirstName} userLastName={userLastName} userUserName={userUserName} userProfilePicture={userProfilePicture} />  
+                              circle={this.state.circle}
+                              changeMailNotifications={this.changeMailNotifications}
+                              onRouteChange={onRouteChange} userFirstName={userFirstName}
+                              userLastName={userLastName} userUserName={userUserName} 
+                              userProfilePicture={userProfilePicture} 
+                         />  
                     </div>
                )    
           } 
