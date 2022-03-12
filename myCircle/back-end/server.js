@@ -103,7 +103,7 @@ const BLOG_DELETE_POST = "DELETE FROM `blog` WHERE title = ? AND id = ?"; // SQL
 const GET_POSTS_BY_AUTHOR = "SELECT * FROM `blog` WHERE author = ? ORDER BY id DESC" // SQL command
 const GET_POSTS_BY_AUTHOR_BY_CIRCLE = "SELECT * FROM `blog` WHERE author = ? AND circle = ? ORDER BY id DESC" // SQL command
 const GET_RECENT_POSTS_BY_AUTHOR = "SELECT * FROM blog WHERE author = ? AND recipient = ? ORDER BY id DESC LIMIT 5"; // SQL command
-const SQL_ADD_BLOG_POST = "INSERT INTO `blog` (author, image,  link, circle, content,date, recipient) VALUES(?,?,?,?,?,?,?)" // 
+const SQL_ADD_BLOG_POST = "INSERT INTO `blog` (author, image,  link, circle, content,date, recipient, likes, dislikes) VALUES(?,?,?,?,?,?,?,?,?)" // 
 const SQL_UPDATE_BLOG =  "UPDATE `blog` SET title = ?, image = ?, link = ?, author = ?, content = ? WHERE id = ?" //SQL command
 const SQL_UPDATE_USER_PROFILE = "UPDATE users SET profilePicture = ?, aboutMe = ? WHERE name = ?" // SQL command
 const SQL_UPDATE_USERS_PINNED_POST = "UPDATE users SET pinnedPost = ? WHERE name = ?" // SQL command
@@ -152,12 +152,12 @@ app.get('/SQLDatabaseBlogSetup', (req, res, next) => {
     //delete the table if it exists..
     SQLdatabase.run('DROP TABLE IF EXISTS `blog`');
     // create blog table
-    SQLdatabase.run('CREATE TABLE `blog` ( id INTEGER PRIMARY KEY AUTOINCREMENT, author varchar(255), title varchar(255), image varchar(255), content text, link varchar(255), date varchar(255), circle varchar(255), recipient varchar(255) )');
+    SQLdatabase.run('CREATE TABLE `blog` ( id INTEGER PRIMARY KEY AUTOINCREMENT, author varchar(255), image varchar(255), content text,  date varchar(255), circle varchar(255), recipient varchar(255), likes int, dislikes int )');
     //create base rows
     let rows = [];
     //loop through posts.json to populate rows array
     for (let i = 0; i < postDataJSON.entries.length; i++) {
-      rows[i] = [postDataJSON.entries[i].id, postDataJSON.entries[i].author, postDataJSON.entries[i].title, postDataJSON.entries[i].image, postDataJSON.entries[i].content, postDataJSON.entries[i].link, postDataJSON.entries[i].date, postDataJSON.entries[i].circle,postDataJSON.entries[i].recipient]
+      rows[i] = [postDataJSON.entries[i].id, postDataJSON.entries[i].author, postDataJSON.entries[i].image, postDataJSON.entries[i].content, postDataJSON.entries[i].date, postDataJSON.entries[i].circle,postDataJSON.entries[i].recipient, postDataJSON.entries[i].likes, postDataJSON.entries[i].dislikes]
     }
     // populate SQL command with rows array populated from posts.json
     rows.forEach( (row) => {
@@ -378,7 +378,7 @@ app.post('/updateUserLoginInfo', (req, res) => {
 
 //#endregion UPDATE ACCOUNT INFO END
 
-
+//#region GET FEEDS
 app.post('/getFeed', (req, res, next) => {  
   // grab all posts
   if (req.body.circle === 'general') {
@@ -401,7 +401,6 @@ app.post('/getFeed', (req, res, next) => {
     })
   }
 })
-
 app.post('/getFeedByUser', (req, res, next) => {  
   // grab all posts
   if (req.body.circle === 'general') {
@@ -424,6 +423,9 @@ app.post('/getFeedByUser', (req, res, next) => {
     })
   }
 })
+//#endregion GET FEEDS
+
+//#region GET USER INFO 
 
 app.post('/getImagesByUser', (req, res, next) => {  
   // grab all posts
@@ -458,26 +460,7 @@ app.post('/getUserGeneralInfo', (req, res) => {
   })
 })
 
-app.post('/newPost', (req, res) => {
-  SQLdatabase.get("SELECT profilePicture FROM users WHERE username = ?", [ req.body.postData.author ], (err, profilePicture) => {
-    if (err) {
-      console.log("failed on profile pic grab")
-      console.log(req.body)
-      res.status(500).send(err.message);
-      return;
-    } 
-    req.body.postData.image = profilePicture
-    SQLdatabase.run(SQL_ADD_BLOG_POST, [ req.body.postData.author, req.body.postData.image.profilePicture, req.body.postData.link, req.body.circle, req.body.postData.postContent,req.body.postData.data, req.body.postData.recipient],  (err, rows) => {
-      if (err) {
-        console.log("errorrrrr")
-        res.status(500).send(err.message);
-        return;
-      }  
-      console.log(req.body.postData)          
-      res.json('success');
-    })
-  })
-});
+
 
 app.post('/getUserProfile', (req, res) => {
   console.log(req.body)
@@ -491,6 +474,49 @@ app.post('/getUserProfile', (req, res) => {
     res.json(rows)
   })
 })
+//#endregion GET USER INFO 
+
+//#region POST CREATION, COMMENTING, VOTING 
+app.post('/newPost', (req, res) => {
+  SQLdatabase.get("SELECT profilePicture FROM users WHERE username = ?", [ req.body.postData.author ], (err, profilePicture) => {
+    if (err) {
+      console.log("failed on profile pic grab")
+      res.status(500).send(err.message);
+      return;
+    } 
+    req.body.postData.image = profilePicture
+    SQLdatabase.run(SQL_ADD_BLOG_POST, [ req.body.postData.author, req.body.postData.image.profilePicture, req.body.postData.link, req.body.circle, req.body.postData.postContent,req.body.postData.data, req.body.postData.recipient, 0, 0],  (err, rows) => {
+      if (err) {
+        console.log("error")
+        res.status(500).send(err.message);
+        return;
+      }    
+      res.json('success');
+    })
+  })
+});
+
+app.post('/votePost', (req, res) => {
+  let { like, dislike, postId } = req.body
+  SQLdatabase.get("SELECT likes, dislikes FROM blog WHERE id = ?", postId, (err, rows) => {
+    if (err) {
+      console.log("ERROR GETTING LIKES")
+    }
+    like += rows.likes;
+    dislike += rows.dislikes;
+  })
+  SQLdatabase.run("UPDATE blog SET likes = ?, dislikes = ? WHERE id = ?", [like, dislike, postId], (err, rows) => {
+    if (err){
+      console.log("error applying like to post at database")
+      res.json("error applying like to post at database")
+      return
+    }
+    console.log("success applying like to post at database")
+    res.json("success applying like to post at database")
+    return
+  })
+})
+//#endregion POST CREATION, COMMENTING, VOTING 
 
 // #endregion 
 

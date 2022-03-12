@@ -79,7 +79,7 @@ export default class Feed extends React.Component {
                 </Box>
                 <h1 style={{ color: 'white' }}>loading {this.state.circle}</h1>
                 <Divider variant="middle" sx={{mt: 1.5, mb: 1.5}} />                
-                <Typography sx={{ mb: 1.5 }} color="white" sx={{ fontSize: 16 }}>
+                <Typography color="white" sx={{ fontSize: 16, mb: 1.5  }}>
                     End of posts
                 </Typography>
               </Container>
@@ -111,13 +111,13 @@ export default class Feed extends React.Component {
                             {/* .MAP IS OUR FOR EACH LOOP, 'ITEM' IS JUST WHAT WE CALL EACH ELEMENT IN THE LIST SO IS INTERCHANGEABLE */}
                                 {this.state.posts.map(item => (                                                             
                                   /* RENDER THE COMPONENT WITH PROPS PASSED IN FROM THE SPECIFIC ITEM WERE CURRENTLY ON FOR EACH ITEM PASSED OVER BY THE .MAP */
-                                    <FeedPost author={item.author} content={item.content} profilePicture={item.image}
+                                    <FeedPost author={item.author} content={item.content} profilePicture={item.image} postId={item.id} likes={item.likes} dislikes={item.dislikes}
                                      onRouteChange={onRouteChange}
                                      />                                     
                                 ))}
                             </Stack>
                         </Box>
-                        <Typography sx={{ mb: 1.5 }} color="white" sx={{ fontSize: 16 }}>
+                        <Typography color="white" sx={{ fontSize: 16, mb: 1.5 }}>
                             End of posts
                         </Typography>
                     </Container>
