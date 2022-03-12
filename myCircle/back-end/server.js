@@ -91,15 +91,29 @@ app.locals.SQLdatabase = SQLdatabase;
 let postDataJSON = require("./database/posts.json");
 let userDataJSON = require("./database/users.json");
 let imagesDataJSON = require("./database/images.json");
+let friendshipsDataJSON = require("./database/friendships.json");
 const { Console } = require('console');
 
+
+  
+const GET_USER_GENERAL_INFO_BY_USERNAME = "SELECT firstName, lastName, aboutMe, location, education, work, profilePicture FROM users WHERE username = ?"
+const GET_USER_PROFILE_INFO_BY_USERNAME = "SELECT firstName, lastName, aboutMe, profilePicture, coverPicture FROM users WHERE username = ?"
+const GET_POST_VOTES_BY_POST_ID = "SELECT likes, dislikes FROM blog WHERE id = ?"
+const UPDATE_POST_VOTES_BY_POST_ID = "UPDATE blog SET likes = ?, dislikes = ? WHERE id = ?"
+const UPDATE_PASSWORD_BY_EMAIL = "UPDATE users SET password = ?, passwordSalt = ? WHERE email = ?"
+const LOOK_UP_EMAIL_BY_EMAIL = "SELECT email FROM users WHERE email = ?"
+const UPDATE_EMAIL = "UPDATE users SET email = ? WHERE email = ?"
+const UPDATE_USER_GENERAL_INFO = "UPDATE users SET firstName = ?, lastName = ?, aboutMe = ?, location = ?, education = ?, work = ? WHERE username = ?"
+const FIND_USER = "SELECT * FROM users WHERE email = ?"
 const SIGN_UP_USER = "INSERT INTO users (email, username, firstName,lastName, password, passwordSalt, profilePicture) VALUES(?,?,?,?,?,?,?)"
 const GET_USER_PROFILE_INFO = "SELECT name, joined, posts, profilePicture, aboutMe, pinnedPost FROM users WHERE name = ?" // SQL command
 const GET_ALL_POSTS = "SELECT * FROM `blog` ORDER BY id DESC"; // SQL command
 const GET_ALL_POSTS_BY_CIRCLE = "SELECT * FROM `blog` WHERE circle = ? ORDER BY id DESC"; // SQL command
 const GET_ALL_IMAGES_BY_USER = "SELECT * FROM images WHERE ownerUsername = ? ORDER BY postId DESC"
+const GET_PROFILEPICTURE_BY_USERNAME = "SELECT profilePicture FROM users WHERE username = ?"
 const GET_RECENT_POSTS = "SELECT * FROM blog WHERE recipient = ? ORDER BY id DESC LIMIT 5"; // SQL command
 const BLOG_DELETE_POST = "DELETE FROM `blog` WHERE title = ? AND id = ?"; // SQL command
+const GET_ALL_USERS_FRIENDS = "SELECT * FROM friendships WHERE user1 =? OR user2 = ?"
 const GET_POSTS_BY_AUTHOR = "SELECT * FROM `blog` WHERE author = ? ORDER BY id DESC" // SQL command
 const GET_POSTS_BY_AUTHOR_BY_CIRCLE = "SELECT * FROM `blog` WHERE author = ? AND circle = ? ORDER BY id DESC" // SQL command
 const GET_RECENT_POSTS_BY_AUTHOR = "SELECT * FROM blog WHERE author = ? AND recipient = ? ORDER BY id DESC LIMIT 5"; // SQL command
@@ -197,6 +211,31 @@ app.get('/SQLDatabaseImagesSetup', (req, res, next) => {
   res.send("image-db-done");
 })
 
+app.get('/SQLDatabaseFriendshipsSetup', (req, res, next) => {  
+  //these queries must run one by one - dont try and delete and create tables at the same time.
+  SQLdatabase.serialize( () => {
+    //delete the table if it exists..
+    SQLdatabase.run('DROP TABLE IF EXISTS `friendships`');
+    // create blog table
+    SQLdatabase.run('CREATE TABLE `friendships` ( user1 varchar(255), user2 varchar(255))');
+    //create base rows
+    let rows = [];
+    //loop through posts.json to populate rows array
+    for (let i = 0; i < friendshipsDataJSON.entries.length; i++) {
+      rows[i] = [friendshipsDataJSON.entries[i].user1, friendshipsDataJSON.entries[i].user2]
+    }
+    // populate SQL command with rows array populated from posts.json
+    rows.forEach( (row) => {
+      // insert rows to table
+      SQLdatabase.run('INSERT INTO `friendships` VALUES(?,?)', row);
+      // increment users post count according to author of currently processed post      
+    });
+  })
+  // render success page
+  console.log("friendships table built");
+  res.send("friendships-db-done");
+})
+
 /*==============================DEBUGGING AND TESTING ENDPOINTS========================*/
 /* GET all users */
 app.get('/getAllUsers', (req, res, next) => {
@@ -221,7 +260,6 @@ app.post('/getAllImagesByUser', (req, res, next) => {
   })
 })
 
-
 /* GET all blog posts */
 app.get('/getAllPosts', (req, res, next) => {  
   // grab all posts
@@ -231,6 +269,17 @@ app.get('/getAllPosts', (req, res, next) => {
       return;
     }    
     res.json(rows);
+  })
+})
+
+app.get('/getAllFriendships', (req, res, next) => {
+  // grab all user data
+  SQLdatabase.all("SELECT * FROM friendships", [], (err, rows) => {
+    if (err) {
+      res.status(500).send(err.message);
+      return;
+    }
+    res.send(rows);
   })
 })
 /*========================END OF DEBUGGING AND TESTING ENDPOINTS========================*/
@@ -282,15 +331,13 @@ app.post('/signin', (req, res) => {
   let data = req.body;
   // init database
   let SQLdatabase = req.app.locals.SQLdatabase;
-  // rename for easier access
-  const FIND_USER = "SELECT * FROM users WHERE email = ?" 
+  // rename for easier access   
   SQLdatabase.get(FIND_USER, data.email, (err, rows) => {
     if (err) {
       console.log("error at database");
       res.status(500).send(err)
     }
-    let user = rows
-    
+    let user = rows    
     if (user!== undefined && user.password === passwordHash(data.password, user.passwordSalt)) {
       res.json({
         status: 'success',
@@ -314,8 +361,8 @@ app.post('/signin', (req, res) => {
 //#region UPDATE ACCOUNT INFO
 
 app.post('/updateUserGeneralInfo', (req, res) => {
-  const { firstName, lastName, aboutMe, location, education, work, username  } = req.body;
-  SQLdatabase.run("UPDATE users SET firstName = ?, lastName = ?, aboutMe = ?, location = ?, education = ?, work = ? WHERE username = ?", firstName, lastName, aboutMe, location, education, work, username, (err, rows) => {
+  const { firstName, lastName, aboutMe, location, education, work, username  } = req.body;  
+  SQLdatabase.run(UPDATE_USER_GENERAL_INFO, firstName, lastName, aboutMe, location, education, work, username, (err, rows) => {
     if (err){
       console.log("error at database")
       res.json("ERROR AT DATABASE")
@@ -327,7 +374,7 @@ app.post('/updateUserGeneralInfo', (req, res) => {
 
 app.post('/updateUserLoginInfo', (req, res) => {
   let { email, password, changeEmail, changePassword, changePasswordConfirm  } = req.body;
-  const FIND_USER = "SELECT * FROM users WHERE email = ?" 
+  
   SQLdatabase.get(FIND_USER, email, (err, rows) => {
     if (err) {
       console.log("error at database");
@@ -338,8 +385,8 @@ app.post('/updateUserLoginInfo', (req, res) => {
       if (changePassword) {
         if (changePassword === changePasswordConfirm) {      
           let passwordSalt = generatePepper;
-          let storePassword = passwordHash(changePassword, passwordSalt);
-          SQLdatabase.run("UPDATE users SET password = ?, passwordSalt = ? WHERE email = ?", [ storePassword, passwordSalt, email ], (err, rows) => {
+          let storePassword = passwordHash(changePassword, passwordSalt);          
+          SQLdatabase.run(UPDATE_PASSWORD_BY_EMAIL, [ storePassword, passwordSalt, email ], (err, rows) => {
             if (err){
               console.log("error at database with password")          
             }
@@ -347,7 +394,7 @@ app.post('/updateUserLoginInfo', (req, res) => {
           })
         }
         if (changeEmail) {
-          SQLdatabase.get("SELECT email FROM users WHERE email = ?", email, (err, rows) => {
+          SQLdatabase.get(LOOK_UP_EMAIL_BY_EMAIL, email, (err, rows) => {
             if (err){
               console.log(err)
             }
@@ -356,7 +403,7 @@ app.post('/updateUserLoginInfo', (req, res) => {
               return
             }
             else {
-              SQLdatabase.run("UPDATE users SET email = ? WHERE email = ?", [ changeEmail, email], (err, rows)=> {
+              SQLdatabase.run(UPDATE_EMAIL, [ changeEmail, email], (err, rows)=> {
               if (err){
                 console.log("error at database changing email")
                 return
@@ -374,8 +421,6 @@ app.post('/updateUserLoginInfo', (req, res) => {
     }  
   })
 })
-
-
 //#endregion UPDATE ACCOUNT INFO END
 
 //#region GET FEEDS
@@ -451,7 +496,7 @@ app.post('/getImagesByUser', (req, res, next) => {
 })
 
 app.post('/getUserGeneralInfo', (req, res) => {
-  SQLdatabase.get("SELECT firstName, lastName, aboutMe, location, education, work, profilePicture FROM users WHERE username = ?", req.body.user, (err, rows) => {
+   SQLdatabase.get(GET_USER_GENERAL_INFO_BY_USERNAME, req.body.user, (err, rows) => {
     if (err) {
       console.log("error getting general user info")
       res.status(500).send(err)
@@ -460,25 +505,39 @@ app.post('/getUserGeneralInfo', (req, res) => {
   })
 })
 
-
-
 app.post('/getUserProfile', (req, res) => {
   console.log(req.body)
-  SQLdatabase.get("SELECT firstName, lastName, aboutMe, profilePicture, coverPicture FROM users WHERE username = ?", req.body.user, (err, rows) => {
+  SQLdatabase.get(GET_USER_PROFILE_INFO_BY_USERNAME, req.body.user, (err, rows) => {
     if (err) {
       console.log("error at database")
       res.json("error at db")
       return
     }
-    console.log(rows)
     res.json(rows)
+  })
+})
+
+app.get('/getAllFriends', (req, res) => {
+  let user = 'mjpswanwick'
+  SQLdatabase.all(GET_ALL_USERS_FRIENDS, user, user, (err, rows) => {
+    if(err){
+      console.log("error at database with friendships")
+      res.json("error at database with friendships")
+      return
+    }
+    let data = []   
+    rows.forEach(element => element.user1 === user ? data.push(element.user2) : data.push(element.user1)
+  );
+    console.log("FRIENDS LIST")
+    console.log(data)
+    res.json(data)
   })
 })
 //#endregion GET USER INFO 
 
 //#region POST CREATION, COMMENTING, VOTING 
-app.post('/newPost', (req, res) => {
-  SQLdatabase.get("SELECT profilePicture FROM users WHERE username = ?", [ req.body.postData.author ], (err, profilePicture) => {
+app.post('/newPost', (req, res) => {  
+  SQLdatabase.get(GET_PROFILEPICTURE_BY_USERNAME, [ req.body.postData.author ], (err, profilePicture) => {
     if (err) {
       console.log("failed on profile pic grab")
       res.status(500).send(err.message);
@@ -498,14 +557,15 @@ app.post('/newPost', (req, res) => {
 
 app.post('/votePost', (req, res) => {
   let { like, dislike, postId } = req.body
-  SQLdatabase.get("SELECT likes, dislikes FROM blog WHERE id = ?", postId, (err, rows) => {
+  SQLdatabase.get(GET_POST_VOTES_BY_POST_ID, postId, (err, rows) => {
     if (err) {
       console.log("ERROR GETTING LIKES")
     }
     like += rows.likes;
     dislike += rows.dislikes;
   })
-  SQLdatabase.run("UPDATE blog SET likes = ?, dislikes = ? WHERE id = ?", [like, dislike, postId], (err, rows) => {
+
+  SQLdatabase.run(UPDATE_POST_VOTES_BY_POST_ID, [like, dislike, postId], (err, rows) => {
     if (err){
       console.log("error applying like to post at database")
       res.json("error applying like to post at database")
@@ -522,3 +582,55 @@ app.post('/votePost', (req, res) => {
 
 app.listen(process.env.PORT)
 console.log("server.js running on port " + process.env.PORT)
+
+//#region GET FEEDS
+app.get('/getFeedWithFriends', (req, res, next) => {  
+  // grab all posts
+  let user = 'mjpswanwick'
+  let friendsList = []
+  let feed = []
+  SQLdatabase.all(GET_ALL_USERS_FRIENDS, [user, user], (err, rows) => {
+    if(err){
+      console.log("error at database with friendships")
+      
+      return
+    }     
+    let friends = [] 
+    rows.forEach(element => element.user1 === user ? friends.push(element.user2) : friends.push(element.user1));    
+    
+    let circle = 'general'  
+      if (circle === 'general') {
+        console.log(friends)  
+        friends.forEach(element => SQLdatabase.all("SELECT * FROM blog WHERE author = ? ", [ element ], (err, rows) => {
+        
+          if (err) {
+            console.log("error at database")
+            res.status(500).send(err.message);
+            return;
+          }     
+feed.push(rows)
+        })
+        )
+        console.log(feed)    
+      } else {
+        friends.forEach(element => SQLdatabase.all("SELECT * FROM blog WHERE author = ?, circle =?", [ element, circle ], (err, rows) => {     // req.body.
+            if (err) {
+            console.log("error at database")
+            res.status(500).send(err.message);
+            return;
+          }  
+        // feed.push(rows) 
+        // console.log(feed)     
+    }))
+    feed.push(rows) 
+    console.log(feed)  
+    
+    }
+    
+  })  
+  
+  res.json(feed)
+})
+app.get('/getAllFriends', (req, res) => {
+
+})
