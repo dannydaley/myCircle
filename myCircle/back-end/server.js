@@ -583,54 +583,76 @@ app.post('/votePost', (req, res) => {
 app.listen(process.env.PORT)
 console.log("server.js running on port " + process.env.PORT)
 
-//#region GET FEEDS
-app.get('/getFeedWithFriends', (req, res, next) => {  
-  // grab all posts
-  let user = 'mjpswanwick'
-  let friendsList = []
+
+
+const getStuf = async (friendList) => {
   let feed = []
-  SQLdatabase.all(GET_ALL_USERS_FRIENDS, [user, user], (err, rows) => {
-    if(err){
-      console.log("error at database with friendships")
-      
-      return
-    }     
-    let friends = [] 
-    rows.forEach(element => element.user1 === user ? friends.push(element.user2) : friends.push(element.user1));    
-    
-    let circle = 'general'  
-      if (circle === 'general') {
-        console.log(friends)  
-        friends.forEach(element => SQLdatabase.all("SELECT * FROM blog WHERE author = ? ", [ element ], (err, rows) => {
-        
-          if (err) {
-            console.log("error at database")
-            res.status(500).send(err.message);
-            return;
-          }     
-feed.push(rows)
+    console.log("starting function")
+    const innerFunc = () => {
+      for (let i = 0; i < friendList.length; i++) {
+      SQLdatabase.all("SELECT * FROM blog WHERE author = ?", friendList[i], (err, rows) => {
+          if (err){
+            console.log("error at posts")
+            return
+          }          
+          console.log(i)
+          feed.push(rows) 
         })
-        )
-        console.log(feed)    
-      } else {
-        friends.forEach(element => SQLdatabase.all("SELECT * FROM blog WHERE author = ?, circle =?", [ element, circle ], (err, rows) => {     // req.body.
-            if (err) {
-            console.log("error at database")
-            res.status(500).send(err.message);
-            return;
-          }  
-        // feed.push(rows) 
-        // console.log(feed)     
-    }))
-    feed.push(rows) 
-    console.log(feed)  
-    
+      }
     }
-    
+    await innerFunc().then(console.log(feed))
+
+}
+
+
+//#region GET FEEDS
+app.get('/getFeedWithFriends', (req, res) => {  
+  // grab all posts
+  let user = 'Daley'
+  let friendsList = []  
+  let feed = {
+    "entries" : []
+  }  
+SQLdatabase.all(GET_ALL_USERS_FRIENDS,  [user, user], async (err, rows) => {
+    if(err){
+      console.log("error at database with friendships")      
+      return
+    }  
+  rows.forEach(element => element.user1 === user ? friendsList.push(element.user2) : friendsList.push(element.user1))
+  let filter = []
+  let feed = []
+  SQLdatabase.all("SELECT * FROM blog", (err, rows) => {
+      if (err) {
+        console.log(err)
+      }
+      feed = rows     
+      feed.forEach(element => friendsList.forEach(friend => element.author === friend ? filter.push(element) : ''))
+      console.log(friendsList)
+      console.log(filter)
+      res.json(filter)
+    })     
   })  
-  
-  res.json(feed)
 })
+
+app.get('/getFriendsPosts', async (req, res) => {
+  let friends = ["newUser1234","mjpswanwick","Rodwayyy","yojivia","Daley90210","angied65"]
+  let filter = []
+  let feed = []
+  SQLdatabase.all("SELECT * FROM blog", (err, rows) => {
+      if (err) {
+        console.log(err)
+      }
+      feed = rows     
+      feed.forEach(element => friends.forEach(friend => element.author === friend ? filter.push(element) : ''))
+      res.json(filter)
+    })
+  })
+    
+
+   
+ 
+
+
 app.get('/getAllFriends', (req, res) => {
 
 })

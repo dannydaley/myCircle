@@ -14,7 +14,6 @@ export default class MyFriends extends React.Component {
             <div>
 <Typography variant="h3" component="div" color="white" sx={{textAlign: 'center', mt: 2, paddingTop: 1, paddingBottom: 2, bgcolor: 'none' }}>{settings}</Typography>
             </div>
-
         )
     }
 }
