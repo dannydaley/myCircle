@@ -18,8 +18,8 @@
         {
             "id": 2,
             "username": "Danny2",
-            "firstName": "",
-            "lastName": "",
+            "firstName": "danny",
+            "lastName": "2",
             "email": "dandaley@email.com",
             "password": "bedb5e0ea27c1bcdba8eab671909819673eb0c87bd9c47f61a4163b74f494bfd1f4c4dfef209df4f30f8baa7fd3867f92d706b4dc8b6ee699b021615e0a6e7e7",
             "passwordSalt": "4aae2963b54bdf7aa63fa8a3a8af791ddbd3ee1f8a5f7169ee4cb2c107ddadc3b84310e9761e3bbac1572c7d264026200dcdb6c97e0b24bbe18542bc51a062e6be3deeb39b9a99ec964cba5cfcd340bf4b719d7cbc3ea8dc3c317592ed391771b279427d04c296c5be94c25ac828e6fa5906ac8b820d7611d85c836ac1ee4acd26496e4665bfa711361a13165bbecdb79afc47b70b46e9d05487ac01ad87249042e8d916b59e4231231550bca5e1f0e3b2ffad1d33edbbf10f69a350f6753c9b37665e468a5bfc275ba834474197a91c1dc2b9e1cfc4d4746e912bfd4cf404f9d34b560e3c23fdc56a0d78d3cadbf49b3c727c0fca7ac1a9eb6c7cd2d63a41da",
@@ -32,8 +32,8 @@
         },
         {
             "id": 3,
-            "firstName": "",
-            "lastName": "",
+            "firstName": "Other",
+            "lastName": "NewUser",
             "username": "TheOtherNewUser",
             "email": "othernewuser@email.com",
             "password": "1c5aabec6b66117c6df34bc3ec85cb485b6c57bf52fe5911c325476c0aec6567f6289f7e1f89dc18493834042cdf122e4050aded2d721ece0601b3ce04b01310",
@@ -47,8 +47,8 @@
         },
         {
             "id": 4,
-            "firstName": "",
-            "lastName": "",
+            "firstName": "NewUser",
+            "lastName": "1234",
             "username": "newUser1234",
             "email": "newuser1234@email.com",
             "password": "ad335a73c47ec0c81be71d4e0f806fc46fe183f7631addbf20eef13893dfc96e02b4c14e08ba45547f9337c551c310babe9afa4e007fa666c2dfc88c108402a1",
@@ -137,8 +137,8 @@
         },
         {
             "id": 10,
-            "firstName": "",
-            "lastName": "",
+            "firstName": "test",
+            "lastName": "errrr",
             "username": "tester",
             "email": "test@email.com",
             "password": "8669e1079a26fd9a9acd35812bfc65a516d27a113b44108f117a56f590e707f2274ff26f125805d49132d74480df54d740e67693b0d84eb6b47875d71715f06c",
