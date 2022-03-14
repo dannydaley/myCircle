@@ -1,5 +1,4 @@
 import Feed from "../components/feed";
-import Overlay from "../components/overlay";
 import * as React from 'react';
 
 export default class FeedPage extends React.Component {    
@@ -12,8 +11,6 @@ export default class FeedPage extends React.Component {
 
      render()   {  
      const { onRouteChange, userFirstName, userLastName, userUserName, userProfilePicture } = this.props;
-     
-          // changeMailNotifications = this.props;
                return (
                     <div >
                          <Feed

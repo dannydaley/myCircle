@@ -107,7 +107,7 @@ export default class ProfileFeed extends React.Component {
                             {/* .MAP IS OUR FOR EACH LOOP, 'ITEM' IS JUST WHAT WE CALL EACH ELEMENT IN THE LIST SO IS INTERCHANGEABLE */}
                                 {this.state.posts.map(item => (                                                             
                                   /* RENDER THE COMPONENT WITH PROPS PASSED IN FROM THE SPECIFIC ITEM WERE CURRENTLY ON FOR EACH ITEM PASSED OVER BY THE .MAP */
-                                    <FeedPost author={item.author} content={item.content} profilePicture={item.image} postId={item.id} likes={item.likes} dislikes={item.dislikes}/>                                     
+                                    <FeedPost author={item.author} authorFirstName={item.authorFirstName} authorLastName={item.authorLastName} content={item.content} profilePicture={item.image} postId={item.id} likes={item.likes} dislikes={item.dislikes}/>                                     
                                 ))}
                             </Stack>
                         </Box>

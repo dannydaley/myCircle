@@ -4,13 +4,6 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
 
-
-
-
-
-
-  const { captureRejectionSymbol } = require('events');
-
 export default class SignUpForm extends React.Component 
   {
       constructor(props) {

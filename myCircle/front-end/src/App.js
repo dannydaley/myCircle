@@ -84,11 +84,18 @@ export default class App extends Component {
       <div className="App"  >
         { this.state.isSignedIn === true ? 
             <div>
-              <NavBar onRouteChange={this.onRouteChange} onColorChange={this.onColorChange} UIColor={this.state.UIColor} mailNotifications={this.state.mailNotifications} changeMailNotifications={this.changeMailNotifications} changeAlertNotifications={this.changeAlertNotifications} alertNotifications={this.state.alertNotifications} />              
-              {/* {this.router(this.state.route)} */}              
+              <NavBar
+                onRouteChange={this.onRouteChange}
+                onColorChange={this.onColorChange}
+                UIColor={this.state.UIColor}
+                mailNotifications={this.state.mailNotifications}
+                changeMailNotifications={this.changeMailNotifications}
+                changeAlertNotifications={this.changeAlertNotifications}
+                alertNotifications={this.state.alertNotifications}
+              />     
               <Routes>
                 <Route path="/" 
-                element={
+                  element={
                     <FeedPage
                       changeMailNotifications={this.changeMailNotifications}
                       onRouteChange={this.onRouteChange}
@@ -102,7 +109,7 @@ export default class App extends Component {
                 <Route path="myProfile"
                   element={
                     <ProfilePage
-                    user={this.state.userUserName}
+                      user={this.state.userUserName}
                       userFirstName={this.state.userFirstName}
                       userLastName={this.state.userLastName}
                       userUserName={this.state.userUserName}
@@ -116,35 +123,21 @@ export default class App extends Component {
                     <ProfilePage
                       userFirstName={this.state.userFirstName}
                       userLastName={this.state.userLastName}
-                      userUserName={this.state.userUserName}
+                      username={this.state.userUserName}
                       changeAlertNotifications={this.changeAlertNotifications}
                       userProfilePicture={this.state.userProfilePicture}
                     />
                   }
                 />
                 <Route path="/:username" component={ProfilePage}
-                element={
-                    <ProfileGate
-                    state={{ from: "the-page-id" }}
-                    />
-                } exact
-                 ></Route>
-                  
-
-                  
-               
-                {/* <Route path="users/:username"
                   element={
-                    <ProfilePage
-                      userFirstName={this.state.userFirstName}
-                      userLastName={this.state.userLastName}
-                      userUserName={this.state.userUserName}
-                      changeAlertNotifications={this.changeAlertNotifications}
-                      userProfilePicture={this.state.userProfilePicture}
+                    <ProfileGate
+                      state={{ from: "the-page-id" }}
                     />
                   }
-                /> */}
-                <Route path="myAccount"
+                  exact
+                 ></Route>
+                 <Route path="myAccount"
                   element={
                     <MyAccountPage
                       userFirstName={this.state.userFirstName}
@@ -160,9 +153,7 @@ export default class App extends Component {
          }  
       </div>
       </DocumentMeta>
-
       </ThemeProvider>
-
     );
   }
 }

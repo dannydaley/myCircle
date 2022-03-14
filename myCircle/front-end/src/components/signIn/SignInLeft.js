@@ -1,5 +1,4 @@
 import myCircle from '../../Images/myCircle.svg'
-import myCircleStamp from '../../Images/myCircleLogoStamp.svg'
 
 export default function SignInLeft() {
     return (

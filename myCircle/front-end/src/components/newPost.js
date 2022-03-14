@@ -12,12 +12,14 @@ export default class NewPost extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            'author': '',
-            'image': '/images/uploads/Daley-change-image-1640178860940-706035700.png',
-            "link":"https://dannydaley.github.io/eightBall/",            
+            'author': this.props.userUserName,
+            'authorFirstName': this.props.userFirstName,
+            'authorLastName': this.props.userLastName,
+            'image': this.props.userProfilePicture,
+            "link":"",            
             'postContent': '',
             "date":"28-12-2019",
-            "recipient":null            
+            "recipient": null            
         }
     }
     
@@ -25,9 +27,7 @@ export default class NewPost extends React.Component {
     onContentChange = (event) => {
         this.setState({postContent: event.target.value})        
     }
-
     onPostSubmit = () => {
-        this.state.author = this.props.userUserName   
         if (this.state.postContent.length < 5) {
             console.log("post not long enough")
             return
@@ -60,6 +60,7 @@ export default class NewPost extends React.Component {
                 <TextField style={{backgroundColor: 'white', opacity: '0.5', borderRadius: '5px', width: '50%'}} sx={{mt: 2, mr: 2}}
                     id="filled-textarea"
                     label="New Post"
+                    
                     placeholder="I've got something to say!"
                     multiline
                     onChange={this.onContentChange}                    
