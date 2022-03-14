@@ -117,7 +117,7 @@ const GET_ALL_USERS_FRIENDS = "SELECT * FROM friendships WHERE user1 =? OR user2
 const GET_POSTS_BY_AUTHOR = "SELECT * FROM `blog` WHERE author = ? ORDER BY id DESC" // SQL command
 const GET_POSTS_BY_AUTHOR_BY_CIRCLE = "SELECT * FROM `blog` WHERE author = ? AND circle = ? ORDER BY id DESC" // SQL command
 const GET_RECENT_POSTS_BY_AUTHOR = "SELECT * FROM blog WHERE author = ? AND recipient = ? ORDER BY id DESC LIMIT 5"; // SQL command
-const SQL_ADD_BLOG_POST = "INSERT INTO `blog` (author, image,  link, circle, content,date, recipient, likes, dislikes) VALUES(?,?,?,?,?,?,?,?,?)" // 
+const SQL_ADD_BLOG_POST = "INSERT INTO `blog` (author, image, circle, content, date, recipient, likes, dislikes) VALUES(?,?,?,?,?,?,?,?)" // 
 const SQL_UPDATE_BLOG =  "UPDATE `blog` SET title = ?, image = ?, link = ?, author = ?, content = ? WHERE id = ?" //SQL command
 const SQL_UPDATE_USER_PROFILE = "UPDATE users SET profilePicture = ?, aboutMe = ? WHERE name = ?" // SQL command
 const SQL_UPDATE_USERS_PINNED_POST = "UPDATE users SET pinnedPost = ? WHERE name = ?" // SQL command
@@ -518,7 +518,7 @@ app.post('/getUserProfile', (req, res) => {
 })
 
 app.get('/getAllFriends', (req, res) => {
-  let user = 'mjpswanwick'
+  let user = 'Daley'
   SQLdatabase.all(GET_ALL_USERS_FRIENDS, user, user, (err, rows) => {
     if(err){
       console.log("error at database with friendships")
@@ -542,11 +542,14 @@ app.post('/newPost', (req, res) => {
       console.log("failed on profile pic grab")
       res.status(500).send(err.message);
       return;
-    } 
-    req.body.postData.image = profilePicture
-    SQLdatabase.run(SQL_ADD_BLOG_POST, [ req.body.postData.author, req.body.postData.image.profilePicture, req.body.postData.link, req.body.circle, req.body.postData.postContent,req.body.postData.data, req.body.postData.recipient, 0, 0],  (err, rows) => {
+    }     
+    console.log(profilePicture)
+    console.log(req.body.postData)
+
+    SQLdatabase.run(SQL_ADD_BLOG_POST, [ req.body.postData.author, profilePicture.profilePicture, req.body.circle, req.body.postData.postContent,req.body.postData.date, req.body.postData.recipient, 0, 0],  (err, rows) => {
       if (err) {
         console.log("error")
+        console.log(err)
         res.status(500).send(err.message);
         return;
       }    
@@ -585,66 +588,85 @@ console.log("server.js running on port " + process.env.PORT)
 
 
 
-const getStuf = async (friendList) => {
-  let feed = []
-    console.log("starting function")
-    const innerFunc = () => {
-      for (let i = 0; i < friendList.length; i++) {
-      SQLdatabase.all("SELECT * FROM blog WHERE author = ?", friendList[i], (err, rows) => {
-          if (err){
-            console.log("error at posts")
-            return
-          }          
-          console.log(i)
-          feed.push(rows) 
-        })
-      }
-    }
-    await innerFunc().then(console.log(feed))
-
-}
-
 
 //#region GET FEEDS
-app.get('/getFeedWithFriends', (req, res) => {  
+app.post('/getFeedFriendsOnly', (req, res) => {  
   // grab all posts
-  let user = 'Daley'
-  let friendsList = []  
-  let feed = {
-    "entries" : []
-  }  
-SQLdatabase.all(GET_ALL_USERS_FRIENDS,  [user, user], async (err, rows) => {
+  let user = req.body.user
+  let friendsList = []
+  friendsList[0] = user  
+  SQLdatabase.all(GET_ALL_USERS_FRIENDS,  [user, user], async (err, rows) => {
     if(err){
       console.log("error at database with friendships")      
       return
-    }  
-  rows.forEach(element => element.user1 === user ? friendsList.push(element.user2) : friendsList.push(element.user1))
-  let filter = []
-  let feed = []
-  SQLdatabase.all("SELECT * FROM blog", (err, rows) => {
-      if (err) {
-        console.log(err)
-      }
-      feed = rows     
-      feed.forEach(element => friendsList.forEach(friend => element.author === friend ? filter.push(element) : ''))
-      console.log(friendsList)
-      console.log(filter)
-      res.json(filter)
-    })     
+    } 
+
+    "1,2,3,4,5"
+
+    rows.forEach(element => element.user1 === user ? friendsList.push(element.user2) : friendsList.push(element.user1))
+    let filter = []
+    let feed = []
+    if (req.body.circle === "general") {
+      await SQLdatabase.all("SELECT * FROM blog WHERE author IN = ("+myListStr+")", async (err, rows) => {
+        if (err) {
+          console.log(err)
+        }
+        feed = rows     
+        await feed.forEach(element => friendsList.forEach(friend => {
+          if (element.author === friend){
+            if (filter[0] !== undefined && element.id < filter[0].id) {
+              filter.unshift(element)
+            } else {
+              filter.push(element)
+            }         
+          } else {
+            return
+          }
+        }))
+        res.json(filter)      
+      })
+    }
+    else {
+      await SQLdatabase.all(GET_ALL_POSTS_BY_CIRCLE, req.body.circle, async (err, rows) => {
+        if (err) {
+          console.log(err)
+        }
+        feed = rows     
+        await feed.forEach(element => friendsList.forEach(friend => {
+          if (element.author === friend){
+              filter.push(element)                    
+          } else {
+            return
+          }
+        }))
+        res.json(filter)      
+      })
+    }
   })  
 })
 
-app.get('/getFriendsPosts', async (req, res) => {
+app.get('/getFriendsPosts', (req, res) => {
   let friends = ["newUser1234","mjpswanwick","Rodwayyy","yojivia","Daley90210","angied65"]
   let filter = []
   let feed = []
-  SQLdatabase.all("SELECT * FROM blog", (err, rows) => {
+  SQLdatabase.all("SELECT * FROM blog", async (err, rows) => {
       if (err) {
         console.log(err)
       }
       feed = rows     
-      feed.forEach(element => friends.forEach(friend => element.author === friend ? filter.push(element) : ''))
-      res.json(filter)
+       await feed.forEach(element => friends.forEach(friend => {
+         if (element.author === friend){
+           if (filter[0] !== undefined && element.id < filter[0].id) {
+             filter.unshift(element)
+           }
+           else {
+             filter.push(element)
+           }         
+        } else {
+          return
+        } 
+      }))       
+         res.json(filter)      
     })
   })
     

@@ -12,13 +12,14 @@ import { Link, useParams } from 'react-router-dom';
 export default function FeedPost(props) {
     
     const { onRouteChange, author, profilePicture, content, postId, likes, dislikes } = props;
+
+
     return (
         <div>
             <CardContent sx={{display: 'flex', mb: 2}}>
                 <Link to={`/${author}`}>
                     <img src={
                         'http://localhost:3001/public/' + profilePicture
-                        // process.env.SERVER + process.env.SERVERPUBLICDIRECTORY + props.profilePicture
                         } width="200px" height="150px" style={{ boxShadow: "1px 3px 5px 0px black", mb: 3 }}                        
                     />
                 </Link>                     

@@ -35,11 +35,13 @@ export default class Feed extends React.Component {
     }  
     this.setState({ dataIsLoaded: false, circle: newCircle })   
     //FETCH IS A GET REQUEST BY DEFAULT, POINT IT TO THE ENDPOINT ON THE BACKEND
-    fetch('http://localhost:3001/getFeed', {
+    fetch('http://localhost:3001/getFeedFriendsOnly', {
       method: 'post',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
-      circle: newCircle
+        user: this.props.userUserName,
+        profilePicture: this.props.userProfilePicture,
+        circle: newCircle
       })    
     })
     //TURN THE RESPONSE INTO A JSON OBJECT
