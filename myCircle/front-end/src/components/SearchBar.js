@@ -51,7 +51,7 @@ render() {
     <this.Search 
     >
       <this.SearchIconWrapper>
-        <this.SearchIcon />
+        <SearchIcon />
       </this.SearchIconWrapper>
       <this.StyledInputBase
         placeholder="Search…"

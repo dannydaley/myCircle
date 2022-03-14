@@ -58,7 +58,7 @@ import { Routes, Route, Link } from "react-router-dom";
 //   },
 // }));
 
-const delay = ms => new Promise(res => setTimeout(res, ms));
+// const delay = ms => new Promise(res => setTimeout(res, ms));
 
 const delayFunction = async () => {
   await this.delay(1000);
