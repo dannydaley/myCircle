@@ -3,8 +3,27 @@ import InputBase from '@mui/material/InputBase';
 import { styled, alpha } from '@mui/material/styles';
 import MenuIcon from '@material-ui/icons/Menu';
 import SearchIcon from '@material-ui/icons/Search';
+import SearchResults from './searchResults'
 
 export default class SearchBar extends React.Component {
+
+  constructor(props) {
+    super(props)
+    this.state ={
+      searchInput: '',
+      newInput: 'false',
+      renderChild: true,
+      results: []
+    }
+
+    this.handleChildUnmount = this.handleChildUnmount.bind(this);
+  }
+
+handleChildUnmount(){
+  console.log("working?")
+    this.setState({renderChild: false});
+}
+
 
   Search = styled('div')(({ theme }) => ({
     position: 'relative',
@@ -45,20 +64,38 @@ export default class SearchBar extends React.Component {
   }));
 
 
+  delay = ms => new Promise(res => setTimeout(res, ms));
+
+  delayFunction = async () => {
+    await this.delay(500);
+  };
+  onInputChange = async (event) => {
+    this.setState({searchInput: event.target.value, newInput: false})
+    await this.delayFunction()
+    this.setState({newInput: true, renderChild: true})
+
+  }
+
+
 
 render() {
   return (
+    <>
     <this.Search 
     >
       <this.SearchIconWrapper>
         <SearchIcon />
       </this.SearchIconWrapper>
       <this.StyledInputBase
+
+        onChange={this.onInputChange}
         placeholder="Search…"
         inputProps={{ 'aria-label': 'search' }}
       />
-    </this.Search>
-
+      {(this.state.renderChild && this.state.newInput) && this.state.searchInput.length > 2 ? <SearchResults searchInput={this.state.searchInput} unmountMe={this.handleChildUnmount}/> : ''}
+    </this.Search>    
+      
+    </>
   )
 }
 }

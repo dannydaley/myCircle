@@ -36,6 +36,7 @@ function passwordHash(thePassword, theSalt) {
 }
 
 
+
 //#endregion
 
 //#region IMAGE UPLOAD HANDLING
@@ -109,7 +110,7 @@ const GET_ALL_POSTS_BY_CIRCLE = "SELECT * FROM `blog` WHERE circle = ? ORDER BY 
 const GET_ALL_IMAGES_BY_USER = "SELECT * FROM images WHERE ownerUsername = ? ORDER BY postId DESC"
 const GET_PROFILEPICTURE_BY_USERNAME = "SELECT profilePicture FROM users WHERE username = ?"
 const GET_ALL_USERS_FRIENDS = "SELECT * FROM friendships WHERE user1 =? OR user2 = ?"
-const GET_POSTS_BY_AUTHOR = "SELECT * FROM `blog` WHERE author = ? ORDER BY id DESC" // SQL command
+const GET_POSTS_BY_AUTHOR = "SELECT blog.*, users.firstName, users.lastName, users.profilePicture FROM `blog` LEFT OUTER JOIN `users` ON `blog`.`author` = `users`.`username` WHERE author = ? ORDER BY id DESC" // SQL command
 const GET_POSTS_BY_AUTHOR_BY_CIRCLE = "SELECT * FROM `blog` WHERE author = ? AND circle = ? ORDER BY id DESC" // SQL command
 const SQL_ADD_BLOG_POST = "INSERT INTO `blog` (author, authorFirstName, authorLastName, image, circle, content, date, recipient, likes, dislikes) VALUES(?,?,?,?,?,?,?,?,?,?)" // 
 const GET_ALL_USERS = "SELECT * FROM users"; // SQL command
@@ -303,6 +304,7 @@ app.post('/signUp', (req, res) => {
     let passwordSalt = generatePepper;
     let storePassword = passwordHash(confirmSignUpPassword, passwordSalt);
     let profilePicture = defaultProfilePicture;
+    
     SQLdatabase.run(SIGN_UP_USER, [ signUpEmail, signUpUserName, signUpFirstName, signUpLastName, storePassword, passwordSalt, profilePicture ], (err, rows) => {
       if (err) {
         console.log("failed to add user to database")
@@ -452,10 +454,11 @@ app.post('/getFeedByUser', (req, res, next) => {
   if (req.body.circle === 'general') {
     SQLdatabase.all(GET_POSTS_BY_AUTHOR, [ req.body.user ], (err, rows) => {
       if (err) {
-        console.log("error at database")
+        console.log("error at database", err)
         res.status(500).send(err.message);
         return;
       }  
+      console.log(rows);
       res.json(rows);
     })
   } else {
@@ -607,6 +610,20 @@ app.post('/getFeedFriendsOnly', (req, res) => {
       })
     }
   })  
+})
+
+
+app.post('/search', (req, res) => {
+  SQLdatabase.all("SELECT firstName, lastName, username, profilePicture, firstname || ' ' || lastname AS full_name FROM users WHERE full_name LIKE '%' || ? || '%' OR username LIKE ? || '%'", [req.body.search, req.body.search], (err, rows) => {
+    if (err) {
+      console.log("Error at database", err)
+      res.json("error at database")
+      return
+    }
+    res.json({
+      status: 'success',
+      results: rows})
+  })
 })
 
 app.listen(process.env.PORT)
