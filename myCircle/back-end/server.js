@@ -247,7 +247,7 @@ app.get('/SQLDatabaseUserActionsSetup', (req, res, next) => {
     SQLdatabase.run('DROP TABLE IF EXISTS `userActions`');
     // create blog table
 
-    SQLdatabase.run('CREATE TABLE `userActions` ( type varchar(255), sender varchar(255), recipient varchar(255), message varchar(255), seen int, date varchar(255), relativePost int)');
+    SQLdatabase.run('CREATE TABLE `userActions` ( type varchar(255), sender varchar(255), recipient varchar(255), message varchar(255), seen int, approved int, date varchar(255), relativePost int)');
     //create base rows
     let rows = userActionsDataJSON.userActions;
     //loop through posts.json to populate rows array
@@ -257,7 +257,7 @@ app.get('/SQLDatabaseUserActionsSetup', (req, res, next) => {
     // populate SQL command with rows array populated from posts.json
     rows.forEach( (row) => {
       // insert rows to table
-      SQLdatabase.run('INSERT INTO `userActions` VALUES(?,?,?,?,?,?,?)', row.type, row.sender, row.recipient, row.message, row.seen, row.date, row.relativePost);
+      SQLdatabase.run('INSERT INTO `userActions` VALUES(?,?,?,?,?,?,?,?)', row.type, row.sender, row.recipient, row.message, row.seen, row.approved, row.date, row.relativePost);
       // increment users post count according to author of currently processed post      
     });
   })
