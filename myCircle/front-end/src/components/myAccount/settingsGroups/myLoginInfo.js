@@ -33,7 +33,7 @@ export default class MyLoginInfo extends React.Component {
             method: 'post',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({
-            username: this.props.userUserName,
+            username: this.props.loggedInUsername,
             email: email,
             password: password,
             changeEmail: changeEmail,

@@ -14,7 +14,7 @@ import me from '../../Images/me.jpg'
 export default class ProfileRightBar extends React.Component {
   
   render () {
-  const { userFirstName, userLastName, userUserName } = this.props
+  const { userFirstName, userLastName, loggedInUsername } = this.props
     return (
       <div style={{position: 'fixed', width: '100vw'}}>
         <React.Fragment >
@@ -22,7 +22,7 @@ export default class ProfileRightBar extends React.Component {
         <Container  maxWidth="sm" sx={{float: 'right',  bgcolor: '#343434', height: '80vh', width: 300, mr: 4 ,mt: 16, display: 'flex', flexDirection: 'column',  justifyContent: 'flex-start', alignItems: 'center'}} >
         <Typography variant="h6" component="div" color="white" sx={{textAlign: 'center', mt: 2, paddingTop: 1, paddingBottom: 2, bgcolor: 'none' }}>{userFirstName}'s images</Typography>
           <div style={{height: '100%', overflow: 'hidden'}}>
-            <RightBarImages userUserName={userUserName}/>
+            <RightBarImages loggedInUsername={loggedInUsername}/>
           </div>
         </Container>
       </React.Fragment>

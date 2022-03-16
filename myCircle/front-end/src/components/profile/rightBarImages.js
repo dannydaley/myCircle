@@ -52,7 +52,7 @@ componentDidMount = () => {
     method: 'post',
     headers: {'Content-Type': 'application/json'},
     body: JSON.stringify({
-      user: this.props.userUserName      
+      user: this.props.loggedInUsername      
     })    
   })
   //TURN THE RESPONSE INTO A JSON OBJECT

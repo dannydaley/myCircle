@@ -48,7 +48,7 @@ export default class MyAccountSettings extends React.Component {
       method: 'post',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
-        user: this.props.userUserName,
+        user: this.props.loggedInUsername,
         settings: newSettings
       })    
     })
@@ -71,7 +71,7 @@ export default class MyAccountSettings extends React.Component {
 
   settingsGroup = (selection) => {
     switch (selection) {
-      case 'My information' : return <MyInformation settings={this.state.settings} userUserName={this.props.userUserName}/>;
+      case 'My information' : return <MyInformation settings={this.state.settings} loggedInUsername={this.props.loggedInUsername}/>;
       case 'My Circles' : return <MyCircles settings={this.state.settings}/>;
       case 'My friends' :return <MyFriends settings={this.state.settings}/>
       case 'My login info' :return <MyLoginInfo settings={this.state.settings} mountComponent={this.componentDidMount}/>
@@ -81,7 +81,7 @@ export default class MyAccountSettings extends React.Component {
 
   render () {   
     
-    const { onRouteChange,  userFirstName, userLastName,userProfilePicture, userUserName } = this.props; 
+    const { onRouteChange,  userFirstName, userLastName,userProfilePicture, loggedInUsername } = this.props; 
     //SETTING UP ACCESS TO THE STATE VARIABLES   
     const { circle, posts, dataIsLoaded } = this.state;
     // IF THE DATA ISNT LOADED YET, LOAD AN ALTERNATIVE WHILE WE WAIT   

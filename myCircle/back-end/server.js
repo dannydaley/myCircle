@@ -94,7 +94,10 @@ let postDataJSON = require("./database/posts.json");
 let userDataJSON = require("./database/users.json");
 let imagesDataJSON = require("./database/images.json");
 let friendshipsDataJSON = require("./database/friendships.json");
-  
+let userActionsDataJSON = require("./database/userActions.json")
+ 
+
+const CHECK_THAT_USERS_ARE_FRIENDS = "SELECT * FROM friendships WHERE (user1 = ? OR user2 = ?) AND (user1 = ? OR user2 = ?)"
 const GET_USER_GENERAL_INFO_BY_USERNAME = "SELECT firstName, lastName, aboutMe, location, education, work, profilePicture FROM users WHERE username = ?"
 const GET_USER_PROFILE_INFO_BY_USERNAME = "SELECT firstName, lastName, aboutMe, profilePicture, coverPicture FROM users WHERE username = ?"
 const GET_POST_VOTES_BY_POST_ID = "SELECT likes, dislikes FROM blog WHERE id = ?"
@@ -237,6 +240,32 @@ app.get('/SQLDatabaseFriendshipsSetup', (req, res, next) => {
   res.send("friendships-db-done");
 })
 
+app.get('/SQLDatabaseUserActionsSetup', (req, res, next) => {  
+  //these queries must run one by one - dont try and delete and create tables at the same time.
+  SQLdatabase.serialize( () => {
+    //delete the table if it exists..
+    SQLdatabase.run('DROP TABLE IF EXISTS `userActions`');
+    // create blog table
+
+    SQLdatabase.run('CREATE TABLE `userActions` ( type varchar(255), sender varchar(255), recipient varchar(255), message varchar(255), seen int, date varchar(255), relativePost int)');
+    //create base rows
+    let rows = userActionsDataJSON.userActions;
+    //loop through posts.json to populate rows array
+    // for (let i = 0; i < userActionsDataJSON.userActions.length; i++) {
+    //   rows[i] = [userActionsDataJSON.userActions.[i].user1, userActionsDataJSON.userActions.[i].user2]
+    // }
+    // populate SQL command with rows array populated from posts.json
+    rows.forEach( (row) => {
+      // insert rows to table
+      SQLdatabase.run('INSERT INTO `userActions` VALUES(?,?,?,?,?,?,?)', row.type, row.sender, row.recipient, row.message, row.seen, row.date, row.relativePost);
+      // increment users post count according to author of currently processed post      
+    });
+  })
+  // render success page
+  console.log("userActions table built");
+  res.send("userActions-db-done");
+})
+
 /*==============================DEBUGGING AND TESTING ENDPOINTS========================*/
 /* GET all users */
 app.get('/getAllUsers', (req, res, next) => {
@@ -276,6 +305,17 @@ app.get('/getAllPosts', (req, res, next) => {
 app.get('/getAllFriendships', (req, res, next) => {
   // grab all user data
   SQLdatabase.all("SELECT * FROM friendships", [], (err, rows) => {
+    if (err) {
+      res.status(500).send(err.message);
+      return;
+    }
+    res.send(rows);
+  })
+})
+
+app.get('/getAllUserActions', (req, res, next) => {
+  // grab all user data
+  SQLdatabase.all("SELECT * FROM userActions", [], (err, rows) => {
     if (err) {
       res.status(500).send(err.message);
       return;
@@ -448,28 +488,46 @@ app.post('/getFeed', (req, res, next) => {
     })
   }
 })
+
 app.post('/getFeedByUser', (req, res, next) => {  
-  // grab all posts
-  if (req.body.circle === 'general') {
-    SQLdatabase.all(GET_POSTS_BY_AUTHOR, [ req.body.user, req.body.user ], (err, rows) => {
-      if (err) {
-        console.log("error at database", err)
-        res.status(500).send(err.message);
-        return;
-      }       
-      res.json(rows);
-    })
-  } else {
-    SQLdatabase.all(GET_POSTS_BY_AUTHOR_BY_CIRCLE, [ req.body.user, req.body.circle ], (err, rows) => {
-      if (err) {
-        console.log("error at database")
-        res.status(500).send(err.message);
-        return;
-      }   
-      res.json(rows);
-    })
-  }
-})
+  let loggedInUsername = req.body.loggedInUsername;
+  let userProfileToGet = req.body.userProfileToGet;
+  let isFriendsWithLoggedInUser = false;
+  SQLdatabase.all(CHECK_THAT_USERS_ARE_FRIENDS, [ loggedInUsername, loggedInUsername, userProfileToGet, userProfileToGet ], (err, rows) => {
+    if(err){
+      console.log("error at database with friendships");
+      res.json("error at database with friendships");
+      return
+    }    
+    rows.length > 0 || loggedInUsername === userProfileToGet ? isFriendsWithLoggedInUser = true : isFriendsWithLoggedInUser = false;
+
+    if (req.body.circle === 'general') {
+      SQLdatabase.all(GET_POSTS_BY_AUTHOR, [ userProfileToGet, userProfileToGet ], (err, posts) => {
+        if (err) {
+          console.log("error at database", err);
+          res.status(500).send(err.message);
+          return;
+        } 
+        res.json({
+          isFriendsWithLoggedInUser: isFriendsWithLoggedInUser,
+          posts: posts
+        });
+      })
+    } else {
+      SQLdatabase.all(GET_POSTS_BY_AUTHOR_BY_CIRCLE, [ userProfileToGet, userProfileToGet ], (err, posts) => {
+        if (err) {
+          console.log("error at database");
+          res.status(500).send(err.message);
+          return;
+        }   
+        res.json({
+          isFriendsWithLoggedInUser: isFriendsWithLoggedInUser,
+          posts: posts
+        });
+      });
+    }
+  });
+});
 //#endregion GET FEEDS
 
 //#region GET USER INFO 
@@ -510,20 +568,25 @@ app.post('/getUserGeneralInfo', (req, res) => {
 app.post('/getUserProfile', (req, res) => {
   let loggedInUsername = req.body.loggedInUsername
   let userProfileToGet = req.body.userProfileToGet
-  let isFriendsWithLoggedInUser = false
+  
   SQLdatabase.all("SELECT * FROM friendships WHERE (user1 = ? OR user2 = ?) AND (user1 = ? OR user2 = ?)", [ loggedInUsername, loggedInUsername, userProfileToGet, userProfileToGet ], (err, rows) => {
     if(err){
       console.log("error at database with friendships")
       res.json("error at database with friendships")
       return
-    }    
-    isFriendsWithLoggedInUser = true
+    }
+    let isFriendsWithLoggedInUser = false        
+    rows.length > 0 || loggedInUsername === userProfileToGet ? isFriendsWithLoggedInUser = true : isFriendsWithLoggedInUser = false;
     SQLdatabase.get(GET_USER_PROFILE_INFO_BY_USERNAME, userProfileToGet, (err, rows) => {
       if (err) {
         console.log("error at database")
         res.json("error at db")
         return
       }    
+      console.log({
+        isFriendsWithLoggedInUser: isFriendsWithLoggedInUser,
+        profileData: rows
+      })
       res.json({
         isFriendsWithLoggedInUser: isFriendsWithLoggedInUser,
         profileData: rows
@@ -598,34 +661,88 @@ app.post('/votePost', (req, res) => {
 
 //#region GET FEEDS
 app.post('/getFeedFriendsOnly', (req, res) => {  
+    // grab all user data 
   // grab all posts
   let user = req.body.user
-  let friendsList = []
+  let friendsList = []  
   friendsList[0] = "'" + user + "'"  
-  SQLdatabase.all(GET_ALL_USERS_FRIENDS,  [user, user], (err, rows) => {
-    if(err){
-      console.log("error at database with friendships")      
-      return
+  SQLdatabase.all("SELECT * FROM userActions WHERE recipient = ? LIMIT 50", [req.body.user], (err, rows) => {
+    if (err) {
+      res.status(500).send(err.message);
+      return;
     }
-    rows.forEach(element => element.user1 === user ? friendsList.push("'"+ element.user2 + "'") : friendsList.push("'"+element.user1+"'"))
-    if (req.body.circle === "general") {
-      SQLdatabase.all("SELECT * FROM blog WHERE author IN  ("+friendsList.join(',')+") AND ((postStrict = 0 OR circle = 'general') AND recipient = ?) ORDER BY id DESC", [ 'none' ],(err, rows) => {
-        if (err) {
-          console.log(err)
-        }
-        res.json(rows)      
-      })
-    }
-    else {
+    let userActions = rows;   
+    SQLdatabase.all(GET_ALL_USERS_FRIENDS,  [user, user], (err, rows) => {
+      if(err){
+        console.log("error at database with friendships")      
+        return
+      }
+      rows.forEach(element => element.user1 === user ? friendsList.push("'"+ element.user2 + "'") : friendsList.push("'"+element.user1+"'"))
+      if (req.body.circle === "general") {
+        SQLdatabase.all("SELECT * FROM blog WHERE author IN  ("+friendsList.join(',')+") AND ((postStrict = 0 OR circle = 'general') AND recipient = ?) ORDER BY id DESC", [ 'none' ],(err, rows) => {
+          if (err) {
+            console.log(err)
+          }
+          console.log(userActions)
+          res.json({
+            posts: rows,
+            userActions: userActions})      
+        })
+      } else {
       SQLdatabase.all("SELECT * FROM blog WHERE circle = ? AND author IN ("+friendsList.join(',')+") ORDER BY id DESC", req.body.circle, (err, rows) => {
         if (err) {
           console.log(err)
         }
-        res.json(rows)      
+        console.log(userActions)
+        res.json({
+          posts: rows,
+          userActions: userActions  
+        })  
       })
     }
-  })  
+  })
 })
+})
+  
+app.post('/friendRequest', (req, res) => {
+  console.log(req.body)
+  let type = "friendRequest";  
+  let { sender, recipient } = req.body  
+  let message = " wants to be your friend!";
+  let seen = false;
+  let relativePost = null  
+  SQLdatabase.get("SELECT * FROM userActions WHERE type = ? AND sender = ?", [type, sender], (err, rows) => {
+    if (err) {
+      console.log(err)
+      res.json(err)
+      return
+    }
+    if (!rows) {
+      SQLdatabase.run("INSERT INTO userActions (type, sender, recipient, message, seen, date, relativePost) VALUES(?,?,?,?,?,date(),?)", [type, sender, recipient, message, seen, relativePost] , (err, rows) => {
+        if (err) {
+          console.log(err)
+          res.status(500).send(err.message);
+          return;
+        }
+        console.log("friend request sent")
+        res.json("request sent")
+      })
+    } else {
+      SQLdatabase.run("DELETE FROM userActions WHERE type = ? AND sender = ?", [type, sender], (err, rows) => {
+        if (err){
+          console.log(err)
+          res.json(err)
+          return
+        }
+        console.log("friend request deleted")
+        res.json("request deleted")
+      })
+    }
+  })
+})
+
+
+
 
 
 app.post('/search', (req, res) => {

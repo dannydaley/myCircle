@@ -133,7 +133,7 @@ export default class NewPost extends React.Component {
     }
 
     render () {
-        const { onRouteChange, userFirstName, userLastName, userUserName, circle } = this.props;           
+        const { onRouteChange, userFirstName, userLastName, circle } = this.props;           
         return (
             <div style={{marginTop: '20px'}}>
                 <label for="file-input">

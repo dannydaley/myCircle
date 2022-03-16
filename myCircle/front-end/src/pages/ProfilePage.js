@@ -8,7 +8,7 @@ export default class ProfilePage extends React.Component {
      constructor(props) {
         super(props);
         this.state = {      
-               isFriendsWithLoggedInUser: '',      
+               isFriendsWithLoggedInUser: false,
                firstName:'',
                lastName: '',
                username: this.props.username,
@@ -39,23 +39,37 @@ componentDidMount = () => {
                lastName: data.profileData.lastName,
                aboutMe: data.profileData.aboutMe,
                profilePicture: data.profileData.profilePicture,
-               coverPicture: data.profileData.coverPicture
+               coverPicture: data.profileData.coverPicture,
+               contentIsLoaded: true
           })
-     }).then(               
-          this.setState({contentIsLoaded: true })         
-     )
+     })
 }
-     render() {
-          
-          const { changeAlertNotifications, loggedInUsername, userProfileToGet } = this.props 
-          const {  firstName,lastName,aboutMe, profilePicture, contentIsLoaded, coverPicture } = this.state
+
+     friendRequest = () => {
+          fetch('http://localhost:3001/friendRequest', {
+               method: 'post',
+               headers: {'Content-Type': 'application/json'},
+               body: JSON.stringify({
+                    sender: this.props.loggedInUsername,
+                    recipient: this.props.userProfileToGet
+               })    
+          }).then(response => response.json())
+          .then(data => {
+               console.log(data)
+          })
+     }
+     
+     render() {       
+          const { changeAlertNotifications, loggedInUsername, userProfileToGet, userFirstName, userLastName, userProfilePicture } = this.props 
+          const {  firstName,lastName,aboutMe, profilePicture, contentIsLoaded, coverPicture, isFriendsWithLoggedInUser } = this.state
           if (contentIsLoaded) {
-               console.log(this.state.profilePicture)
                return (
                     <>               
-                         <ProfileOverlay userFirstName={firstName} userLastName={lastName} userProfilePicture={profilePicture} userProfileToGet={userProfileToGet} changeAlertNotifications={changeAlertNotifications} />
+                         <ProfileOverlay userFirstName={firstName} userLastName={lastName} userProfilePicture={profilePicture} userProfileToGet={userProfileToGet} changeAlertNotifications={changeAlertNotifications} isFriendsWithLoggedInUser={isFriendsWithLoggedInUser} friendRequest={this.friendRequest}/>
                          <ProfileHeader  coverPicture={coverPicture}/>
-                         {this.state.isFriendsWithLoggedInUser ? <ProfileFeed userProfileToGet={userProfileToGet} loggedInUsername={loggedInUsername}  userFirstName={this.props.userFirstName} userLastName={this.props.userLastName} userProfilePicture={this.props.userProfilePicture}/> : ''}
+                        
+                          <ProfileFeed userProfileToGet={userProfileToGet}  isFriendsWithLoggedInUser={isFriendsWithLoggedInUser} loggedInUsername={loggedInUsername}  userFirstName={userFirstName} userLastName={userLastName} userProfilePicture={userProfilePicture}/> 
+          
                          {/* <ProfileFeed userProfileToGet={userProfileToGet} loggedInUsername={loggedInUsername}  userFirstName={this.props.userFirstName} userLastName={this.props.userLastName} userProfilePicture={this.props.userProfilePicture}/> */}
                     </>
                )

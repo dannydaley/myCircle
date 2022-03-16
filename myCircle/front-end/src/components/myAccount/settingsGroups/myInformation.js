@@ -57,7 +57,7 @@ export default class MyInformation extends React.Component {
             method: 'post',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({
-            username: this.props.userUserName,
+            username: this.props.loggedInUsername,
             firstName: firstName,
             lastName: lastName,            
             aboutMe : aboutMe,
@@ -83,12 +83,13 @@ export default class MyInformation extends React.Component {
           newCircle = 'general'
         }  
         this.setState({ dataIsLoaded: false,  })   
+        console.log(this.props.loggedInUsername)
         //FETCH IS A GET REQUEST BY DEFAULT, POINT IT TO THE ENDPOINT ON THE BACKEND
         fetch('http://localhost:3001/getUserGeneralInfo', {
           method: 'post',
           headers: {'Content-Type': 'application/json'},
           body: JSON.stringify({
-          user: this.props.userUserName
+          user: this.props.loggedInUsername
           })    
         })
         //TURN THE RESPONSE INTO A JSON OBJECT

@@ -41,15 +41,26 @@ export default class App extends Component {
       route: 'signin',
       isSignedIn: false,
       mailNotifications: 0,
-      alertNotifications: 0,
+      alertNotifications: 10,
       userFirstName: '',
       userLastName: '',
       loggedInUsername: '',
       userProfilePicture: '',
-      UIColor: ''
+      UIColor: '',
+      notifications: []
     }
   }
   // const isLoggedIn = useSelector(state => state.isLoggedIn),
+
+  setNotifications = (data) => {
+    console.log(data)
+    let count = 0;
+    data.forEach(element => (
+    
+      element.seen === 0 ? count++ : ""))
+    this.setState({ alertNotifications: count, notifications: data })  
+  }
+
 
   onRouteChange = (route) => {
     if (route === 'signout') {
@@ -97,6 +108,7 @@ export default class App extends Component {
                 <Route path="/" 
                   element={
                     <FeedPage
+                      setNotifications={this.setNotifications}
                       changeMailNotifications={this.changeMailNotifications}
                       onRouteChange={this.onRouteChange}
                       userFirstName={this.state.userFirstName}

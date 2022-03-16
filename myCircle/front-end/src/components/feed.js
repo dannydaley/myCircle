@@ -51,9 +51,10 @@ export default class Feed extends React.Component {
     .then(data => {    
       this.setState({ 
         circle: newCircle,     
-        posts: data,
+        posts: data.posts,
         dataIsLoaded: true
       });
+      this.props.setNotifications(data.userActions)
     })
   }
   changeCircle = (newCircle) => { 

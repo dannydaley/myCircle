@@ -17,6 +17,7 @@ export default class ProfileFeed extends React.Component {
     super(props);
     this.state = {
       circle: props.circle,
+      isFriendsWithLoggedInUser: this.props.isFriendsWithLoggedInUser,
         posts: [],
         dataIsLoaded: false
     }
@@ -34,15 +35,16 @@ export default class ProfileFeed extends React.Component {
   componentDidMount = async (newCircle) => {
     if (!newCircle) {
       newCircle = 'general'
-    }  
-    console.log(this.props.userUserName)
+    }    
     this.setState({ dataIsLoaded: false, circle: newCircle })   
     //FETCH IS A GET REQUEST BY DEFAULT, POINT IT TO THE ENDPOINT ON THE BACKEND
     fetch('http://localhost:3001/getFeedByUser', {
       method: 'post',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
-        user: this.props.userProfileToGet,
+        loggedInUsername: this.props.loggedInUsername,
+   
+        userProfileToGet: this.props.userProfileToGet,        
         circle: newCircle
       })    
     })
@@ -50,13 +52,16 @@ export default class ProfileFeed extends React.Component {
     .then(response => response.json())
     .then(await this.delayFunction())
     // WHAT WE DO WITH THE DATA WE RECEIVE (data => console.log(data)) SHOULD SHOW WHAT WE GET
-    .then(data => {    
-      this.setState({ 
+    .then(data => {   
+      console.log(data) 
+      this.setState({         
         circle: newCircle,     
-        posts: data,
+        posts: data.posts,
         dataIsLoaded: true
       });
     })
+    console.log("on assign")
+    
   }
 
   changeCircle = (newCircle) => { 
@@ -64,9 +69,11 @@ export default class ProfileFeed extends React.Component {
   }
 
   render () {   
+
+    console.log(this.state.isFriendsWithLoggedInUser)
     const { userProfileToGet, loggedInUsername } = this.props; 
     //SETTING UP ACCESS TO THE STATE VARIABLES   
-    const { circle, posts, dataIsLoaded } = this.state;
+    const { circle, posts, dataIsLoaded, isFriendsWithLoggedInUser } = this.state;
     // IF THE DATA ISNT LOADED YET, LOAD AN ALTERNATIVE WHILE WE WAIT   
     if (!dataIsLoaded) {
       return (
@@ -98,9 +105,10 @@ export default class ProfileFeed extends React.Component {
               mr:2,
               mt: 12
               }}>
+               
               <NewPost
                 recipient={userProfileToGet}
-                userUserName={loggedInUsername}
+                loggedInUserName={loggedInUsername}
                 userFirstName={this.props.userFirstName}
                 userLastName={this.props.userLastName}
                 userProfilePicture={this.props.userProfilePicture}
@@ -131,18 +139,36 @@ export default class ProfileFeed extends React.Component {
         </div>
       </div>
       )
-    } else {
-    // OTHERWISE RUN THE GOOD STUFF
-      return (
+    } else {      
+      if (!isFriendsWithLoggedInUser) {
+        return (
         <div>
           <div style={{backgroundColor: '#010101', display: 'flex', justifyContent: 'space-between', paddingBottom: '100px', minHeight: '100vh'}}>
             <div style={{width: '30%', height: '100px'}}></div>
                 <React.Fragment>              
                     <CssBaseline />
                     <Container maxWidth="lg" sx={{zIndex: 10, bgcolor: '#343434', borderRadius: '0px 0px 30px 30px', width: '100%', pb: 2, ml: 2, mr:2,  mt: 12}}>
+                    <Typography>Add this user as a friend to interact with them</Typography>
+                    </Container>
+                </React.Fragment>
+            <div
+              style={{width: '30%', height: '100px'}}>
+            </div>
+          </div>       
+        </div>
+      ); 
+      }
+      else {
+      return (
+        <div>
+          <div style={{backgroundColor: '#010101', display: 'flex', justifyContent: 'space-between', paddingBottom: '100px', minHeight: '100vh'}}>
+            <div style={{width: '30%', height: '100px'}}></div>
+                <React.Fragment>              
+                    <CssBaseline />
+                    <Container maxWidth="lg" sx={{zIndex: 10, bgcolor: '#343434', borderRadius: '0px 0px 30px 30px', width: '100%', pb: 2, ml: 2, mr:2,  mt: 12}}>     
                         <NewPost
                           recipient={userProfileToGet}
-                          userUserName={loggedInUsername}
+                          loggedInUsername={loggedInUsername}
                           userFirstName={this.props.userFirstName}
                           userLastName={this.props.userLastName}
                           userProfilePicture={this.props.userProfilePicture}
@@ -168,6 +194,9 @@ export default class ProfileFeed extends React.Component {
                         >
                           End of posts
                         </Typography>
+
+
+
                     </Container>
                 </React.Fragment>
             <div
@@ -176,6 +205,10 @@ export default class ProfileFeed extends React.Component {
           </div>       
         </div>
       );
+
+      }
+    // OTHERWISE RUN THE GOOD STUFF    
+
     }
   } 
 }

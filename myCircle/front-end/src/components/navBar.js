@@ -79,7 +79,6 @@ const delayFunction = async () => {
   };
 
   const handleMenuClose = () => {
-    delayFunction();
     setAnchorEl(null);
     handleMobileMenuClose();
   };
