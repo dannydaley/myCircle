@@ -20,7 +20,7 @@ export default function FeedPost(props) {
                 <Link to={`/${authorUsername}`}>
                     <img src={
                         'http://localhost:3001/public/' + profilePicture
-                        } width="200px" height="150px" style={{ boxShadow: "1px 3px 5px 0px black", mb: 3 }}                        
+                        } width="100px" height="100px" style={{ boxShadow: "1px 3px 5px 0px black", mb: 3 }}                        
                     />
                 </Link>                     
                 <div style={{width: '80%', marginLeft: '5%'}}>
@@ -33,7 +33,6 @@ export default function FeedPost(props) {
                         {content}
                     </Typography>
                 </div>
-
             </CardContent>
             <PostActions postId={postId} likes={likes} dislikes={dislikes} />
             <Divider variant="middle" />

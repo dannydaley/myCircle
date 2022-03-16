@@ -105,14 +105,14 @@ const UPDATE_EMAIL = "UPDATE users SET email = ? WHERE email = ?"
 const UPDATE_USER_GENERAL_INFO = "UPDATE users SET firstName = ?, lastName = ?, aboutMe = ?, location = ?, education = ?, work = ? WHERE username = ?"
 const FIND_USER = "SELECT * FROM users WHERE email = ?"
 const SIGN_UP_USER = "INSERT INTO users (email, username, firstName,lastName, password, passwordSalt, profilePicture) VALUES(?,?,?,?,?,?,?)"
-const GET_ALL_POSTS = "SELECT * FROM `blog` ORDER BY id DESC"; // SQL command
+const GET_ALL_POSTS = "SELECT * FROM `blog` WHERE postStrict = 0 ORDER BY id DESC"; // SQL command
 const GET_ALL_POSTS_BY_CIRCLE = "SELECT * FROM `blog` WHERE circle = ? ORDER BY id DESC"; // SQL command
 const GET_ALL_IMAGES_BY_USER = "SELECT * FROM images WHERE ownerUsername = ? ORDER BY postId DESC"
 const GET_PROFILEPICTURE_BY_USERNAME = "SELECT profilePicture FROM users WHERE username = ?"
 const GET_ALL_USERS_FRIENDS = "SELECT * FROM friendships WHERE user1 =? OR user2 = ?"
-const GET_POSTS_BY_AUTHOR = "SELECT blog.*, users.firstName, users.lastName, users.profilePicture FROM `blog` LEFT OUTER JOIN `users` ON `blog`.`author` = `users`.`username` WHERE author = ? ORDER BY id DESC" // SQL command
+const GET_POSTS_BY_AUTHOR = "SELECT blog.*, users.firstName, users.lastName, users.profilePicture FROM `blog` LEFT OUTER JOIN `users` ON `blog`.`author` = `users`.`username` WHERE author = ? OR recipient = ? ORDER BY id DESC" // SQL command
 const GET_POSTS_BY_AUTHOR_BY_CIRCLE = "SELECT * FROM `blog` WHERE author = ? AND circle = ? ORDER BY id DESC" // SQL command
-const SQL_ADD_BLOG_POST = "INSERT INTO `blog` (author, authorFirstName, authorLastName, image, circle, content, date, recipient, likes, dislikes) VALUES(?,?,?,?,?,?,?,?,?,?)" // 
+const SQL_ADD_BLOG_POST = "INSERT INTO `blog` (author, authorFirstName, authorLastName, image, circle, content, date, recipient, likes, dislikes, postStrict) VALUES(?,?,?,?,?,?,?,?,?,?,?)" // 
 const GET_ALL_USERS = "SELECT * FROM users"; // SQL command
 
 app.get('/updateImages', (req, res) => {
@@ -167,17 +167,17 @@ app.get('/SQLDatabaseBlogSetup', (req, res, next) => {
     //delete the table if it exists..
     SQLdatabase.run('DROP TABLE IF EXISTS `blog`');
     // create blog table
-    SQLdatabase.run('CREATE TABLE `blog` ( id INTEGER PRIMARY KEY AUTOINCREMENT, author varchar(255), authorFirstName varchar(255), authorLastName varchar(255), image varchar(255), content text,  date varchar(255), circle varchar(255), recipient varchar(255), likes int, dislikes int )');
+    SQLdatabase.run('CREATE TABLE `blog` ( id INTEGER PRIMARY KEY AUTOINCREMENT, author varchar(255), authorFirstName varchar(255), authorLastName varchar(255), image varchar(255), content text,  date varchar(255), circle varchar(255), recipient varchar(255), likes int, dislikes int, postStrict int)');
     //create base rows
     let rows = [];
     //loop through posts.json to populate rows array
     for (let i = 0; i < postDataJSON.entries.length; i++) {
-      rows[i] = [postDataJSON.entries[i].id, postDataJSON.entries[i].author, postDataJSON.entries[i].authorFirstName, postDataJSON.entries[i].authorLastName, postDataJSON.entries[i].image, postDataJSON.entries[i].content, postDataJSON.entries[i].date, postDataJSON.entries[i].circle,postDataJSON.entries[i].recipient, postDataJSON.entries[i].likes, postDataJSON.entries[i].dislikes]
+      rows[i] = [postDataJSON.entries[i].id, postDataJSON.entries[i].author, postDataJSON.entries[i].authorFirstName, postDataJSON.entries[i].authorLastName, postDataJSON.entries[i].image, postDataJSON.entries[i].content, postDataJSON.entries[i].date, postDataJSON.entries[i].circle,postDataJSON.entries[i].recipient, postDataJSON.entries[i].likes, postDataJSON.entries[i].dislikes, postDataJSON.entries[i].postStrict]
     }
     // populate SQL command with rows array populated from posts.json
     rows.forEach( (row) => {
       // insert rows to table
-      SQLdatabase.run('INSERT INTO `blog` VALUES(?,?,?,?,?,?,?,?,?,?,?)', row);
+      SQLdatabase.run('INSERT INTO `blog` VALUES(?,?,?,?,?,?,?,?,?,?,?,?)', row);
       // increment users post count according to author of currently processed post      
     });
   })
@@ -452,7 +452,7 @@ app.post('/getFeed', (req, res, next) => {
 app.post('/getFeedByUser', (req, res, next) => {  
   // grab all posts
   if (req.body.circle === 'general') {
-    SQLdatabase.all(GET_POSTS_BY_AUTHOR, [ req.body.user ], (err, rows) => {
+    SQLdatabase.all(GET_POSTS_BY_AUTHOR, [ req.body.user, req.body.user ], (err, rows) => {
       if (err) {
         console.log("error at database", err)
         res.status(500).send(err.message);
@@ -537,15 +537,18 @@ app.post('/getAllFriends', (req, res) => {
 //#endregion GET USER INFO 
 
 //#region POST CREATION, COMMENTING, VOTING 
-app.post('/newPost', (req, res) => {  
+app.post('/newPost', (req, res) => {
   SQLdatabase.get(GET_PROFILEPICTURE_BY_USERNAME, [ req.body.postData.author ], (err, profilePicture) => {
     if (err) {
       console.log("failed on profile pic grab")
       res.status(500).send(err.message);
       return;
     }   
-    console.log(req.body)
-    SQLdatabase.run(SQL_ADD_BLOG_POST, [ req.body.postData.author, req.body.postData.authorFirstName, req.body.postData.authorLastName, req.body.postData.image, req.body.circle, req.body.postData.postContent,req.body.postData.date, req.body.postData.recipient, 0, 0],  (err, rows) => {
+
+    if (!req.body.postData.recipient) {
+      req.body.postData.recipient = 'none'
+    }
+    SQLdatabase.run(SQL_ADD_BLOG_POST, [ req.body.postData.author, req.body.postData.authorFirstName, req.body.postData.authorLastName, req.body.postData.image, req.body.circle, req.body.postData.postContent,req.body.postData.date, req.body.postData.recipient, 0, 0, req.body.postData.postStrict],  (err, rows) => {
       if (err) {
         console.log("error")
         console.log(err)
@@ -594,7 +597,7 @@ app.post('/getFeedFriendsOnly', (req, res) => {
     }
     rows.forEach(element => element.user1 === user ? friendsList.push("'"+ element.user2 + "'") : friendsList.push("'"+element.user1+"'"))
     if (req.body.circle === "general") {
-      SQLdatabase.all("SELECT * FROM blog WHERE author IN  ("+friendsList.join(',')+") ORDER BY id DESC", (err, rows) => {
+      SQLdatabase.all("SELECT * FROM blog WHERE author IN  ("+friendsList.join(',')+") AND ((postStrict = 0 OR circle = 'general') AND recipient = ?) ORDER BY id DESC", [ 'none' ],(err, rows) => {
         if (err) {
           console.log(err)
         }

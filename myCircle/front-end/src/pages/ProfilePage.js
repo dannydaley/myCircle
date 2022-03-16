@@ -51,7 +51,7 @@ componentDidMount = () => {
                     <>               
                          <ProfileOverlay userFirstName={firstName} userLastName={lastName} userProfilePicture={profilePicture} userUserName={userUserName} changeAlertNotifications={changeAlertNotifications} />
                          <ProfileHeader  coverPicture={coverPicture}/>
-                         <ProfileFeed userUserName={userUserName}/>
+                         <ProfileFeed userUserName={userUserName} thisUsername={this.props.thisUsername} userFirstName={this.props.userFirstName} userLastName={this.props.userLastName} userProfilePicture={this.props.userProfilePicture}/>
                     </>
                )
                }

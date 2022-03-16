@@ -1,6 +1,7 @@
 import React from "react";
 import CircularProgress from '@mui/material/CircularProgress';
 import { Link, useParams } from 'react-router-dom';
+import zIndex from "@material-ui/core/styles/zIndex";
 
 export default class SearchResults extends React.Component {
     constructor(props) {
@@ -39,7 +40,8 @@ export default class SearchResults extends React.Component {
                             width: '1000vw',
                             position: 'absolute',
                             overflow: 'hidden',
-                            marginLeft: '-140%'
+                            marginLeft: '-140%',
+                            zIndex: '10'
                             }}
                         onClick={
                             this.props.unmountMe
@@ -49,6 +51,7 @@ export default class SearchResults extends React.Component {
                         style={{
                             width: '100%',
                             backgroundColor: 'white',
+                            // blueeeeee #217cd8
                             zIndex: '1000',
                             position: 'absolute',
                             display: 'flex',
@@ -84,11 +87,18 @@ export default class SearchResults extends React.Component {
             return(            
                 <>
                     <div style={{
-                        height: '200px',
+                        
+                        height: '55px',
                         width: '100%',
                         backgroundColor: 'white',
                         zIndex: '1000',
-                        position: 'absolute'
+                        position: 'absolute',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        borderRadius: '0 0 20px 20px',
+                        boxShadow: '-1px 3px 5px 0px black'
                         }}>
                         <CircularProgress />
                     </div>

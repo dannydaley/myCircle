@@ -132,7 +132,11 @@ export default class App extends Component {
                 <Route path="/:username" component={ProfilePage}
                   element={
                     <ProfileGate
+                      userFirstName={this.state.userFirstName}
+                      userLastName={this.state.userLastName}
                       state={{ from: "the-page-id" }}
+                      thisUsername={this.state.userUserName}
+                      userProfilePicture={this.state.userProfilePicture}
                     />
                   }
                   exact
