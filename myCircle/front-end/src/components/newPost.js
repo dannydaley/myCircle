@@ -14,7 +14,7 @@ export default class NewPost extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            'author': this.props.userUserName,
+            'author': this.props.loggedInUsername,
             'authorFirstName': this.props.userFirstName,
             'authorLastName': this.props.userLastName,
             'image': this.props.userProfilePicture,

@@ -44,7 +44,7 @@ export default class App extends Component {
       alertNotifications: 0,
       userFirstName: '',
       userLastName: '',
-      userUserName: '',
+      loggedInUsername: '',
       userProfilePicture: '',
       UIColor: ''
     }
@@ -62,7 +62,7 @@ export default class App extends Component {
   }
 
   updateSession = (firstName, lastName, userName, userProfilePicture) => {
-    this.setState({ userFirstName: firstName, userLastName: lastName, userUserName: userName, userProfilePicture: userProfilePicture })
+    this.setState({ userFirstName: firstName, userLastName: lastName, loggedInUsername: userName, userProfilePicture: userProfilePicture })
   }
 
   // THESE FUNCTIONS HANDLE INCREMENTING THE NOTIFICATIONS. THESE ARE CURRENTLY PASSED INTO THE NAV BAR
@@ -101,7 +101,7 @@ export default class App extends Component {
                       onRouteChange={this.onRouteChange}
                       userFirstName={this.state.userFirstName}
                       userLastName={this.state.userLastName}
-                      userUserName={this.state.userUserName}
+                      loggedInUsername={this.state.loggedInUsername}
                       userProfilePicture={this.state.userProfilePicture}
                     />
                   }
@@ -109,10 +109,10 @@ export default class App extends Component {
                 <Route path="myProfile"
                   element={
                     <ProfilePage
-                      user={this.state.userUserName}
+                      loggedInUsername={this.state.loggedInUsername}
                       userFirstName={this.state.userFirstName}
                       userLastName={this.state.userLastName}
-                      userUserName={this.state.userUserName}
+                      userProfileToGet={this.state.loggedInUsername}
                       changeAlertNotifications={this.changeAlertNotifications}
                       userProfilePicture={this.state.userProfilePicture}
                     />
@@ -123,7 +123,7 @@ export default class App extends Component {
                     <ProfilePage
                       userFirstName={this.state.userFirstName}
                       userLastName={this.state.userLastName}
-                      username={this.state.userUserName}
+                      username={this.state.loggedInUsername}
                       changeAlertNotifications={this.changeAlertNotifications}
                       userProfilePicture={this.state.userProfilePicture}
                     />
@@ -135,7 +135,7 @@ export default class App extends Component {
                       userFirstName={this.state.userFirstName}
                       userLastName={this.state.userLastName}
                       state={{ from: "the-page-id" }}
-                      thisUsername={this.state.userUserName}
+                      thisUsername={this.state.loggedInUsername}
                       userProfilePicture={this.state.userProfilePicture}
                     />
                   }
@@ -146,7 +146,7 @@ export default class App extends Component {
                     <MyAccountPage
                       userFirstName={this.state.userFirstName}
                       userProfilePicture={this.state.userProfilePicture}
-                      userUserName={this.state.userUserName}
+                      loggedInUsername={this.state.loggedInUsername}
                     />
                   }
                 />

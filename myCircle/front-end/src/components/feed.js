@@ -39,7 +39,7 @@ export default class Feed extends React.Component {
       method: 'post',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
-        user: this.props.userUserName,
+        user: this.props.loggedInUsername,
         profilePicture: this.props.userProfilePicture,
         circle: newCircle
       })    
@@ -56,26 +56,25 @@ export default class Feed extends React.Component {
       });
     })
   }
-
   changeCircle = (newCircle) => { 
-    this.componentDidMount(newCircle); 
+  this.componentDidMount(newCircle); 
   }
 
   render () {   
-    const { onRouteChange, changeMailNotifications, userFirstName, userLastName, userUserName, userProfilePicture } = this.props; 
+    const { onRouteChange, changeMailNotifications, userFirstName, userLastName, loggedInUsername, userProfilePicture } = this.props; 
     //SETTING UP ACCESS TO THE STATE VARIABLES   
     const { circle, posts, dataIsLoaded } = this.state;
     // IF THE DATA ISNT LOADED YET, LOAD AN ALTERNATIVE WHILE WE WAIT   
     if (!dataIsLoaded) {
       return (
       <div>
-        <Overlay changeCircle={this.changeCircle} userProfilePicture={userProfilePicture} userUserName={userUserName}/>        
+        <Overlay changeCircle={this.changeCircle} userProfilePicture={userProfilePicture} loggedInUsername={loggedInUsername}/>        
         <div style={{backgroundColor: '#010101', display: 'flex', justifyContent: 'space-between', paddingBottom: '100px', minHeight: '100vh'}}>          
           <div style={{width: '30%', height: '100px'}}></div>
             <React.Fragment>              
             <CssBaseline />
             <Container maxWidth="lg" sx={{zIndex: 10, bgcolor: '#343434', borderRadius: '0px 0px 30px 30px', width: '100%', pb: 2, ml: 2, mr:2,  mt: 12}}>
-                <NewPost userFirstName={userFirstName} userLastName={userLastName} userUserName={userUserName} circle={circle} userProfilePicture={userProfilePicture} />
+                <NewPost userFirstName={userFirstName} userLastName={userLastName} loggedInUsername={loggedInUsername} circle={circle} userProfilePicture={userProfilePicture} />
                 <Box sx={{ padding: 2, bgcolor: 'none', display: 'flex', justifyContent: 'center', mt: 2}}>
                     <CircularProgress />                    
                 </Box>
@@ -94,7 +93,7 @@ export default class Feed extends React.Component {
     // OTHERWISE RUN THE GOOD STUFF
       return (
         <div>
-          <Overlay changeCircle={this.changeCircle} onRouteChange={onRouteChange} userProfilePicture={userProfilePicture}  userUserName={userUserName}/>
+          <Overlay changeCircle={this.changeCircle} onRouteChange={onRouteChange} userProfilePicture={userProfilePicture}  loggedInUsername={loggedInUsername}/>
           <div style={{backgroundColor: '#010101', display: 'flex', justifyContent: 'space-between', paddingBottom: '100px', minHeight: '100vh'}}>
             <div style={{width: '30%', height: '100px'}}></div>
                 <React.Fragment>              
@@ -105,7 +104,7 @@ export default class Feed extends React.Component {
                           changeCircle={this.changeCircle}
                           userFirstName={userFirstName}
                           userLastName={userLastName}
-                          userUserName={userUserName}
+                          loggedInUsername={loggedInUsername}
                          />
                         <p>{this.feedPosts}</p>
                         <Box sx={{ padding: 2, bgcolor: 'none'}}>

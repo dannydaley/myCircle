@@ -250,9 +250,8 @@ app.get('/getAllUsers', (req, res, next) => {
   })
 })
 
-app.post('/getAllImagesByUser', (req, res, next) => {
-  // grab all user data
-  console.log(req.body.user)
+app.post('/getAllImagesByUser', (req, res, next) => {  // grab all user data
+
   SQLdatabase.all(GET_ALL_IMAGES_BY_USER, [ req.body.user ], (err, rows) => {
     if (err) {
       res.status(500).send(err.message);
@@ -457,8 +456,7 @@ app.post('/getFeedByUser', (req, res, next) => {
         console.log("error at database", err)
         res.status(500).send(err.message);
         return;
-      }  
-      console.log(rows);
+      }       
       res.json(rows);
     })
   } else {
@@ -510,13 +508,27 @@ app.post('/getUserGeneralInfo', (req, res) => {
 })
 
 app.post('/getUserProfile', (req, res) => {
-  SQLdatabase.get(GET_USER_PROFILE_INFO_BY_USERNAME, req.body.user, (err, rows) => {
-    if (err) {
-      console.log("error at database")
-      res.json("error at db")
+  let loggedInUsername = req.body.loggedInUsername
+  let userProfileToGet = req.body.userProfileToGet
+  let isFriendsWithLoggedInUser = false
+  SQLdatabase.all("SELECT * FROM friendships WHERE (user1 = ? OR user2 = ?) AND (user1 = ? OR user2 = ?)", [ loggedInUsername, loggedInUsername, userProfileToGet, userProfileToGet ], (err, rows) => {
+    if(err){
+      console.log("error at database with friendships")
+      res.json("error at database with friendships")
       return
-    }
-    res.json(rows)
+    }    
+    isFriendsWithLoggedInUser = true
+    SQLdatabase.get(GET_USER_PROFILE_INFO_BY_USERNAME, userProfileToGet, (err, rows) => {
+      if (err) {
+        console.log("error at database")
+        res.json("error at db")
+        return
+      }    
+      res.json({
+        isFriendsWithLoggedInUser: isFriendsWithLoggedInUser,
+        profileData: rows
+      })
+    })    
   })
 })
 
