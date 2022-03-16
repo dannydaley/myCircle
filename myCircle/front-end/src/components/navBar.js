@@ -17,6 +17,7 @@ import NotificationsIcon from '@material-ui/icons/Notifications';
 import MoreIcon from '@material-ui/icons/MoreVert';
 import myCircleText from '../Images/myCircleText.svg'
 import SearchBar from './SearchBar';
+import NotificationsButton from './navBar/notificationsButton';
 
 import { Routes, Route, Link } from "react-router-dom";
 
@@ -60,16 +61,19 @@ import { Routes, Route, Link } from "react-router-dom";
 
 // const delay = ms => new Promise(res => setTimeout(res, ms));
 
-const delayFunction = async () => {
-  await this.delay(1000);
-  console.log("LOADING FEED");
-};
 
- function NavBar({ onRouteChange, alertNotifications, mailNotifications, changeMailNotifications,changeAlertNotifications, onColorChange, UIColor }) {
+ function NavBar({ notifications, onRouteChange, alertNotifications, mailNotifications, changeMailNotifications,changeAlertNotifications, onColorChange, UIColor }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
+
+const delayFunction = async () => {
+  await this.delay(1000);
+  console.log("LOADING FEED");
+};
+let openNotifications = false;
+ 
   const handleProfileMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -89,6 +93,7 @@ const delayFunction = async () => {
 
   const menuId = 'primary-search-account-menu';
   //DESKTOP MENU!!
+
   const renderMenu = (
     <Menu
       anchorEl={anchorEl}
@@ -118,7 +123,7 @@ const delayFunction = async () => {
        >Sign Out
        </MenuItem>      
     </Menu>
-  );
+  );  
 
   const mobileMenuId = 'primary-search-account-menu-mobile';
       //MOBILE MENU!!
@@ -205,12 +210,12 @@ const delayFunction = async () => {
 
 
   return (
+    <>
       <nav>
     <Box sx={{ flexGrow: 1, justifyItems: "spaceBetween" }}>
       <AppBar position="fixed" 
       // sx={{backgroundColor: UIColor}}
-      >
-      
+      >      
         <Toolbar>
           <IconButton
             size="large"
@@ -251,11 +256,7 @@ const delayFunction = async () => {
                 <MailIcon />
               </Badge>
             </IconButton>
-            <IconButton size="large" aria-label="show 17 new notifications" color="inherit" onClick={changeAlertNotifications}>
-              <Badge badgeContent={alertNotifications} color="error">
-                <NotificationsIcon />
-              </Badge>
-            </IconButton>
+            <NotificationsButton alertNotifications={alertNotifications} notifications={notifications} />
             <IconButton size="large" edge="end" aria-label="account of current user" aria-controls={menuId} aria-haspopup="true" onClick={handleProfileMenuOpen} color="inherit">
               <AccountCircle />
             </IconButton>
@@ -274,10 +275,12 @@ const delayFunction = async () => {
           </Box>
         </Toolbar>
       </AppBar>
+      
       {renderMobileMenu}
       {renderMenu}
     </Box>
     </nav>
+    </>
   );
 }
 export default NavBar

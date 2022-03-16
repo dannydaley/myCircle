@@ -41,7 +41,7 @@ export default class App extends Component {
       route: 'signin',
       isSignedIn: false,
       mailNotifications: 0,
-      alertNotifications: 10,
+      alertNotifications: 0,
       userFirstName: '',
       userLastName: '',
       loggedInUsername: '',
@@ -103,6 +103,7 @@ export default class App extends Component {
                 changeMailNotifications={this.changeMailNotifications}
                 changeAlertNotifications={this.changeAlertNotifications}
                 alertNotifications={this.state.alertNotifications}
+                notifications={this.state.notifications}
               />     
               <Routes>
                 <Route path="/" 

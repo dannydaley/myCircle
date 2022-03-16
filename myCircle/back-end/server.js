@@ -718,7 +718,7 @@ app.post('/friendRequest', (req, res) => {
       return
     }
     if (!rows) {
-      SQLdatabase.run("INSERT INTO userActions (type, sender, recipient, message, seen, date, relativePost) VALUES(?,?,?,?,?,date(),?)", [type, sender, recipient, message, seen, relativePost] , (err, rows) => {
+      SQLdatabase.run("INSERT INTO userActions (type, sender, recipient, message, seen,approved, date, relativePost) VALUES(?,?,?,?,?,?,date(),?)", [type, sender, recipient, message, seen, false, relativePost] , (err, rows) => {
         if (err) {
           console.log(err)
           res.status(500).send(err.message);
