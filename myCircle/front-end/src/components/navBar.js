@@ -62,7 +62,7 @@ import { Routes, Route, Link } from "react-router-dom";
 // const delay = ms => new Promise(res => setTimeout(res, ms));
 
 
- function NavBar({ notifications, onRouteChange, alertNotifications, mailNotifications, changeMailNotifications,changeAlertNotifications, onColorChange, UIColor }) {
+ function NavBar({ getNotifications, refuseFriendRequest,confirmFriendRequest,notifications, onRouteChange, alertNotifications, mailNotifications, changeMailNotifications,changeAlertNotifications, onColorChange, UIColor }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
   const isMenuOpen = Boolean(anchorEl);
@@ -151,7 +151,7 @@ let openNotifications = false;
         </IconButton>
         <p>Messages</p>
       </MenuItem>
-      <MenuItem onClick={handleProfileMenuOpen}>
+      {/* <MenuItem onClick={handleProfileMenuOpen}>
         <IconButton
           size="large"
           aria-label="show 16 new notifications"
@@ -164,19 +164,11 @@ let openNotifications = false;
           </Badge>
         </IconButton>
         <p>Notifications</p>
-      </MenuItem>
-      <MenuItem onClick={handleProfileMenuOpen}>
-        <IconButton
-          size="large"
-          aria-label="account of current user"
-          aria-controls="primary-search-account-menu"
-          aria-haspopup="true"
-          color="inherit"
-        >
-          <AccountCircle />
-        </IconButton>
-        <p><Link to="/myProfile">My Profile</Link></p>
-      </MenuItem>
+      </MenuItem> */}
+      <>
+      <NotificationsButton alertNotifications={alertNotifications} notifications={notifications} />
+      Notifications
+      </>
       <MenuItem 
       >
       
@@ -256,7 +248,7 @@ let openNotifications = false;
                 <MailIcon />
               </Badge>
             </IconButton>
-            <NotificationsButton alertNotifications={alertNotifications} notifications={notifications} />
+            <NotificationsButton alertNotifications={alertNotifications} notifications={notifications} confirmFriendRequest={confirmFriendRequest} refuseFriendRequest={refuseFriendRequest} getNotifications={getNotifications}/>
             <IconButton size="large" edge="end" aria-label="account of current user" aria-controls={menuId} aria-haspopup="true" onClick={handleProfileMenuOpen} color="inherit">
               <AccountCircle />
             </IconButton>

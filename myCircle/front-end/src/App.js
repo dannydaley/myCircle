@@ -41,26 +41,89 @@ export default class App extends Component {
       route: 'signin',
       isSignedIn: false,
       mailNotifications: 0,
-      alertNotifications: 0,
+      notifications: ["1", "2", "3"],
+      alertNotifications: 10,
       userFirstName: '',
       userLastName: '',
       loggedInUsername: '',
       userProfilePicture: '',
       UIColor: '',
-      notifications: []
+      
     }
   }
   // const isLoggedIn = useSelector(state => state.isLoggedIn),
+  delay = ms => new Promise(res => setTimeout(res, ms));
 
-  setNotifications = (data) => {
-    console.log(data)
-    let count = 0;
-    data.forEach(element => (
-    
+  delayFunction = async () => {
+    await this.delay(1000);
+  };
+
+
+
+  
+  getNotifications = async () => {
+     fetch('http://localhost:3001/getNotifications', {
+      method: 'post',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        user: this.state.loggedInUsername
+      })    
+    })
+    //TURN THE RESPONSE INTO A JSON OBJECT
+    .then(response => response.json())
+    .then(await this.delayFunction())
+    // WHAT WE DO WITH THE DATA WE RECEIVE (data => console.log(data)) SHOULD SHOW WHAT WE GET
+    .then(data => {
+      console.log(data)
+    let count = 0;    
+    data.forEach(element => (    
       element.seen === 0 ? count++ : ""))
     this.setState({ alertNotifications: count, notifications: data })  
-  }
+    })
+}
 
+  confirmFriendRequest = (sender, loggedInUser) => {
+    console.log("cliiiiiiccckkkkeeeeeeddddd")
+    fetch('http://localhost:3001/confirmFriendRequest', {
+      method: 'post',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        sender: sender,
+        recipient: loggedInUser
+   })    
+ }).then(response => response.json())
+ .then(data => {
+      console.log(data)
+ })
+	}
+
+	refuseFriendRequest = (sender, loggedInUser) => {
+    fetch('http://localhost:3001/refuseFriendRequest', {
+      method: 'post',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+           sender: sender,
+           recipient: loggedInUser
+      })    
+ }).then(response => response.json())
+ .then(data => {
+      console.log(data)
+ })
+	}
+
+  sendFriendRequest = () => {
+    fetch('http://localhost:3001/friendRequest', {
+         method: 'post',
+         headers: {'Content-Type': 'application/json'},
+         body: JSON.stringify({
+              sender: this.props.loggedInUsername,
+              recipient: this.props.userProfileToGet
+         })    
+    }).then(response => response.json())
+    .then(data => {
+         console.log(data)
+    })
+}
 
   onRouteChange = (route) => {
     if (route === 'signout') {
@@ -96,6 +159,9 @@ export default class App extends Component {
         { this.state.isSignedIn === true ? 
             <div>
               <NavBar
+              getNotifications={this.getNotifications}
+                refuseFriendRequest={this.refuseFriendRequest}
+                confirmFriendRequest={this.confirmFriendRequest}
                 onRouteChange={this.onRouteChange}
                 onColorChange={this.onColorChange}
                 UIColor={this.state.UIColor}
@@ -109,6 +175,7 @@ export default class App extends Component {
                 <Route path="/" 
                   element={
                     <FeedPage
+                    getNotifications={this.getNotifications}
                       setNotifications={this.setNotifications}
                       changeMailNotifications={this.changeMailNotifications}
                       onRouteChange={this.onRouteChange}
@@ -122,6 +189,7 @@ export default class App extends Component {
                 <Route path="myProfile"
                   element={
                     <ProfilePage
+                    getNotifications={this.getNotifications}
                       loggedInUsername={this.state.loggedInUsername}
                       userFirstName={this.state.userFirstName}
                       userLastName={this.state.userLastName}
@@ -131,9 +199,10 @@ export default class App extends Component {
                     />
                   }
                 />
-                <Route path="myProfile"
+                {/* <Route path="myProfile"
                   element={
                     <ProfilePage
+                    getNotifications={this.getNotifications}
                       userFirstName={this.state.userFirstName}
                       userLastName={this.state.userLastName}
                       username={this.state.loggedInUsername}
@@ -141,14 +210,15 @@ export default class App extends Component {
                       userProfilePicture={this.state.userProfilePicture}
                     />
                   }
-                />
+                /> */}
                 <Route path="/:username" component={ProfilePage}
                   element={
                     <ProfileGate
+                    getNotifications={this.getNotifications}
                       userFirstName={this.state.userFirstName}
                       userLastName={this.state.userLastName}
                       state={{ from: "the-page-id" }}
-                      thisUsername={this.state.loggedInUsername}
+                      loggedInUsername={this.state.loggedInUsername}
                       userProfilePicture={this.state.userProfilePicture}
                     />
                   }
@@ -157,6 +227,7 @@ export default class App extends Component {
                  <Route path="myAccount"
                   element={
                     <MyAccountPage
+                    getNotifications={this.getNotifications}
                       userFirstName={this.state.userFirstName}
                       userProfilePicture={this.state.userProfilePicture}
                       loggedInUsername={this.state.loggedInUsername}

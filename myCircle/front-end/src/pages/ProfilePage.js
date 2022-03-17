@@ -42,10 +42,12 @@ componentDidMount = () => {
                coverPicture: data.profileData.coverPicture,
                contentIsLoaded: true
           })
+          this.props.getNotifications()
      })
 }
 
-     friendRequest = () => {
+     sendFriendRequest = () => {
+          console.log("cliccckedddd")
           fetch('http://localhost:3001/friendRequest', {
                method: 'post',
                headers: {'Content-Type': 'application/json'},
@@ -65,7 +67,14 @@ componentDidMount = () => {
           if (contentIsLoaded) {
                return (
                     <>               
-                         <ProfileOverlay userFirstName={firstName} userLastName={lastName} userProfilePicture={profilePicture} userProfileToGet={userProfileToGet} changeAlertNotifications={changeAlertNotifications} isFriendsWithLoggedInUser={isFriendsWithLoggedInUser} friendRequest={this.friendRequest}/>
+                         <ProfileOverlay
+                         userFirstName={firstName}
+                         userLastName={lastName}
+                         userProfilePicture={profilePicture}
+                         userProfileToGet={userProfileToGet}
+                         changeAlertNotifications={changeAlertNotifications}
+                         isFriendsWithLoggedInUser={isFriendsWithLoggedInUser}
+                         sendFriendRequest={this.sendFriendRequest}/>
                          <ProfileHeader  coverPicture={coverPicture}/>
                         
                           <ProfileFeed userProfileToGet={userProfileToGet}  isFriendsWithLoggedInUser={isFriendsWithLoggedInUser} loggedInUsername={loggedInUsername}  userFirstName={userFirstName} userLastName={userLastName} userProfilePicture={userProfilePicture}/> 

@@ -7,10 +7,11 @@ import CircularProgress from '@mui/material/CircularProgress';
 
 
 export default class RightBarImages extends React.Component {
-  constructor () {
-    super();
+  constructor (props) {
+    super(props);
     this.state = {
-      imagesAreLoaded: false              
+      imagesAreLoaded: false,
+      loggedInUsername: this.props.loggedInUsername             
     }
   }
 srcset(image, size, rows = 1, cols = 1) {
@@ -47,17 +48,19 @@ formatPictures = (imageData) => {
   });  
 }
 
-componentDidMount = () => {
-  fetch('http://localhost:3001/getAllImagesByUser', {
+componentDidMount = () => {  
+  console.log(this.props.loggedInUsername )
+  fetch('http://localhost:3001/getAllImagesByUser', {    
     method: 'post',
     headers: {'Content-Type': 'application/json'},
     body: JSON.stringify({
-      user: this.props.loggedInUsername      
+      user: this.props.userProfileToGet    
     })    
   })
   //TURN THE RESPONSE INTO A JSON OBJECT
   .then(response => response.json())
-  .then(data => {     
+  .then(data => {   
+    console.log(data)  
        this.formatPictures(data)
        this.setState({imagesAreLoaded: true})    
     })

@@ -5,10 +5,10 @@ import MyAccountSettings from '../components/myAccount/myAccountSettings'
 export default class MyAccountPage extends React.Component {
 
     render() {
-        const { userFirstName, userLastName, userProfilePicture, loggedInUsername } = this.props
+        const { userFirstName, userLastName, userProfilePicture, loggedInUsername, getNotifications } = this.props
         return (
             <div>
-                <MyAccountSettings userFirstName={userFirstName} userLastName={userLastName} userProfilePicture={userProfilePicture} loggedInUsername={loggedInUsername}/>
+                <MyAccountSettings userFirstName={userFirstName} userLastName={userLastName} userProfilePicture={userProfilePicture} loggedInUsername={loggedInUsername} getNotifications={getNotifications}/>
             </div>
         )
     }

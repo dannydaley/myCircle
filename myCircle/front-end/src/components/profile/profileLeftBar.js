@@ -17,7 +17,7 @@ export default class ProfileLeftBar extends React.Component  {
   } 
 
   render () {
-    const { userFirstName, userLastName, loggedInUsername, changeAlertNotifications, userProfilePicture, isFriendsWithLoggedInUser, friendRequest } = this.props
+    const { userFirstName, userLastName, loggedInUsername, changeAlertNotifications, userProfilePicture, isFriendsWithLoggedInUser, sendFriendRequest } = this.props
     console.log(userProfilePicture)
     return (
       <div>
@@ -27,7 +27,7 @@ export default class ProfileLeftBar extends React.Component  {
           <Box sx={{ padding: 2, bgcolor: 'none'}}>
             <img src={"http://localhost:3001/public/" + userProfilePicture} width="200px" height="150px" style={{ boxShadow: "1px 3px 5px 0px black", mb: 3, ":hover": { cursor: 'pointer' } }} />
             <Typography variant="h5" component="div" color="white" sx={{textAlign: 'center', mt: 2}}>{userFirstName} {userLastName}</Typography>
-            {isFriendsWithLoggedInUser? "" : <Button variant="contained"  startIcon={<PersonAddIcon />} sx={{textTransform: 'none', mt: 2}} onClick={friendRequest}>Add Friend</Button>}
+            {isFriendsWithLoggedInUser? "" : <Button variant="contained"  startIcon={<PersonAddIcon />} sx={{textTransform: 'none', mt: 2}} onClick={sendFriendRequest}>Add Friend</Button>}
           </Box>
           <Typography variant="h6" component="div" color="white" sx={{textAlign: 'center', mt: 2}}>Users info</Typography>
           </Container>

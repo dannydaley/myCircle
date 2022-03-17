@@ -113,6 +113,8 @@ const GET_ALL_POSTS_BY_CIRCLE = "SELECT * FROM `blog` WHERE circle = ? ORDER BY 
 const GET_ALL_IMAGES_BY_USER = "SELECT * FROM images WHERE ownerUsername = ? ORDER BY postId DESC"
 const GET_PROFILEPICTURE_BY_USERNAME = "SELECT profilePicture FROM users WHERE username = ?"
 const GET_ALL_USERS_FRIENDS = "SELECT * FROM friendships WHERE user1 =? OR user2 = ?"
+// const GET_NOTIFICATIONS = "SELECT * FROM userActions WHERE recipient = ? LIMIT 50"
+const GET_NOTIFICATIONS = "SELECT userActions.* , users.firstName, users.lastName FROM `userActions` LEFT OUTER JOIN `users` ON `userActions`.`sender` = `users`.`username` WHERE recipient = ? ORDER BY actionId DESC LIMIT 50 "
 const GET_POSTS_BY_AUTHOR = "SELECT blog.*, users.firstName, users.lastName, users.profilePicture FROM `blog` LEFT OUTER JOIN `users` ON `blog`.`author` = `users`.`username` WHERE author = ? OR recipient = ? ORDER BY id DESC" // SQL command
 const GET_POSTS_BY_AUTHOR_BY_CIRCLE = "SELECT * FROM `blog` WHERE author = ? AND circle = ? ORDER BY id DESC" // SQL command
 const SQL_ADD_BLOG_POST = "INSERT INTO `blog` (author, authorFirstName, authorLastName, image, circle, content, date, recipient, likes, dislikes, postStrict) VALUES(?,?,?,?,?,?,?,?,?,?,?)" // 
@@ -247,7 +249,7 @@ app.get('/SQLDatabaseUserActionsSetup', (req, res, next) => {
     SQLdatabase.run('DROP TABLE IF EXISTS `userActions`');
     // create blog table
 
-    SQLdatabase.run('CREATE TABLE `userActions` ( type varchar(255), sender varchar(255), recipient varchar(255), message varchar(255), seen int, approved int, date varchar(255), relativePost int)');
+    SQLdatabase.run('CREATE TABLE `userActions` ( actionId INTEGER PRIMARY KEY AUTOINCREMENT, type varchar(255), sender varchar(255), recipient varchar(255), message varchar(255), seen int, approved int, date varchar(255), relativePost int)');
     //create base rows
     let rows = userActionsDataJSON.userActions;
     //loop through posts.json to populate rows array
@@ -257,7 +259,7 @@ app.get('/SQLDatabaseUserActionsSetup', (req, res, next) => {
     // populate SQL command with rows array populated from posts.json
     rows.forEach( (row) => {
       // insert rows to table
-      SQLdatabase.run('INSERT INTO `userActions` VALUES(?,?,?,?,?,?,?,?)', row.type, row.sender, row.recipient, row.message, row.seen, row.approved, row.date, row.relativePost);
+      SQLdatabase.run('INSERT INTO `userActions` VALUES(?,?,?,?,?,?,?,?,?)', row.id, row.type, row.sender, row.recipient, row.message, row.seen, row.approved, row.date, row.relativePost);
       // increment users post count according to author of currently processed post      
     });
   })
@@ -279,14 +281,14 @@ app.get('/getAllUsers', (req, res, next) => {
   })
 })
 
-app.post('/getAllImagesByUser', (req, res, next) => {  // grab all user data
-
-  SQLdatabase.all(GET_ALL_IMAGES_BY_USER, [ req.body.user ], (err, rows) => {
+/*GET all images */
+app.get('/getAllImages', (req, res, next) => {  // grab all user data
+  SQLdatabase.all("SELECT * FROM images",  (err, rows) => {
     if (err) {
       res.status(500).send(err.message);
       return;
     }
-    res.send(rows);
+    res.json(rows);
   })
 })
 
@@ -302,6 +304,7 @@ app.get('/getAllPosts', (req, res, next) => {
   })
 })
 
+/* GET all friendships */
 app.get('/getAllFriendships', (req, res, next) => {
   // grab all user data
   SQLdatabase.all("SELECT * FROM friendships", [], (err, rows) => {
@@ -313,6 +316,7 @@ app.get('/getAllFriendships', (req, res, next) => {
   })
 })
 
+/* GET all UserActions */
 app.get('/getAllUserActions', (req, res, next) => {
   // grab all user data
   SQLdatabase.all("SELECT * FROM userActions", [], (err, rows) => {
@@ -336,14 +340,18 @@ app.get('/', (req, res) => {
 })
 
 //#region SIGN UP & SIGN IN 
-app.post('/signUp', (req, res) => {
-  let SQLdatabase = req.app.locals.SQLdatabase;    
+app.post('/signUp', (req, res) => {  
+  //set up variables from the request for better readability
   let { signUpEmail, signUpUserName,signUpFirstName, signUpLastName, signUpPassword, confirmSignUpPassword } = req.body;
+  //if both password fields match
   if (signUpPassword === confirmSignUpPassword) {
+    //generate salt to store
     let passwordSalt = generatePepper;
+    //generate password to store, using password from the confirm field, and the generated salt
     let storePassword = passwordHash(confirmSignUpPassword, passwordSalt);
+    //assign default profile picture
     let profilePicture = defaultProfilePicture;
-    
+    //Create a new user in the user database with the fields from the form, the default profile picture and the generated password hash and salt
     SQLdatabase.run(SIGN_UP_USER, [ signUpEmail, signUpUserName, signUpFirstName, signUpLastName, storePassword, passwordSalt, profilePicture ], (err, rows) => {
       if (err) {
         console.log("failed to add user to database")
@@ -361,26 +369,30 @@ app.post('/signUp', (req, res) => {
         res.status(500).send(err.message);
         return
       }
+      //respond with success 
       res.json('sign up success');   
     })    
   } else {
+    //response if password fields dont match
     res.json("PASSWORDS DONT MATCH")
   }
 })
 
 app.post('/signin', (req, res) => {  
-  //ready the data
-  let data = req.body;
-  // init database
-  let SQLdatabase = req.app.locals.SQLdatabase;
-  // rename for easier access   
-  SQLdatabase.get(FIND_USER, data.email, (err, rows) => {
+  //pull data from request body for better readbility
+  let { email, password } = req.body;
+ //search if user exists using email address
+  SQLdatabase.get(FIND_USER, email, (err, rows) => {
     if (err) {
       console.log("error at database");
       res.status(500).send(err)
     }
-    let user = rows    
-    if (user!== undefined && user.password === passwordHash(data.password, user.passwordSalt)) {
+    //assign any returned rows to user variable
+    let user = rows  
+    //if a user exists, and their stored password matches the output of the hashing function
+    // with their password entry..  
+    if (user!== undefined && user.password === passwordHash(password, user.passwordSalt)) {
+      //respond with user data
       res.json({
         status: 'success',
         firstName: rows.firstName,
@@ -390,6 +402,7 @@ app.post('/signin', (req, res) => {
       })
     } else {     
       console.log("invalid user credentials")
+      //otherwise respond with failure message
       res.json({
       status: 'failed',
       message: 'incorrect email or password'
@@ -403,31 +416,41 @@ app.post('/signin', (req, res) => {
 //#region UPDATE ACCOUNT INFO
 
 app.post('/updateUserGeneralInfo', (req, res) => {
+  //pull variables from request body for better readability
   const { firstName, lastName, aboutMe, location, education, work, username  } = req.body;  
+  //update users general information in database
   SQLdatabase.run(UPDATE_USER_GENERAL_INFO, firstName, lastName, aboutMe, location, education, work, username, (err, rows) => {
     if (err){
-      console.log("error at database")
+      //error response
       res.json("ERROR AT DATABASE")
     }
-    console.log("success at database")
+    //success response
     res.json("success at database")
   })
 })
 
 app.post('/updateUserLoginInfo', (req, res) => {
+  //pull variables from request body for better readability
   let { email, password, changeEmail, changePassword, changePasswordConfirm  } = req.body;
-  
+  //search for user by email
   SQLdatabase.get(FIND_USER, email, (err, rows) => {
     if (err) {
       console.log("error at database");
       res.status(500).send(err)
     }
+    // if a user is found, apply it to user variable 
     let user = rows
+    // if a user exists and the password stored matches the output of the hashing function with the entered password plus the stored salt.. 
     if (user!== undefined && user.password === passwordHash(password, user.passwordSalt)) {
+      //if the change password field has been updated..
       if (changePassword) {
-        if (changePassword === changePasswordConfirm) {      
+        // if password and confirm fields match..
+        if (changePassword === changePasswordConfirm) {    
+          //generate a new salt to store  
           let passwordSalt = generatePepper;
+          //generate a new password hash to store using the hashing function, passing in the new password entry and the newly generated salt
           let storePassword = passwordHash(changePassword, passwordSalt);          
+          // apply the password to the database where the email matches the users
           SQLdatabase.run(UPDATE_PASSWORD_BY_EMAIL, [ storePassword, passwordSalt, email ], (err, rows) => {
             if (err){
               console.log("error at database with password")          
@@ -435,29 +458,34 @@ app.post('/updateUserLoginInfo', (req, res) => {
             console.log("success with changing password")
           })
         }
+        // if changeEmail field has been updated
         if (changeEmail) {
+          // look up user using their existing email adress
           SQLdatabase.get(LOOK_UP_EMAIL_BY_EMAIL, email, (err, rows) => {
             if (err){
               console.log(err)
             }
+            // if no rows are returned
             if (!rows) {
+              //notify email doesnt exist
                 console.log("current email not in database")
               return
             }
             else {
+              //otherwise, update the email with the new changeEmail entry
               SQLdatabase.run(UPDATE_EMAIL, [ changeEmail, email], (err, rows)=> {
               if (err){
-                console.log("error at database changing email")
                 return
-              }   
-              console.log("success with changes in email")        
+              }    
               })
             }
           })
         }
       }
+      //respond with success on completion of changes
   res.json("success with changes")
     } else {
+      // password verification doesnt validate, respond with inv credentials
       console.log("incorrect validation")
       res.json("incorrect validation")
     }  
@@ -466,6 +494,7 @@ app.post('/updateUserLoginInfo', (req, res) => {
 //#endregion UPDATE ACCOUNT INFO END
 
 //#region GET FEEDS
+
 app.post('/getFeed', (req, res, next) => {  
   // grab all posts
   if (req.body.circle === 'general') {
@@ -532,28 +561,17 @@ app.post('/getFeedByUser', (req, res, next) => {
 
 //#region GET USER INFO 
 
-app.post('/getImagesByUser', (req, res, next) => {  
-  // grab all posts
-  if (req.body.circle === 'general') {
-    SQLdatabase.all(GET_POSTS_BY_AUTHOR, [ req.body.user ], (err, rows) => {
-      if (err) {
-        console.log("error at database")
-        res.status(500).send(err.message);
-        return;
-      }  
-      res.json(rows);
-    })
-  } else {
-    SQLdatabase.all(GET_POSTS_BY_AUTHOR_BY_CIRCLE, [ req.body.user, req.body.circle ], (err, rows) => {
-      if (err) {
-        console.log("error at database")
-        res.status(500).send(err.message);
-        return;
-      }   
-      res.json(rows);
-    })
-  }
+app.post('/getAllImagesByUser', (req, res, next) => {  // grab all user data
+
+  SQLdatabase.all(GET_ALL_IMAGES_BY_USER, req.body.user, (err, rows) => {
+    if (err) {
+      res.status(500).send(err.message);
+      return;
+    }
+    res.json(rows);
+  })
 })
+
 
 app.post('/getUserGeneralInfo', (req, res) => {
    SQLdatabase.get(GET_USER_GENERAL_INFO_BY_USERNAME, req.body.user, (err, rows) => {
@@ -582,12 +600,7 @@ app.post('/getUserProfile', (req, res) => {
         console.log("error at database")
         res.json("error at db")
         return
-      }    
-      console.log({
-        isFriendsWithLoggedInUser: isFriendsWithLoggedInUser,
-        profileData: rows
-      })
-      res.json({
+      }     res.json({
         isFriendsWithLoggedInUser: isFriendsWithLoggedInUser,
         profileData: rows
       })
@@ -636,17 +649,25 @@ app.post('/newPost', (req, res) => {
 });
 
 app.post('/votePost', (req, res) => {
-  let { like, dislike, postId } = req.body
+  let { like, dislike, postId, sender, recipient } = req.body
+  let message = " has reacted to your post!"
   SQLdatabase.get(GET_POST_VOTES_BY_POST_ID, postId, (err, rows) => {
     if (err) {
       console.log("ERROR GETTING LIKES")
     }
     like += rows.likes;
     dislike += rows.dislikes;
+        SQLdatabase.run("INSERT INTO userActions (type, sender, recipient, message, seen, approved, date, relativePost) VALUES (?,?,?,?,?,?, DATE(),?)", ["reaction", sender, recipient, message, false, false, postId], (err, rows) => {
+    if (err){
+      console.log("error applying like to post at user action database")
+      res.json("error applying like to post at user action database")
+      return
+    }
+    console.log("success applying like to post at user action database")
   })
   SQLdatabase.run(UPDATE_POST_VOTES_BY_POST_ID, [like, dislike, postId], (err, rows) => {
     if (err){
-      console.log("error applying like to post at database")
+      console.log("error applying like to post at database" + err)
       res.json("error applying like to post at database")
       return
     }
@@ -654,24 +675,48 @@ app.post('/votePost', (req, res) => {
     res.json("success applying like to post at database")
     return
   })
+
+  })
 })
+
+
+  app.post('/setNotificationAsSeen', (req, res) => {
+    let { actionId } = req.body;
+    console.log("serverrrr")
+    SQLdatabase.run("UPDATE userActions SET seen = true WHERE actionId = ?", actionId, (err, rows) => {
+      if (err) {
+        console.log("error setting notification as seen")
+        res.json("error setting notification as seen")
+      }
+      console.log("success setting notification as seen")
+      res.json("success")
+    })
+  })
+  
+
+
+
 //#endregion POST CREATION, COMMENTING, VOTING 
 
 // #endregion 
-
+app.post('/getNotifications', (req, res) => {
+  let user = req.body.user
+  SQLdatabase.all(GET_NOTIFICATIONS, [user], (err, rows) => {
+    if (err) {
+      res.status(500).send(err.message);
+      return;
+    }
+        
+    res.json(rows)
+  })
+})
 //#region GET FEEDS
 app.post('/getFeedFriendsOnly', (req, res) => {  
     // grab all user data 
   // grab all posts
   let user = req.body.user
   let friendsList = []  
-  friendsList[0] = "'" + user + "'"  
-  SQLdatabase.all("SELECT * FROM userActions WHERE recipient = ? LIMIT 50", [req.body.user], (err, rows) => {
-    if (err) {
-      res.status(500).send(err.message);
-      return;
-    }
-    let userActions = rows;   
+  friendsList[0] = "'" + user + "'";
     SQLdatabase.all(GET_ALL_USERS_FRIENDS,  [user, user], (err, rows) => {
       if(err){
         console.log("error at database with friendships")      
@@ -682,27 +727,24 @@ app.post('/getFeedFriendsOnly', (req, res) => {
         SQLdatabase.all("SELECT * FROM blog WHERE author IN  ("+friendsList.join(',')+") AND ((postStrict = 0 OR circle = 'general') AND recipient = ?) ORDER BY id DESC", [ 'none' ],(err, rows) => {
           if (err) {
             console.log(err)
-          }
-          console.log(userActions)
+          }          
           res.json({
-            posts: rows,
-            userActions: userActions})      
+            posts: rows
+            })      
         })
       } else {
       SQLdatabase.all("SELECT * FROM blog WHERE circle = ? AND author IN ("+friendsList.join(',')+") ORDER BY id DESC", req.body.circle, (err, rows) => {
         if (err) {
           console.log(err)
         }
-        console.log(userActions)
         res.json({
-          posts: rows,
-          userActions: userActions  
+          posts: rows        
         })  
       })
     }
   })
 })
-})
+
   
 app.post('/friendRequest', (req, res) => {
   console.log(req.body)
@@ -741,6 +783,40 @@ app.post('/friendRequest', (req, res) => {
   })
 })
 
+app.post('/confirmFriendRequest', (req, res) => {
+  let { sender, recipient } = req.body
+  let type = "friendRequest"
+  SQLdatabase.run("DELETE FROM userActions WHERE sender = ? AND recipient = ? AND type = ?", [sender, recipient, type], (err, rows) => {
+    if (err) {
+      console.log(err)
+      res.json(err)
+    }
+    // INSERT INTO users (email, username, firstName,lastName, password, passwordSalt, profilePicture) VALUES(?,?,?,?,?,?,?)
+    SQLdatabase.run("INSERT INTO friendships (user1, user2) VALUES (?,?)", [sender, recipient], (err, rows) => {
+      if(err){
+        console.log(err)
+        res.json(err)
+      }
+      SQLdatabase.run
+      console.log("friend added successfully")
+      res.json("success")
+    })
+  })
+})
+
+app.post('/refuseFriendRequest', (req, res) => {
+  let { sender, recipient } = req.body
+  let type = "friendRequest"
+  SQLdatabase.run("DELETE FROM userActions WHERE sender = ? AND recipient = ? AND type = ?", [sender, recipient, type], (err, rows) => {
+    if (err) {
+      console.log(err)
+      res.json(err)
+    }
+    console.log("friend refused successfully")
+    res.json("success")
+    
+  })
+})
 
 
 

@@ -9,7 +9,7 @@ export default function ProfileGate (props) {
      var userProfileToGet = pathname.substring(1);
     return (
         <> 
-        <ProfilePage userProfileToGet={userProfileToGet} loggedInUsername={props.thisUsername} userFirstName={props.userFirstName} userLastName={props.userLastName} userProfilePicture={props.userProfilePicture}/>                        
+        <ProfilePage userProfileToGet={userProfileToGet} loggedInUsername={props.loggedInUsername} userFirstName={props.userFirstName} userLastName={props.userLastName} userProfilePicture={props.userProfilePicture} getNotifications={props.getNotifications}/>                        
         </>
     )  
 }  

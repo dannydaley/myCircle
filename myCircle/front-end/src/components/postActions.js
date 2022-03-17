@@ -38,9 +38,11 @@ export default class PostActions extends React.Component {
           method: 'post',
           headers: {'Content-Type': 'application/json'},
           body: JSON.stringify({
-          postId: this.state.postId,
-          like: this.state.likes,
-          dislike: this.state.dislikes
+            sender: this.props.loggedInUsername,
+            recipient: this.props.authorUsername,
+            postId: this.state.postId,
+            like: this.state.likes,
+            dislike: this.state.dislikes
           })    
         })
         //TURN THE RESPONSE INTO A JSON OBJECT
