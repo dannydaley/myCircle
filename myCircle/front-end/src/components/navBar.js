@@ -150,25 +150,9 @@ let openNotifications = false;
           </Badge>
         </IconButton>
         <p>Messages</p>
-      </MenuItem>
-      {/* <MenuItem onClick={handleProfileMenuOpen}>
-        <IconButton
-          size="large"
-          aria-label="show 16 new notifications"
-          aria-controls="primary-search-account-menu"
-          aria-haspopup="true"
-          color="inherit"
-        >
-          <Badge badgeContent={alertNotifications} color="error">
-            <NotificationsIcon />
-          </Badge>
-        </IconButton>
-        <p>Notifications</p>
-      </MenuItem> */}
-      <>
+      </MenuItem>     
       <NotificationsButton alertNotifications={alertNotifications} notifications={notifications} />
-      Notifications
-      </>
+      Notifications 
       <MenuItem 
       >
       

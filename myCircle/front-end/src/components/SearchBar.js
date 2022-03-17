@@ -92,7 +92,11 @@ render() {
         placeholder="Search…"
         inputProps={{ 'aria-label': 'search' }}
       />
-      {(this.state.renderChild && this.state.newInput) && this.state.searchInput.length > 2 ? <SearchResults searchInput={this.state.searchInput} unmountMe={this.handleChildUnmount}/> : ''}
+      {(this.state.renderChild && this.state.newInput) && this.state.searchInput.length > 2 ? 
+      <SearchResults
+      searchInput={this.state.searchInput}
+      unmountMe={this.handleChildUnmount}/> :
+       ''}
     </this.Search>    
       
     </>

@@ -11,7 +11,7 @@ import { Link, useParams } from 'react-router-dom';
 
 export default function FeedPost(props) {
     
-    const { onRouteChange, authorUsername, authorFirstName, authorLastName, profilePicture, content, postId, likes, dislikes, loggedInUsername } = props;
+    const { authorUsername, authorFirstName, authorLastName, profilePicture, content, postId, likes, dislikes, loggedInUsername } = props;
 
 
     return (
@@ -20,12 +20,19 @@ export default function FeedPost(props) {
                 <Link to={`/${authorUsername}`}>
                     <img src={
                         'http://localhost:3001/public/' + profilePicture
-                        } width="100px" height="100px" style={{ boxShadow: "1px 3px 5px 0px black", mb: 3 }}                        
+                        }
+                        width="100px"
+                        height="100px"
+                        style={{ boxShadow: "1px 3px 5px 0px black", mb: 3 }}                        
                     />
                 </Link>                     
                 <div style={{width: '80%', marginLeft: '5%'}} id={"postId=$" + postId}>
                     <Link to="/">
-                        <Typography variant="h5" component="div" color="white" sx={{textAlign: 'left', ml: -2, mb: 2, fontWeight: 'bold'}}>                            
+                        <Typography
+                        variant="h5"
+                        component="div"
+                        color="white"
+                        sx={{textAlign: 'left', ml: -2, mb: 2, fontWeight: 'bold'}}>                            
                             <a href={authorUsername} style={{color: 'white'}}>{authorFirstName} {authorLastName}</a>
                         </Typography>
                     </Link>
@@ -34,7 +41,13 @@ export default function FeedPost(props) {
                     </Typography>
                 </div>
             </CardContent>
-            <PostActions postId={postId} likes={likes} dislikes={dislikes}  loggedInUsername={loggedInUsername} authorUsername={authorUsername}/>
+            <PostActions
+                postId={postId}
+                likes={likes}
+                dislikes={dislikes}
+                loggedInUsername={loggedInUsername}
+                authorUsername={authorUsername}
+            />
             <Divider variant="middle" />
         </div>
     )

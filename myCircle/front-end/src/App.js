@@ -47,9 +47,7 @@ export default class App extends Component {
       userLastName: '',
       loggedInUsername: '',
       userProfilePicture: '',
-      UIColor: '',
-      reload: false
-      
+      UIColor: ''    
     }
   }
   // const isLoggedIn = useSelector(state => state.isLoggedIn),
@@ -72,29 +70,29 @@ export default class App extends Component {
     })
     //TURN THE RESPONSE INTO A JSON OBJECT
     .then(response => response.json())
-    .then(await this.delayFunction(1000))
+    // .then(await this.delayFunction(1000))
     // WHAT WE DO WITH THE DATA WE RECEIVE (data => console.log(data)) SHOULD SHOW WHAT WE GET
     .then(data => {
       console.log(data)
     let count = 0;    
     data.forEach(element => (    
       element.seen === 0 ? count++ : ""))
-    this.setState({ alertNotifications: count, notifications: data, reload: false })  
+    this.setState({ alertNotifications: count, notifications: data})  
     }) 
 }
 
-refresh = () => {
-  if(!this.state.reload) {      
-      setInterval(this.getNotifications(), 10000000000000)
-      this.setState({reload: true})  
-    }
+
+  componentDidMount() { 
+      console.log(this.state.isSignedIn)
+      this.interval = setInterval(() => this.getNotifications(), 5000);    
+  }
+  componentWillUnmount() {
+    clearInterval(this.interval);
   }
 
 
 
-
   confirmFriendRequest = (sender, loggedInUser) => {
-    console.log("cliiiiiiccckkkkeeeeeeddddd")
     fetch('http://localhost:3001/confirmFriendRequest', {
       method: 'post',
       headers: {'Content-Type': 'application/json'},

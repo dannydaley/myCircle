@@ -18,7 +18,8 @@ export default class Feed extends React.Component {
     this.state = {
       circle: this.props.circle,
         posts: [],
-        dataIsLoaded: false
+        dataIsLoaded: false,
+        passedFirstLoad: false
     }
   }
 
@@ -29,8 +30,9 @@ export default class Feed extends React.Component {
   };
 
   //COMPONENT DID MOUNT IS BUILT IN AND RUNS WHEN THE COMPONENT MOUNTS
-  componentDidMount = async (newCircle) => {
-    if (!newCircle) {
+  getFeed = async (newCircle) => {
+    console.log("!!!!!!!!!!!!!!!!!")
+    if (!newCircle || newCircle === undefined) {
       newCircle = 'general'
     }  
     this.setState({ dataIsLoaded: false, circle: newCircle })   
@@ -56,15 +58,34 @@ export default class Feed extends React.Component {
       });
       this.props.getNotifications()
     })
+    
+   
   }
+
+  returnFunction = () => {
+    console.log("HEYYY")
+    return
+  }
+  componentDidMount(){
+     this.getFeed(this.state.circle)
+    // this.interval = setInterval(() => this.returnFunction(), 10000);
+    
+  }
+
   changeCircle = (newCircle) => { 
-  this.componentDidMount(newCircle); 
+  this.getFeed(newCircle); 
   }
+  // componentDidMount(this.state.circle) {
+    
+  // }
+
+
 
   render () {   
     const { onRouteChange, changeMailNotifications, userFirstName, userLastName, loggedInUsername, userProfilePicture } = this.props; 
     //SETTING UP ACCESS TO THE STATE VARIABLES   
     const { circle, posts, dataIsLoaded } = this.state;
+    
     // IF THE DATA ISNT LOADED YET, LOAD AN ALTERNATIVE WHILE WE WAIT   
     if (!dataIsLoaded) {
       return (
