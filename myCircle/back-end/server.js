@@ -682,7 +682,6 @@ app.post('/votePost', (req, res) => {
 
   app.post('/setNotificationAsSeen', (req, res) => {
     let { actionId } = req.body;
-    console.log("serverrrr")
     SQLdatabase.run("UPDATE userActions SET seen = true WHERE actionId = ?", actionId, (err, rows) => {
       if (err) {
         console.log("error setting notification as seen")
@@ -700,6 +699,7 @@ app.post('/votePost', (req, res) => {
 
 // #endregion 
 app.post('/getNotifications', (req, res) => {
+  console.log("getting notifications")
   let user = req.body.user
   SQLdatabase.all(GET_NOTIFICATIONS, [user], (err, rows) => {
     if (err) {

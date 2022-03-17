@@ -48,14 +48,15 @@ export default class App extends Component {
       loggedInUsername: '',
       userProfilePicture: '',
       UIColor: '',
+      reload: false
       
     }
   }
   // const isLoggedIn = useSelector(state => state.isLoggedIn),
   delay = ms => new Promise(res => setTimeout(res, ms));
 
-  delayFunction = async () => {
-    await this.delay(1000);
+  delayFunction = (time) => {
+    this.delay(time);
   };
 
 
@@ -71,16 +72,26 @@ export default class App extends Component {
     })
     //TURN THE RESPONSE INTO A JSON OBJECT
     .then(response => response.json())
-    .then(await this.delayFunction())
+    .then(await this.delayFunction(1000))
     // WHAT WE DO WITH THE DATA WE RECEIVE (data => console.log(data)) SHOULD SHOW WHAT WE GET
     .then(data => {
       console.log(data)
     let count = 0;    
     data.forEach(element => (    
       element.seen === 0 ? count++ : ""))
-    this.setState({ alertNotifications: count, notifications: data })  
-    })
+    this.setState({ alertNotifications: count, notifications: data, reload: false })  
+    }) 
 }
+
+refresh = () => {
+  if(!this.state.reload) {      
+      setInterval(this.getNotifications(), 10000000000000)
+      this.setState({reload: true})  
+    }
+  }
+
+
+
 
   confirmFriendRequest = (sender, loggedInUser) => {
     console.log("cliiiiiiccckkkkeeeeeeddddd")
@@ -110,6 +121,7 @@ export default class App extends Component {
       console.log(data)
  })
 	}
+
 
   sendFriendRequest = () => {
     fetch('http://localhost:3001/friendRequest', {
@@ -152,11 +164,13 @@ export default class App extends Component {
   }
 
   render() {   
+
     return (
       <ThemeProvider theme={theme} >
       <DocumentMeta >      
       <div className="App"  >
         { this.state.isSignedIn === true ? 
+          
             <div>
               <NavBar
               getNotifications={this.getNotifications}
