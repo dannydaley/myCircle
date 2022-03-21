@@ -71,7 +71,7 @@ export default class MyAccountSettings extends React.Component {
 
   settingsGroup = (selection) => {
     switch (selection) {
-      case 'My information' : return <MyInformation settings={this.state.settings} loggedInUsername={this.props.loggedInUsername}/>;
+      case 'My information' : return <MyInformation updateSession={this.props.updateSession} settings={this.state.settings} loggedInUsername={this.props.loggedInUsername} refreshData={this.props.refreshData}/>;
       case 'My Circles' : return <MyCircles settings={this.state.settings}/>;
       case 'My friends' :return <MyFriends settings={this.state.settings}/>
       case 'My login info' :return <MyLoginInfo settings={this.state.settings} mountComponent={this.componentDidMount}/>

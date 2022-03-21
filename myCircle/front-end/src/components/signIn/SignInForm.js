@@ -24,6 +24,19 @@ class SignInForm extends React.Component
         this.setState({signInPassword: event.target.value})
     }
 
+applySession = (firstName, lastName, username, profilePicture) => {
+                this.props.updateSession(firstName, lastName, username, profilePicture)
+                this.props.onRouteChange('home')  
+}
+
+    componentDidMount() {     
+        fetch('http://localhost:3001/refreshSessionStatus', {
+          status: 'session-exists'
+        }).then(response => response.json())
+          .then(data => data.status === "session-exists" ? this.applySession(data.firstName, data.lastName, data.username, data.profilePicture) :''
+          )
+          }
+
 onSubmitSignIn = () => {
     fetch('http://localhost:3001/signin', {
         method: 'post',

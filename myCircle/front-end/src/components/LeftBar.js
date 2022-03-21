@@ -12,9 +12,7 @@ export default class LeftBar extends React.Component  {
 
   constructor(props) {
     super(props);
-    this.state = {
-      
-    }
+
   } 
   render () {
     const { changeCircle, userProfilePicture } = this.props;

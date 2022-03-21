@@ -5,7 +5,8 @@ import MyAccountLeftBar from "./myAccountLeftBar";
 export default class  MyAccountOverlay extends React.Component {
     constructor(props) {
         super(props);
-    }    
+        
+    }
 
     render () {
         const { userFirstName, userLastName, changeSettings, userProfilePicture } = this.props

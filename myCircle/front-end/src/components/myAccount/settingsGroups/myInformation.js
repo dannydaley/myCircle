@@ -9,15 +9,16 @@ import SchoolIcon from '@mui/icons-material/School';
 import Container from '@mui/material/Container';
 import InfoIcon from '@mui/icons-material/Info';
 import Button from '@mui/material/Button';
-
+import ImageIcon from '@mui/icons-material/Image';
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
+import axios from 'axios';
 
 
 export default class MyInformation extends React.Component {
 
     constructor(props) {
-        super();
+        super(props);
         this.state = {
             firstName: '',
             lastName: '',            
@@ -49,7 +50,41 @@ export default class MyInformation extends React.Component {
     onWorkChange = (event) => {
         this.setState({work: event.target.value})
     }
+    onProfilePictureChange = (event) => {
+    
+        this.updateProfilePicture(event.target.files[0])
+    }
 
+    delay = ms => new Promise(res => setTimeout(res, ms));
+
+    delayFunction = async () => {
+      await this.delay(10000);
+    };
+
+
+    updateProfilePicture = async (image) => {        
+        let formData = new FormData()
+       
+    formData.append('image', image)   
+    formData.append('username', this.props.loggedInUsername)    
+    await axios.post("http://localhost:3001/changeProfilePicture", formData ,{        
+        headers: { "Content-Type": "multipart/form-data" } ,
+        body: JSON.stringify({
+            "username": this.props.loggedInUsername
+        })
+    })    
+    .then(res => {        
+        console.log(res)
+       
+        
+           this.setState({profilePicture: res.profilePicture})           
+        
+        
+           
+          
+         
+      
+})}
 
     updateUserGeneralInfo = () => {
         const { firstName, lastName, aboutMe, location, education, work } = this.state
@@ -83,7 +118,7 @@ export default class MyInformation extends React.Component {
           newCircle = 'general'
         }  
         this.setState({ dataIsLoaded: false,  })   
-        console.log(this.props.loggedInUsername)
+     
         //FETCH IS A GET REQUEST BY DEFAULT, POINT IT TO THE ENDPOINT ON THE BACKEND
         fetch('http://localhost:3001/getUserGeneralInfo', {
           method: 'post',
@@ -134,6 +169,10 @@ export default class MyInformation extends React.Component {
                                 // onClick={()=>this.props.onRouteChange('profile')}
                                 /> 
                                 <Typography variant="h6" component="div" sx={{textAlign: 'center', mt: 2, paddingTop: 1, paddingBottom: 3, bgcolor: 'none' }}>Change profile picture</Typography>
+                                <label for="file-input">
+                    <ImageIcon fontSize="large" sx={{ mt: 3, fontSize: 70,  color: 'white', mr: 2}} />
+                </label>
+                <input id="file-input" type="file" name="file" onChange={this.onProfilePictureChange.bind(this)} hidden/>  
                             </div>   
   
                     {/* images/profilePictures/Daley-update-profile-picture-1640184634605-875098110.png */}

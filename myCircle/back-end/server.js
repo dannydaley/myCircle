@@ -8,7 +8,27 @@ app.use(cors())
 app.use(bodyParser.json())
 var path = require('path');
 app.use("/public", express.static(path.join(__dirname, 'public')));
+let uuidv4 = require('uuid/v4')
+// Session setup
+var session = require('cookie-session');
+var cookieParser = require('cookie-parser');
+app.use(cookieParser());
+var userSession = {
+  secret: "myMegaSecret",
+  keys: ['key1', 'key2', 'key3'],
+  originalMaxAge: 0,
+  maxAge:0,
+  resave: true,
+  saveUninitialized: true,  
+  cookie: {
+    httpOnly: true,    
+    secure: false,
+    maxAge: 30  
+  }
+}
 
+app.use(cookieParser())
+app.use(session(userSession))
 
 
 
@@ -44,38 +64,33 @@ function passwordHash(thePassword, theSalt) {
 //set up multer middleware for image uploads
 var multer  = require('multer');
 
-//set up storage location
+
+
+
+
 const storage = multer.diskStorage({
-  
-  //set up save destination
-  destination: function (req, file, cb) {     
-     cb(null, 'public/images/uploads') 
-  }, //set up filename
-  filename: function (req, file, cb) {
-    if (file.fieldname !== undefined) {
-      // delete the attached image
-    }  
-    //create unique suffix for naming
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
-    if (req.body.context === "blogPost") {
-      // create filename (author + filename + unique suffix + filetype)
-      cb(null, req.body.author + '-' + file.fieldname + '-' + uniqueSuffix + '.png')
-      // reset the request.body.image field with the image location + new filename to be put in the database as a link
-      req.body.image = "/images/uploads/" + req.body.author + '-' + file.fieldname + '-' + uniqueSuffix + '.png'
-    }    
-    // if upload image field on form is left blank..
-    else {
-      console.log("file fieldname is undefined")
-      return
-    }
-  }
+   destination: "public/images/uploads",
+   filename: function(req, file, cb){
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
+      cb(null,"-IMAGE-" + uniqueSuffix + ".png");
+      req.body.image = "images/uploads/" + "-IMAGE-" + uniqueSuffix + '.png';
+
+   }
 })
 
+const upload = multer({
+   storage: storage,
+   limits:{fileSize: 1000000},
+}).single("myImage");
+//set up storage location
+  
+
+
+
+
 // set upload storage to the previously set up desitnation
-const upload = multer({ storage: storage });
+
 /* END OF IMAGE UPLOAD HANDLING */
-
-
 
 //#endregion IMAGE UPLAOD HANDLING
 
@@ -94,7 +109,8 @@ let postDataJSON = require("./database/posts.json");
 let userDataJSON = require("./database/users.json");
 let imagesDataJSON = require("./database/images.json");
 let friendshipsDataJSON = require("./database/friendships.json");
-let userActionsDataJSON = require("./database/userActions.json")
+let userActionsDataJSON = require("./database/userActions.json");
+const { request } = require('https');
  
 
 const CHECK_THAT_USERS_ARE_FRIENDS = "SELECT * FROM friendships WHERE (user1 = ? OR user2 = ?) AND (user1 = ? OR user2 = ?)"
@@ -392,13 +408,26 @@ app.post('/signin', (req, res) => {
     //if a user exists, and their stored password matches the output of the hashing function
     // with their password entry..  
     if (user!== undefined && user.password === passwordHash(password, user.passwordSalt)) {
+      req.session.userData = {
+      };
+        req.session.userData.isSignedIn= true;
+        req.session.userData.userFirstName = rows.firstName;
+        req.session.userData.userLastName=  rows.lastName;
+        req.session.userData.loggedInUsername= rows.username;
+        req.session.userData.userProfilePicture= rows.profilePicture;
+      console.log(req.session)
       //respond with user data
       res.json({
         status: 'success',
-        firstName: rows.firstName,
-        lastName: rows.lastName,
-        username: rows.username,
-        profilePicture: rows.profilePicture
+        isSignedIn: req.session.userData.isSignedIn,
+        firstName: req.session.userData.userFirstName,
+        lastName: req.session.userData.userLastName,
+        username: req.session.userData.loggedInUsername,
+        profilePicture: req.session.userData.userProfilePicture
+        // firstName: rows.firstName,
+        // lastName: rows.lastName,
+        // username: rows.username,
+        // profilePicture: rows.profilePicture
       })
     } else {     
       console.log("invalid user credentials")
@@ -410,6 +439,30 @@ app.post('/signin', (req, res) => {
     }  
   })
 })
+
+app.get('/refreshSessionStatus', (req, res) => {
+  console.log("refreshing session")
+  if (req.session.userData !== undefined) {
+      res.json({
+    status: 'session-exists',
+    isSignedIn: req.session.userData.isSignedIn,
+    firstName: req.session.userData.userFirstName,
+    lastName: req.session.userData.userLastName,
+    username: req.session.userData.loggedInUsername,
+    profilePicture: req.session.userData.userProfilePicture
+    // firstName: rows.firstName,
+    // lastName: rows.lastName,
+    // username: rows.username,
+    // profilePicture: rows.profilePicture
+  })
+
+  }
+  else{
+    res.json("no session")
+  }
+
+})
+
 
 //#endregion SIGN UP & SIGN IN 
 
@@ -700,6 +753,7 @@ app.post('/votePost', (req, res) => {
 // #endregion 
 app.post('/getNotifications', (req, res) => {
   console.log("getting notifications")
+  console.log(req.session)
   let user = req.body.user
   SQLdatabase.all(GET_NOTIFICATIONS, [user], (err, rows) => {
     if (err) {
@@ -743,9 +797,7 @@ app.post('/getFeedFriendsOnly', (req, res) => {
       })
     }
   })
-})
-
-  
+})  
 app.post('/friendRequest', (req, res) => {
   console.log(req.body)
   let type = "friendRequest";  
@@ -818,9 +870,6 @@ app.post('/refuseFriendRequest', (req, res) => {
   })
 })
 
-
-
-
 app.post('/search', (req, res) => {
   SQLdatabase.all("SELECT firstName, lastName, username, profilePicture, firstname || ' ' || lastname AS full_name FROM users WHERE full_name LIKE '%' || ? || '%' OR username LIKE ? || '%'", [req.body.search, req.body.search], (err, rows) => {
     if (err) {
@@ -833,6 +882,50 @@ app.post('/search', (req, res) => {
       results: rows})
   })
 })
+
+app.post("/changeProfilePicture", (req, res) => {   
+    let upload = multer({ storage: storage}).single('image');    
+    upload(req, res, function(err) {
+      // req.file contains information of uploaded file
+      // req.body contains information of text fields
+      if (!req.file) {
+          return res.json('Please select an image to upload');
+      }
+      else if (err) {
+           console.log(err)
+      }
+      const classifiedsadd = {
+      image: req.file.filename
+};  
+var params = [ req.file.filename, req.body.username ]
+console.log(req.body.username)
+ SQLdatabase.run("UPDATE users SET profilePicture = ? WHERE username = ?", [req.body.image, req.body.username], (err, result) => {
+    if (err) {
+      console.log("error adding picture to database")
+      res.json("error adding picture to database")
+    }
+    
+    // SQLdatabase.run('INSERT INTO `images` VALUES(?,?,?)', [req.body.username, req.body.image, null], (err, rows)  => {
+
+    // });
+          res.json({
+         
+            profilePicture: req.body.image
+    })
+})
+})
+ 
+  })
+
+ app.post('/refreshData', (req, res) => {
+   SQLdatabase.get("SELECT firstName, lastName, profilePicture FROM users WHERE username = ?", req.body.loggedInUsername, (err, rows)=> {
+     let userData = rows;
+     res.json(userData)
+   })
+ })
+
+
+
 
 app.listen(process.env.PORT)
 console.log("server.js running on port " + process.env.PORT)

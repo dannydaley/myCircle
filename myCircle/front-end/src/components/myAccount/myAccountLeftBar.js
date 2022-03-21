@@ -12,8 +12,10 @@ export default class MyAccountLeftBar extends React.Component  {
 
   constructor(props) {
     super(props);
+
   } 
   render () {
+   
     const { userFirstName, userLastName, changeSettings, userProfilePicture } = this.props
     return (
       <div>

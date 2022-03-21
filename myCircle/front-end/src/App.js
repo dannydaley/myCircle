@@ -83,8 +83,9 @@ export default class App extends Component {
 
 
   componentDidMount() { 
-      console.log(this.state.isSignedIn)
-      this.interval = setInterval(() => this.getNotifications(), 5000);    
+      if (this.state.isSignedIn) {
+       this.interval = setInterval(() => this.getNotifications(), 5000);     
+      }      
   }
   componentWillUnmount() {
     clearInterval(this.interval);
@@ -145,10 +146,33 @@ export default class App extends Component {
     this.setState({route: route})
   }
 
+
   updateSession = (firstName, lastName, userName, userProfilePicture) => {
-    this.setState({ userFirstName: firstName, userLastName: lastName, loggedInUsername: userName, userProfilePicture: userProfilePicture })
+    this.setState({ userFirstName: firstName, userLastName: lastName, loggedInUsername: userName, userProfilePicture: userProfilePicture, isSignedIn: true })
+    console.log(this.state)
+    
   }
 
+  refreshData = () => {
+    fetch('http://localhost:3001/refreshData', {
+      method: 'post',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+           loggedInUsername: this.state.loggedInUsername           
+      })    
+ })
+ //TURN THE RESPONSE INTO A JSON OBJECT
+ .then(response => response.json())     
+ // WHAT WE DO WITH THE DATA WE RECEIVE (data => console.log(data)) SHOULD SHOW WHAT WE GET
+ .then(data => {
+      this.setState({           
+           firstName: data.profileData.firstName,
+           lastName: data.profileData.lastName,           
+           profilePicture: data.profileData.profilePicture     
+      })      
+ })
+}
+  
   // THESE FUNCTIONS HANDLE INCREMENTING THE NOTIFICATIONS. THESE ARE CURRENTLY PASSED INTO THE NAV BAR
   changeMailNotifications = (mailNotifications) => {    
     this.setState({mailNotifications: this.state.mailNotifications+=1})
@@ -239,6 +263,8 @@ export default class App extends Component {
                  <Route path="myAccount"
                   element={
                     <MyAccountPage
+                    refreshData={this.refreshData}
+                    updateSession={this.updateSession}
                     getNotifications={this.getNotifications}
                       userFirstName={this.state.userFirstName}
                       userProfilePicture={this.state.userProfilePicture}
