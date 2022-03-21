@@ -63,21 +63,22 @@ export default class MyInformation extends React.Component {
 
 
     updateProfilePicture = async (image) => {        
-        let formData = new FormData()
-       
-    formData.append('image', image)   
-    formData.append('username', this.props.loggedInUsername)    
-    await axios.post("http://localhost:3001/changeProfilePicture", formData ,{        
-        headers: { "Content-Type": "multipart/form-data" } ,
-        body: JSON.stringify({
-            "username": this.props.loggedInUsername
-        })
-    })    
-    .then(res => {        
-        this.setState({profilePicture: res.profilePicture})
-        this.props.remountParent() 
-        this.props.refreshData()
-})}
+        let formData = new FormData()       
+        formData.append('image', image)   
+        formData.append('username', this.props.loggedInUsername)    
+        await axios.post("http://localhost:3001/changeProfilePicture", formData ,{        
+            headers: { "Content-Type": "multipart/form-data" } ,
+            body: JSON.stringify({
+                "username": this.props.loggedInUsername
+            })
+        })    
+        .then(res => {        
+            this.setState({profilePicture: res.profilePicture})
+            this.props.remountParent() 
+            this.props.refreshData()
+            }
+        )
+    }
 
     updateUserGeneralInfo = () => {
         const { firstName, lastName, aboutMe, location, education, work } = this.state
@@ -100,18 +101,14 @@ export default class MyInformation extends React.Component {
         .then(data => { 
             this.props.remountParent() 
             this.props.refreshData()
-    })
-}
-
-
-
-
+        })
+    }
 
     componentDidMount = async (newCircle) => {
         if (!newCircle) {
           newCircle = 'general'
         }  
-        this.setState({ dataIsLoaded: false,  })   
+        this.setState({ dataIsLoaded: false })   
      
         //FETCH IS A GET REQUEST BY DEFAULT, POINT IT TO THE ENDPOINT ON THE BACKEND
         fetch('http://localhost:3001/getUserGeneralInfo', {
