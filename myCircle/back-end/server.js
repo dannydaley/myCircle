@@ -133,7 +133,7 @@ const GET_ALL_USERS_FRIENDS = "SELECT * FROM friendships WHERE user1 =? OR user2
 const GET_NOTIFICATIONS = "SELECT userActions.* , users.firstName, users.lastName FROM `userActions` LEFT OUTER JOIN `users` ON `userActions`.`sender` = `users`.`username` WHERE recipient = ? ORDER BY actionId DESC LIMIT 50 "
 const GET_POSTS_BY_AUTHOR_OR_RECIPIENT = "SELECT blog.*, users.firstName, users.lastName, users.profilePicture FROM `blog` LEFT OUTER JOIN `users` ON `blog`.`author` = `users`.`username` WHERE author = ? OR recipient = ? ORDER BY id DESC" // SQL command
 const GET_POSTS_BY_AUTHOR_BY_CIRCLE = "SELECT * FROM `blog` WHERE author = ? AND circle = ? ORDER BY id DESC" // SQL command
-const SQL_ADD_BLOG_POST = "INSERT INTO `blog` (author, authorFirstName, authorLastName, image, circle, content, date, recipient, likes, dislikes, postStrict) VALUES(?,?,?,?,?,?,?,?,?,?,?)" // 
+const SQL_ADD_BLOG_POST = "INSERT INTO `blog` (author, circle, content, date, recipient, likes, dislikes, postStrict) VALUES(?,?,?,date(),?,?,?,?)" // 
 const GET_ALL_USERS = "SELECT * FROM users"; // SQL command
 
 app.get('/updateImages', (req, res) => {
@@ -689,7 +689,7 @@ app.post('/newPost', (req, res) => {
     if (!req.body.postData.recipient) {
       req.body.postData.recipient = 'none'
     }
-    SQLdatabase.run(SQL_ADD_BLOG_POST, [ req.body.postData.author, req.body.postData.authorFirstName, req.body.postData.authorLastName, req.body.postData.image, req.body.circle, req.body.postData.postContent,req.body.postData.date, req.body.postData.recipient, 0, 0, req.body.postData.postStrict],  (err, rows) => {
+    SQLdatabase.run(SQL_ADD_BLOG_POST, [ req.body.postData.author, req.body.circle, req.body.postData.postContent,req.body.postData.recipient, 0, 0, req.body.postData.postStrict],  (err, rows) => {
       if (err) {
         console.log("error")
         console.log(err)
@@ -704,12 +704,6 @@ app.post('/newPost', (req, res) => {
 app.post('/votePost', (req, res) => {
   let { like, dislike, postId, sender, recipient } = req.body
   let message = " has reacted to your post!"
-  SQLdatabase.get(GET_POST_VOTES_BY_POST_ID, postId, (err, rows) => {
-    if (err) {
-      console.log("ERROR GETTING LIKES")
-    }
-    like += rows.likes;
-    dislike += rows.dislikes;
         SQLdatabase.run("INSERT INTO userActions (type, sender, recipient, message, seen, approved, date, relativePost) VALUES (?,?,?,?,?,?, DATE(),?)", ["reaction", sender, recipient, message, false, false, postId], (err, rows) => {
     if (err){
       console.log("error applying like to post at user action database")
@@ -727,9 +721,7 @@ app.post('/votePost', (req, res) => {
     console.log("success applying like to post at database")
     res.json("success applying like to post at database")
     return
-  })
-
-  })
+  }) 
 })
 
 
@@ -884,39 +876,43 @@ app.post('/search', (req, res) => {
   })
 })
 
-app.post("/changeProfilePicture", (req, res) => {   
+app.post("/changeProfilePicture", (req, res) => {       
     let upload = multer({ storage: storage}).single('image');    
     upload(req, res, function(err) {
-      // req.file contains information of uploaded file
-      // req.body contains information of text fields
-      if (!req.file) {
-          return res.json('Please select an image to upload');
-      }
-      else if (err) {
-           console.log(err)
-      }
-      const classifiedsadd = {
-      image: req.file.filename
-};  
-var params = [ req.file.filename, req.body.username ]
-console.log(req.body.username)
- SQLdatabase.run("UPDATE users SET profilePicture = ? WHERE username = ?", [req.body.image, req.body.username], (err, result) => {
-    if (err) {
-      console.log("error adding picture to database")
-      res.json("error adding picture to database")
-    }
-
-    // SQLdatabase.run('INSERT INTO `images` VALUES(?,?,?)', [req.body.username, req.body.image, null], (err, rows)  => {
-
-    // });
-          res.json({
-
-            profilePicture: req.body.image
+        if (!req.file) {
+            return res.json('Please select an image to upload');
+        }
+        else if (err) {
+            console.log(err)
+        }
+        const classifiedsadd = { image: req.file.filename };  
+        var params = [ req.file.filename, req.body.username ] 
+        SQLdatabase.run("UPDATE users SET profilePicture = ? WHERE username = ?", [req.body.image, req.body.username], (err, result) => {
+            if (err) {
+            console.log("error adding picture to database")
+            res.json("error adding picture to database")
+            }
+            // "SELECT userActions.* , users.firstName, users.lastName FROM `userActions` LEFT OUTER JOIN `users` ON `userActions`.`sender` = `users`.`username` WHERE reci
+            SQLdatabase.all("SELECT blog.*, users.firstName, users.lastName FROM `blog` LEFT OUTER JOIN `users` ON `blog`.`author` = `users`.`username` WHERE username = ? ORDER BY id DESC LIMIT 1", req.body.username, (err, rows) => {
+                console.log(rows)
+                if (err) {
+                    console.log(err)
+                }
+                SQLdatabase.run(SQL_ADD_BLOG_POST, [ req.body.username, "general",  `${rows[0].firstName} ${rows[0].lastName} has changed their profile picture!`,"none", 0, 0, false], (err, result) => {
+                    if (err) {
+                        console.log(err)
+                    }
+                    SQLdatabase.run("INSERT INTO images (ownerUsername, imageLocation, postId) VALUES (?,?,?)", [req.body.username, req.body.image, rows[0].id+1 ], (err, rows) => {
+                        if (err) {
+                            console.log(err)
+                        }
+                        res.json({profilePicture: req.body.image})
+                    })
+                })  
+            })
+        })
     })
 })
-})
-
-  })
 
  app.post('/refreshData', (req, res) => {
    SQLdatabase.get("SELECT firstName, lastName, profilePicture FROM users WHERE username = ?", req.body.loggedInUsername, (err, rows)=> {
@@ -924,9 +920,6 @@ console.log(req.body.username)
      res.json(userData)
    })
  })
-
-
-
 
 app.listen(process.env.PORT)
 console.log("server.js running on port " + process.env.PORT)

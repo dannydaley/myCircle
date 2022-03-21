@@ -1,17 +1,16 @@
 import * as React from 'react';
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
-import me from '../../Images/me.jpg'
-
 import CircularProgress from '@mui/material/CircularProgress';
-
+import ShowImage from './showImage';
 
 export default class RightBarImages extends React.Component {
   constructor (props) {
     super(props);
     this.state = {
       imagesAreLoaded: false,
-      loggedInUsername: this.props.loggedInUsername             
+      loggedInUsername: this.props.loggedInUsername ,
+      showingImage: false            
     }
   }
 srcset(image, size, rows = 1, cols = 1) {
@@ -22,8 +21,6 @@ srcset(image, size, rows = 1, cols = 1) {
     }&fit=crop&auto=format&dpr=2 2x`,
   };
 }    
-
-
 
 images = []
 
@@ -65,6 +62,9 @@ componentDidMount = () => {
        this.setState({imagesAreLoaded: true})    
     })
 }
+  showImage = () => {
+    this.setState({showImage: true})
+  }
 
 
   render() {
@@ -81,7 +81,9 @@ componentDidMount = () => {
         </ImageList>
       )
     } else {
-      return (        
+      return (      
+        <> 
+        
         <ImageList
           sx={{ width: 260, height: '100%', pb: 3}}
           variant="quilted"
@@ -94,13 +96,13 @@ componentDidMount = () => {
                 {...this.srcset(item.img, 1, item.rows, item.cols)}
                 alt={item.title}
                 loading="lazy"
+                onClick={() => this.showImage()}
               />
             </ImageListItem>
           ))}
         </ImageList>
+        </>
       );
     }
   }
 }
-
-

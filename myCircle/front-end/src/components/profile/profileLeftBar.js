@@ -1,24 +1,18 @@
 import * as React from 'react';
-
-import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
-import me from '../../Images/me.jpg'
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 
-
 export default class ProfileLeftBar extends React.Component  {
-
   constructor(props) {
     super(props);
   } 
 
   render () {
-    const { userFirstName, userLastName, loggedInUsername, changeAlertNotifications, userProfilePicture, isFriendsWithLoggedInUser, sendFriendRequest } = this.props
-    console.log(userProfilePicture)
+    const { userFirstName, userLastName, userProfilePicture, isFriendsWithLoggedInUser, sendFriendRequest } = this.props
     return (
       <div>
         <React.Fragment>

@@ -50,8 +50,7 @@ export default class MyInformation extends React.Component {
     onWorkChange = (event) => {
         this.setState({work: event.target.value})
     }
-    onProfilePictureChange = (event) => {
-    
+    onProfilePictureChange = (event) => {    
         this.updateProfilePicture(event.target.files[0])
     }
 
@@ -66,7 +65,7 @@ export default class MyInformation extends React.Component {
         let formData = new FormData()       
         formData.append('image', image)   
         formData.append('username', this.props.loggedInUsername)    
-        await axios.post("http://localhost:3001/changeProfilePicture", formData ,{        
+        await axios.post("http://localhost:3001/changeProfilePicture", formData, {        
             headers: { "Content-Type": "multipart/form-data" } ,
             body: JSON.stringify({
                 "username": this.props.loggedInUsername
@@ -155,18 +154,18 @@ export default class MyInformation extends React.Component {
                             src={
                                 'http://localhost:3001/public/' + profilePicture
                                 // process.env.SERVER + process.env.SERVERPUBLICDIRECTORY + props.profilePicture 
-
                                 } width="200px" height="150px" style={{ boxShadow: "1px 3px 5px 0px black", mb: 3 }}
                                 // onClick={()=>this.props.onRouteChange('profile')}
                                 /> 
-                                <Typography variant="h6" component="div" sx={{textAlign: 'center', mt: 2, paddingTop: 1, paddingBottom: 3, bgcolor: 'none' }}>Change profile picture</Typography>
-                                <label for="file-input">
-                    <ImageIcon fontSize="large" sx={{ mt: 3, fontSize: 70,  color: 'white', mr: 2}} />
-                </label>
+                                
+                <label for="file-input">
+                    <div style={{display: 'flex', flexDirection: 'row'}}>
+                        <ImageIcon fontSize="large" sx={{ mt: 3, fontSize: 70,  color: 'white', mr: 2, ":hover": { cursor: 'pointer' } }} />
+                        <Typography variant="h6" component="div" sx={{textAlign: 'center', mt: 2, paddingTop: 1, paddingBottom: 3, bgcolor: 'none', color:'white',":hover": { cursor: 'pointer' } }}>Change profile picture</Typography>
+               </div>
+         </label>
                 <input id="file-input" type="file" name="file" onChange={this.onProfilePictureChange.bind(this)} hidden/>  
-                            </div>   
-  
-                    {/* images/profilePictures/Daley-update-profile-picture-1640184634605-875098110.png */}
+                            </div>    
                     <PersonIcon sx={{mr: 2, color: 'rgba(255, 255, 255, 0.7)'}} /> 
                     <TextField
                         sx={{mr: '5%' ,maxWidth: '30%', width: '25%', border: '6px solid white', borderRadius: '4px',backgroundColor: 'white' }}
