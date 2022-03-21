@@ -1,18 +1,10 @@
 import * as React from 'react';
-import Stack from '@mui/material/Stack';
 import CssBaseline from '@mui/material/CssBaseline';
 import Box from '@mui/material/Box';
-
 import Container from '@mui/material/Container';
-import Typography from '@mui/material/Typography';
-import FeedPost from '../feedPost';
-import NewPost from '../newPost';
 import CircularProgress from '@mui/material/CircularProgress';
-import { Button } from '@mui/material';
 import Divider from '@mui/material/Divider';
 import MyAccountOverlay from './myAccountOverlay'
-import TextField from '@mui/material/TextField';
-
 import MyInformation from './settingsGroups/myInformation'
 import MyLoginInfo from './settingsGroups/myLoginInfo'
 import MyCircles from './settingsGroups/myCircles'
@@ -71,7 +63,7 @@ export default class MyAccountSettings extends React.Component {
 
   settingsGroup = (selection) => {
     switch (selection) {
-      case 'My information' : return <MyInformation updateSession={this.props.updateSession} settings={this.state.settings} loggedInUsername={this.props.loggedInUsername} refreshData={this.props.refreshData}/>;
+      case 'My information' : return <MyInformation updateSession={this.props.updateSession} settings={this.state.settings} remountParent={this.componentDidMount} loggedInUsername={this.props.loggedInUsername} refreshData={this.props.refreshData}/>;
       case 'My Circles' : return <MyCircles settings={this.state.settings}/>;
       case 'My friends' :return <MyFriends settings={this.state.settings}/>
       case 'My login info' :return <MyLoginInfo settings={this.state.settings} mountComponent={this.componentDidMount}/>
@@ -81,9 +73,9 @@ export default class MyAccountSettings extends React.Component {
 
   render () {   
     
-    const { onRouteChange,  userFirstName, userLastName,userProfilePicture, loggedInUsername } = this.props; 
+    const { userFirstName, userLastName,userProfilePicture } = this.props; 
     //SETTING UP ACCESS TO THE STATE VARIABLES   
-    const { circle, posts, dataIsLoaded } = this.state;
+    const { dataIsLoaded } = this.state;
     // IF THE DATA ISNT LOADED YET, LOAD AN ALTERNATIVE WHILE WE WAIT   
     if (!dataIsLoaded) {
       return (

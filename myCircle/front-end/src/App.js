@@ -119,7 +119,7 @@ export default class App extends Component {
  .then(data => {
       console.log(data)
  })
-	}
+}
 
 
   sendFriendRequest = () => {
@@ -164,11 +164,11 @@ export default class App extends Component {
  //TURN THE RESPONSE INTO A JSON OBJECT
  .then(response => response.json())     
  // WHAT WE DO WITH THE DATA WE RECEIVE (data => console.log(data)) SHOULD SHOW WHAT WE GET
- .then(data => {
+ .then(data => {  
       this.setState({           
-           firstName: data.profileData.firstName,
-           lastName: data.profileData.lastName,           
-           profilePicture: data.profileData.profilePicture     
+           userFirstName: data.firstName,
+           userLastName: data.lastName,           
+           userProfilePicture: data.profilePicture
       })      
  })
 }
@@ -195,7 +195,7 @@ export default class App extends Component {
           
             <div>
               <NavBar
-              getNotifications={this.getNotifications}
+                getNotifications={this.getNotifications}
                 refuseFriendRequest={this.refuseFriendRequest}
                 confirmFriendRequest={this.confirmFriendRequest}
                 onRouteChange={this.onRouteChange}

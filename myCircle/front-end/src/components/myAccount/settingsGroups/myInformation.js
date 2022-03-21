@@ -74,16 +74,9 @@ export default class MyInformation extends React.Component {
         })
     })    
     .then(res => {        
-        console.log(res)
-       
-        
-           this.setState({profilePicture: res.profilePicture})           
-        
-        
-           
-          
-         
-      
+        this.setState({profilePicture: res.profilePicture})
+        this.props.remountParent() 
+        this.props.refreshData()
 })}
 
     updateUserGeneralInfo = () => {
@@ -105,7 +98,8 @@ export default class MyInformation extends React.Component {
         .then(response => response.json())        
         // WHAT WE DO WITH THE DATA WE RECEIVE (data => console.log(data)) SHOULD SHOW WHAT WE GET
         .then(data => { 
-            this.componentDidMount()
+            this.props.remountParent() 
+            this.props.refreshData()
     })
 }
 

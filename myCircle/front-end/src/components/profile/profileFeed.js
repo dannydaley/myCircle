@@ -187,10 +187,10 @@ export default class ProfileFeed extends React.Component {
                                 <FeedPost
                                 loggedInUserName={loggedInUsername}
                                 authorUsername={item.author}
-                                authorFirstName={item.authorFirstName}
-                                authorLastName={item.authorLastName}
+                                authorFirstName={item.firstName}
+                                authorLastName={item.lastName}
                                 content={item.content}
-                                profilePicture={item.image}
+                                profilePicture={item.profilePicture}
                                 postId={item.id}
                                 likes={item.likes}
                                 dislikes={item.dislikes}/>                                     

@@ -8,7 +8,7 @@ export default class MyAccountPage extends React.Component {
         const { userFirstName, userLastName, userProfilePicture, loggedInUsername, getNotifications,refreshData } = this.props
         return (
             <div>
-                <MyAccountSettings userFirstName={userFirstName} userLastName={userLastName} userProfilePicture={userProfilePicture} loggedInUsername={loggedInUsername} getNotifications={getNotifications}refreshData={refreshData}/>
+                <MyAccountSettings userFirstName={userFirstName} userLastName={userLastName} userProfilePicture={userProfilePicture} loggedInUsername={loggedInUsername} getNotifications={getNotifications} refreshData={refreshData}/>
             </div>
         )
     }
