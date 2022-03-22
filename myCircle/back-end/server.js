@@ -72,17 +72,16 @@ const storage = multer.diskStorage({
    destination: "public/images/uploads",
    filename: function(req, file, cb){
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
-      cb(null,"-IMAGE-" + uniqueSuffix + ".png");
-      req.body.image = "images/uploads/" + "-IMAGE-" + uniqueSuffix + '.png';
-
+      cb(null,"-IMAGE-" + uniqueSuffix + ".png");  
+      req.body.image = "images/uploads/" + "-IMAGE-" + uniqueSuffix + ".png";
    }
 })
 
-const upload = multer({
-   storage: storage,
-   limits:{fileSize: 1000000},
-}).single("myImage");
-//set up storage location
+// const upload = multer({
+//    storage: storage,
+//    limits:{fileSize: 1000000},
+// }).single("myImage");
+// //set up storage location
 
 
 
@@ -695,13 +694,6 @@ app.post('/getAllFriends', (req, res) => {
 
 //#region POST CREATION, COMMENTING, VOTING 
 app.post('/newPost', (req, res) => {
-  SQLdatabase.get(GET_PROFILEPICTURE_BY_USERNAME, [ req.body.postData.author ], (err, profilePicture) => {
-    if (err) {
-      console.log("failed on profile pic grab")
-      res.status(500).send(err.message);
-      return;
-    }   
-
     if (!req.body.postData.recipient) {
       req.body.postData.recipient = 'none'
     }
@@ -712,10 +704,68 @@ app.post('/newPost', (req, res) => {
         res.status(500).send(err.message);
         return;
       }    
+      res.json('success');    
+  })
+});
+
+
+app.post('/newPost2',  (req, res) => {   
+  let upload =  multer({ storage: storage}).array('imagesArray', 2); 
+  upload(req, res, function(err) {
+      if (err) {
+          console.log(err);
+      }
+  let recipient = req.body.recipient;
+    if (!recipient) {
+      recipient = 'none'
+    }   
+    let author = req.body.username;
+    let postContent = req.body.postContent;
+    let postStrict = req.body.postStrict;
+    let circle = req.body.circle;
+    console.log(author)
+    console.log(postContent)
+    console.log(postStrict)
+    console.log(circle)
+    SQLdatabase.run(SQL_ADD_BLOG_POST, [ author, circle, postContent,recipient, 0, 0, postStrict ],  (err, rows) => {
+      if (err) {
+        console.log("error")
+        console.log(err)
+        res.status(500).send(err.message);
+        return;
+      }    
       res.json('success');
     })
   })
-});
+})
+
+  
+
+  
+  
+  // console.log(images)
+      
+
+
+
+  // console.log(req)
+  // let upload = multer({ storage: storage}).array('images');    
+  // upload(req, res, function(err) {
+  //     if (!req.file) {
+  //         return res.json('Please select an image to upload');
+  //     }
+  //     else if (err) {
+  //         console.log(err)
+  //     }
+  //     SQLdatabase.get(GET_PROFILEPICTURE_BY_USERNAME, [ req.body.postData.author ], (err, profilePicture) => {
+  //   if (err) {
+  //     console.log("failed on profile pic grab")
+  //     res.status(500).send(err.message);
+  //     return;
+  //   }   
+
+
+
 
 app.post('/votePost', (req, res) => {
   let { like, dislike, postId, sender, recipient } = req.body
@@ -797,7 +847,7 @@ app.post('/getFeedFriendsOnly', (req, res) => {
             })        
             SQLdatabase.all("SELECT images.imageLocation, images.postId FROM `images` WHERE postId IN  ("+postIds.join(',')+")", (err, images) => {           
             images.forEach(image => posts.forEach(post=> {image.postId === post.id ? post.images.push(image.imageLocation): '' }))      
-            console.log(posts)
+           
             res.json({
             posts: posts
             })      
@@ -920,6 +970,7 @@ app.post("/changeProfilePicture", (req, res) => {
         }
         const classifiedsadd = { image: req.file.filename };  
         var params = [ req.file.filename, req.body.username ] 
+        req.body.image = req.body.image.replace(',', '')
         SQLdatabase.run("UPDATE users SET profilePicture = ? WHERE username = ?", [req.body.image, req.body.username], (err, result) => {
             if (err) {
             console.log("error adding picture to database")

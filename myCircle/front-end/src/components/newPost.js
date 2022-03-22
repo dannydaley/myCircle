@@ -9,22 +9,25 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import NavBar from './navBar';
 import { styled } from '@mui/system';
 import SwitchUnstyled, { switchUnstyledClasses } from '@mui/base/SwitchUnstyled';
+import axios from 'axios';
 
 export default class NewPost extends React.Component { 
     constructor(props) {
         super(props);
         this.state = {
             'author': this.props.loggedInUsername,
-            'authorFirstName': this.props.userFirstName,
-            'authorLastName': this.props.userLastName,
-            'image': this.props.userProfilePicture,
+            'imagesArray': [],
             "link":"",            
-            'postContent': '',
-            "date":"28-12-2019",
+            'postContent': '', 
             "postStrict": false,
             "recipient": this.props.recipient        
         }
+
+        this.onImageUploadChange = this.onImageUploadChange.bind(this);
+        this.onPostSubmit = this.onPostSubmit.bind(this);
     }
+
+
 
     blue = {
         500: '#007FFF',
@@ -102,7 +105,7 @@ export default class NewPost extends React.Component {
   delayFunction = async () => {
     await this.delay(1000);
   };
-    onStrictChange = async() => {
+  onStrictChange = async() => {
         this.setState({postStrict: !this.state.postStrict})
         await this.delayFunction(2000)
         console.log(this.state.postStrict)
@@ -110,11 +113,50 @@ export default class NewPost extends React.Component {
     onContentChange = (event) => {
         this.setState({postContent: event.target.value})        
     }
-    onPostSubmit = () => {
-        if (this.state.postContent.length < 5) {
-            console.log("post not long enough")
-            return
-        }  
+    onImageUploadChange = (event) => {  
+      this.setState({imagesArray: [...this.state.imagesArray, ...event.target.files]})}
+
+
+  
+
+
+            
+
+    onPostSubmit = async () => {
+
+
+      //   if (this.state.postContent.length < 5) {
+      //       console.log("post not long enough")
+      //       return
+      //   }  
+      //   let formData = new FormData();
+      //   for (const key of Object.keys(this.state.imagesArray)) {
+      //       formData.append('imagesArray', this.state.imagesArray[key])
+      //   }
+      //   formData.append('username', this.props.loggedInUsername)
+      //   formData.append('postContent', this.state.postContent)
+      //   formData.append('postStrict', this.state.postStrict)
+      //   formData.append('recipient', this.props.recipient)
+      //   formData.append('circle', this.props.circle)
+      //     await axios.post("http://localhost:3001/newPost2", formData, {        
+      //         headers: { "Content-Type": "multipart/form-data" } ,
+      //         body: JSON.stringify({
+      //             "username": this.props.loggedInUsername,
+      //             'postData': this.state,
+      //             'circle' : this.props.circle   
+      //         })
+      //     })
+      //     .then(data => {
+            
+      //         if (data.data === 'success') {              
+      //             this.props.changeCircle(this.props.circle) 
+      //         } else {
+      //             console.log(data)
+      //         } 
+      //     })
+      // }
+
+        //////////////////////////////////////////
         fetch('http://localhost:3001/newPost', {
             method: 'post',
             headers: {'Content-Type': 'application/json'},
@@ -139,7 +181,7 @@ export default class NewPost extends React.Component {
                 <label for="file-input">
                     <ImageIcon fontSize="large" sx={{ mt: 3, fontSize: 70,  color: 'white', mr: 2}} />
                 </label>
-                <input id="file-input" type="file" name="file" hidden/>   
+                <input id="file-input" type="file" name="file" onChange={this.onImageUploadChange.bind(this)} multiple hidden/>   
                 <TextField style={{backgroundColor: 'white', opacity: '0.5', borderRadius: '5px', width: '50%'}} sx={{mt: 2, mr: 2}}
                     id="filled-textarea"
                     label="New Post"
