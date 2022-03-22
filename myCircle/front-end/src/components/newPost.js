@@ -22,83 +22,82 @@ export default class NewPost extends React.Component {
             "postStrict": false,
             "recipient": this.props.recipient        
         }
-
         this.onImageUploadChange = this.onImageUploadChange.bind(this);
         this.onPostSubmit = this.onPostSubmit.bind(this);
+      }
+
+
+
+  blue = {
+      500: '#007FFF',
+    };
+    
+    grey = {
+      400: '#BFC7CF',
+      500: '#AAB4BE',
+      600: '#6F7E8C',
+    };
+      
+  Root = styled('span')(
+    ({ theme }) => `
+    font-size: 0;
+    position: relative;
+    display: inline-block;
+    width: 40px;
+    height: 20px;
+    margin: 10px;
+    cursor: pointer;      
+    &.${switchUnstyledClasses.disabled} {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }      
+    & .${switchUnstyledClasses.track} {
+      background: ${theme.palette.mode === 'dark' ? this.grey[600] : this.grey[400]};
+      border-radius: 10px;
+      display: block;
+      height: 100%;
+      width: 100%;
+      position: absolute;
+    }      
+    & .${switchUnstyledClasses.thumb} {
+      display: block;
+      width: 14px;
+      height: 14px;
+      top: 3px;
+      left: 3px;
+      border-radius: 16px;
+      background-color: #fff;
+      position: relative;
+      transition: all 200ms ease;
+    }      
+    &.${switchUnstyledClasses.focusVisible} .${switchUnstyledClasses.thumb} {
+      background-color: ${this.grey[500]};
+      box-shadow: 0 0 1px 8px rgba(0, 0, 0, 0.25);
+    }      
+    &.${switchUnstyledClasses.checked} {
+      .${switchUnstyledClasses.thumb} {
+        left: 22px;
+        top: 3px;
+        background-color: #fff;
+      }      
+      .${switchUnstyledClasses.track} {
+        background: ${this.blue[500]};
+      }
+    }      
+    & .${switchUnstyledClasses.input} {
+      cursor: inherit;
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      opacity: 0;
+      z-index: 1;
+      margin: 0;
     }
-
-
-
-    blue = {
-        500: '#007FFF',
-      };
-      
-      grey = {
-        400: '#BFC7CF',
-        500: '#AAB4BE',
-        600: '#6F7E8C',
-      };
-      
-      Root = styled('span')(
-        ({ theme }) => `
-        font-size: 0;
-        position: relative;
-        display: inline-block;
-        width: 40px;
-        height: 20px;
-        margin: 10px;
-        cursor: pointer;      
-        &.${switchUnstyledClasses.disabled} {
-          opacity: 0.4;
-          cursor: not-allowed;
-        }      
-        & .${switchUnstyledClasses.track} {
-          background: ${theme.palette.mode === 'dark' ? this.grey[600] : this.grey[400]};
-          border-radius: 10px;
-          display: block;
-          height: 100%;
-          width: 100%;
-          position: absolute;
-        }      
-        & .${switchUnstyledClasses.thumb} {
-          display: block;
-          width: 14px;
-          height: 14px;
-          top: 3px;
-          left: 3px;
-          border-radius: 16px;
-          background-color: #fff;
-          position: relative;
-          transition: all 200ms ease;
-        }      
-        &.${switchUnstyledClasses.focusVisible} .${switchUnstyledClasses.thumb} {
-          background-color: ${this.grey[500]};
-          box-shadow: 0 0 1px 8px rgba(0, 0, 0, 0.25);
-        }      
-        &.${switchUnstyledClasses.checked} {
-          .${switchUnstyledClasses.thumb} {
-            left: 22px;
-            top: 3px;
-            background-color: #fff;
-          }      
-          .${switchUnstyledClasses.track} {
-            background: ${this.blue[500]};
-          }
-        }      
-        & .${switchUnstyledClasses.input} {
-          cursor: inherit;
-          position: absolute;
-          width: 100%;
-          height: 100%;
-          top: 0;
-          left: 0;
-          opacity: 0;
-          z-index: 1;
-          margin: 0;
-        }
-        `,
-      );
-      label = { componentsProps: { input: { 'aria-label': 'Demo switch' } } };
+    `,
+  );
+  label = { componentsProps: { input: { 'aria-label': 'Demo switch' } } };
       
   delay = ms => new Promise(res => setTimeout(res, ms));
 
@@ -106,71 +105,46 @@ export default class NewPost extends React.Component {
     await this.delay(1000);
   };
   onStrictChange = async() => {
-        this.setState({postStrict: !this.state.postStrict})
-        await this.delayFunction(2000)
-        console.log(this.state.postStrict)
-    }
-    onContentChange = (event) => {
-        this.setState({postContent: event.target.value})        
-    }
-    onImageUploadChange = (event) => {  
-      this.setState({imagesArray: [...this.state.imagesArray, ...event.target.files]})}
+    this.setState({postStrict: !this.state.postStrict})
+    await this.delayFunction(2000)
+    console.log(this.state.postStrict)
+  }
+  onContentChange = (event) => {
+    this.setState({postContent: event.target.value})        
+  }
+  onImageUploadChange = (event) => {  
+    this.setState({imagesArray: [...this.state.imagesArray, ...event.target.files]})}        
 
 
-  
 
-
-            
-
-    onPostSubmit = async () => {
-
-
-      //   if (this.state.postContent.length < 5) {
-      //       console.log("post not long enough")
-      //       return
-      //   }  
-      //   let formData = new FormData();
-      //   for (const key of Object.keys(this.state.imagesArray)) {
-      //       formData.append('imagesArray', this.state.imagesArray[key])
-      //   }
-      //   formData.append('username', this.props.loggedInUsername)
-      //   formData.append('postContent', this.state.postContent)
-      //   formData.append('postStrict', this.state.postStrict)
-      //   formData.append('recipient', this.props.recipient)
-      //   formData.append('circle', this.props.circle)
-      //     await axios.post("http://localhost:3001/newPost2", formData, {        
-      //         headers: { "Content-Type": "multipart/form-data" } ,
-      //         body: JSON.stringify({
-      //             "username": this.props.loggedInUsername,
-      //             'postData': this.state,
-      //             'circle' : this.props.circle   
-      //         })
-      //     })
-      //     .then(data => {
-            
-      //         if (data.data === 'success') {              
-      //             this.props.changeCircle(this.props.circle) 
-      //         } else {
-      //             console.log(data)
-      //         } 
-      //     })
-      // }
-
-        //////////////////////////////////////////
-        fetch('http://localhost:3001/newPost', {
-            method: 'post',
-            headers: {'Content-Type': 'application/json'},
+  onPostSubmit = async () => {
+      if (this.state.postContent.length < 5) {
+          console.log("post not long enough")
+          return
+      }  
+      let formData = new FormData();
+      for (const key of Object.keys(this.state.imagesArray)) {
+          formData.append('imagesArray', this.state.imagesArray[key])
+      }
+      formData.append('username', this.props.loggedInUsername)
+      formData.append('postContent', this.state.postContent)
+      formData.append('postStrict', this.state.postStrict)
+      formData.append('recipient', this.props.recipient)
+      formData.append('circle', this.props.circle)
+      await axios.post("http://localhost:3001/newPost", formData, {        
+            headers: { "Content-Type": "multipart/form-data" } ,
             body: JSON.stringify({
+                "username": this.props.loggedInUsername,
                 'postData': this.state,
-                'circle' : this.props.circle                
+                'circle' : this.props.circle   
             })
-        }).then(response => response.json())
-        .then(data => {
-            if (data === 'success') {              
+      })
+      .then(data => {    
+            if (data.data.data === 'success') {              
                 this.props.changeCircle(this.props.circle) 
             } else {
                 console.log(data)
-            } 
+            }
         })
     }
 

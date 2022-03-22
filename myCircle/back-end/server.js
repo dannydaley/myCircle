@@ -68,14 +68,29 @@ var multer  = require('multer');
 
 
 
+// const storage = multer.diskStorage({
+//    destination: "public/images/uploads",
+//    filename: function(req, file, cb){
+//         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
+//       cb(null,"-IMAGE-" + uniqueSuffix + ".png");  
+//       req.body.image = "images/uploads/" + "-IMAGE-" + uniqueSuffix + ".png"
+
+
+
+//     })
+//    }
+// })
+
 const storage = multer.diskStorage({
-   destination: "public/images/uploads",
-   filename: function(req, file, cb){
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
-      cb(null,"-IMAGE-" + uniqueSuffix + ".png");  
-      req.body.image = "images/uploads/" + "-IMAGE-" + uniqueSuffix + ".png";
-   }
+  destination: "public/images/uploads",
+  filename: function(req, file, cb){
+       const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
+     cb(null,"-IMAGE-" + uniqueSuffix + ".png");  
+     let fileName = "images/uploads/" + "-IMAGE-" + uniqueSuffix + ".png"    
+     console.log(fileName) 
+     req.body.imageLocations += fileName + ","}
 })
+let upload = multer({ storage: storage})
 
 // const upload = multer({
 //    storage: storage,
@@ -693,28 +708,8 @@ app.post('/getAllFriends', (req, res) => {
 //#endregion GET USER INFO 
 
 //#region POST CREATION, COMMENTING, VOTING 
-app.post('/newPost', (req, res) => {
-    if (!req.body.postData.recipient) {
-      req.body.postData.recipient = 'none'
-    }
-    SQLdatabase.run(SQL_ADD_BLOG_POST, [ req.body.postData.author, req.body.circle, req.body.postData.postContent,req.body.postData.recipient, 0, 0, req.body.postData.postStrict],  (err, rows) => {
-      if (err) {
-        console.log("error")
-        console.log(err)
-        res.status(500).send(err.message);
-        return;
-      }    
-      res.json('success');    
-  })
-});
 
-
-app.post('/newPost2',  (req, res) => {   
-  let upload =  multer({ storage: storage}).array('imagesArray', 2); 
-  upload(req, res, function(err) {
-      if (err) {
-          console.log(err);
-      }
+app.post('/newPost', upload.array('imagesArray', 4), (req, res) => {
   let recipient = req.body.recipient;
     if (!recipient) {
       recipient = 'none'
@@ -723,49 +718,36 @@ app.post('/newPost2',  (req, res) => {
     let postContent = req.body.postContent;
     let postStrict = req.body.postStrict;
     let circle = req.body.circle;
-    console.log(author)
-    console.log(postContent)
-    console.log(postStrict)
-    console.log(circle)
-    SQLdatabase.run(SQL_ADD_BLOG_POST, [ author, circle, postContent,recipient, 0, 0, postStrict ],  (err, rows) => {
+    if(req.body.imageLocations){
+      images = req.body.imageLocations.split(',')  
+      images[0] = images[0].replace('undefined', '')
+    }
+    SQLdatabase.all("SELECT blog.*, users.firstName, users.lastName FROM `blog` LEFT OUTER JOIN `users` ON `blog`.`author` = `users`.`username` WHERE username = ? ORDER BY id DESC LIMIT 1", author, (err, rows) => {
+      console.log(rows)
       if (err) {
-        console.log("error")
-        console.log(err)
-        res.status(500).send(err.message);
-        return;
-      }    
-      res.json('success');
+          console.log(err)
+      }
+      SQLdatabase.run(SQL_ADD_BLOG_POST, [ author, circle, postContent, recipient, 0, 0, postStrict], (err, result) => {
+        if (err) {
+            console.log(err)
+        }
+        req.body.lastPost = rows[0].id+1 
+        let imageList =[]
+        if (req.body.imageLocations) {
+                    images.forEach(image => image.length > 1 ? 
+          SQLdatabase.run("INSERT INTO images (ownerUsername, imageLocation, postId) VALUES (?,?,?)", [author, image, req.body.lastPost],(err, rows) => {
+          if (err) {
+              console.log(err)
+          }
+        }) : '')                      
+          res.json({data: "success"})     
+        }
+        else {
+          res.json({data: "success"})   
+        }                
+      })  
     })
   })
-})
-
-  
-
-  
-  
-  // console.log(images)
-      
-
-
-
-  // console.log(req)
-  // let upload = multer({ storage: storage}).array('images');    
-  // upload(req, res, function(err) {
-  //     if (!req.file) {
-  //         return res.json('Please select an image to upload');
-  //     }
-  //     else if (err) {
-  //         console.log(err)
-  //     }
-  //     SQLdatabase.get(GET_PROFILEPICTURE_BY_USERNAME, [ req.body.postData.author ], (err, profilePicture) => {
-  //   if (err) {
-  //     console.log("failed on profile pic grab")
-  //     res.status(500).send(err.message);
-  //     return;
-  //   }   
-
-
-
 
 app.post('/votePost', (req, res) => {
   let { like, dislike, postId, sender, recipient } = req.body
@@ -802,10 +784,6 @@ app.post('/votePost', (req, res) => {
       res.json("success")
     })
   })
-
-
-
-
 //#endregion POST CREATION, COMMENTING, VOTING 
 
 // #endregion 
@@ -959,43 +937,45 @@ app.post('/search', (req, res) => {
   })
 })
 
-app.post("/changeProfilePicture", (req, res) => {       
-    let upload = multer({ storage: storage}).single('image');    
-    upload(req, res, function(err) {
-        if (!req.file) {
-            return res.json('Please select an image to upload');
-        }
-        else if (err) {
-            console.log(err)
-        }
-        const classifiedsadd = { image: req.file.filename };  
-        var params = [ req.file.filename, req.body.username ] 
-        req.body.image = req.body.image.replace(',', '')
-        SQLdatabase.run("UPDATE users SET profilePicture = ? WHERE username = ?", [req.body.image, req.body.username], (err, result) => {
-            if (err) {
-            console.log("error adding picture to database")
-            res.json("error adding picture to database")
-            }
-            // "SELECT userActions.* , users.firstName, users.lastName FROM `userActions` LEFT OUTER JOIN `users` ON `userActions`.`sender` = `users`.`username` WHERE reci
-            SQLdatabase.all("SELECT blog.*, users.firstName, users.lastName FROM `blog` LEFT OUTER JOIN `users` ON `blog`.`author` = `users`.`username` WHERE username = ? ORDER BY id DESC LIMIT 1", req.body.username, (err, rows) => {
-                console.log(rows)
-                if (err) {
-                    console.log(err)
-                }
-                SQLdatabase.run(SQL_ADD_BLOG_POST, [ req.body.username, "general",  `${rows[0].firstName} ${rows[0].lastName} has changed their profile picture!`,"none", 0, 0, false], (err, result) => {
+app.post("/changeProfilePicture", upload.single('image'), (req, res) => {     
+  const classifiedsadd = { image: req.file.filename };  
+  var params = [ req.file.filename, req.body.username ]  
+  // images[0] = images[0].replace('undefined', '')
+  req.body.imageLocations = req.body.imageLocations.replace('undefined', '')  
+  let image = req.body.imageLocations.replace(',','')             
+  console.log(image)  
+      SQLdatabase.run("UPDATE users SET profilePicture = ? WHERE username = ?", [image, req.body.username], (err, result) => {
+          if (err) {
+          console.log("error adding picture to database")
+          res.json("error adding picture to database")
+          }
+          // "SELECT userActions.* , users.firstName, users.lastName FROM `userActions` LEFT OUTER JOIN `users` ON `userActions`.`sender` = `users`.`username` WHERE reci
+          SQLdatabase.all("SELECT blog.*, users.firstName, users.lastName FROM `blog` LEFT OUTER JOIN `users` ON `blog`.`author` = `users`.`username` WHERE username = ? ORDER BY id DESC LIMIT 1", req.body.username, (err, rows) => {
+              if (err) {
+                  console.log(err)
+              }
+              console.log(req.body)
+              if (!rows) {
+                SQLdatabase.get("SELECT ")
+              }
+              SQLdatabase.run(SQL_ADD_BLOG_POST + " RETURNING id", [ req.body.username, "general",  `${rows[0].firstName} ${rows[0].lastName} has changed their profile picture!`,"none", 0, 0, false], (err, result) => {
+                  if (err) {
+                      console.log(err)
+                  }
+                  console.log("result")
+                  console.log(result)
+                  req.body.lastPost = rows[0].id+1                 
+
+                  SQLdatabase.run("INSERT INTO images (ownerUsername, imageLocation, postId) VALUES (?,?,?)", [req.body.username, image, req.body.lastPost], (err, rows) => {
                     if (err) {
                         console.log(err)
-                    }
-                    SQLdatabase.run("INSERT INTO images (ownerUsername, imageLocation, postId) VALUES (?,?,?)", [req.body.username, req.body.image, rows[0].id+1 ], (err, rows) => {
-                        if (err) {
-                            console.log(err)
-                        }
-                        res.json({profilePicture: req.body.image})
-                    })
-                })  
-            })
-        })
-    })
+                    }                     
+                   res.json({profilePicture: req.body.image})                     
+                })
+
+          })
+      })
+  })
 })
 
  app.post('/refreshData', (req, res) => {
