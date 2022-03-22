@@ -191,6 +191,7 @@ export default class ProfileFeed extends React.Component {
                                 authorLastName={item.lastName}
                                 content={item.content}
                                 profilePicture={item.profilePicture}
+                                images={item.images}
                                 postId={item.id}
                                 likes={item.likes}
                                 dislikes={item.dislikes}/>                                     

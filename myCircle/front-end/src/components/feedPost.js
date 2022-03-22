@@ -11,7 +11,7 @@ import { Link, useParams } from 'react-router-dom';
 
 export default function FeedPost(props) {
     
-    const { authorUsername, authorFirstName, authorLastName, profilePicture, content, postId, likes, dislikes, loggedInUsername } = props;
+    const { authorUsername, authorFirstName, authorLastName, profilePicture, images, content, postId, likes, dislikes, loggedInUsername } = props;
 
 
     return (
@@ -39,7 +39,13 @@ export default function FeedPost(props) {
                     <Typography sx={{ mb: 1.5 , overflowX: 'hidden', color:"white", fontSize: 16 , textAlign: 'left'}}>
                         {content}
                     </Typography>
-                </div>
+                    {images ? images.map(image => (                                                             
+                                  /* RENDER THE COMPONENT WITH PROPS PASSED IN FROM THE SPECIFIC ITEM WERE CURRENTLY ON FOR EACH ITEM PASSED OVER BY THE .MAP */
+                                    <img src={'http://localhost:3001/public/' + image}
+                                    width={"200px"}
+                                     />                                     
+                                )) : ''}
+                                </div>
             </CardContent>
             <PostActions
                 postId={postId}

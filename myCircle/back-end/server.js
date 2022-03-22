@@ -188,17 +188,17 @@ app.get('/SQLDatabaseBlogSetup', (req, res, next) => {
     //delete the table if it exists..
     SQLdatabase.run('DROP TABLE IF EXISTS `blog`');
     // create blog table
-    SQLdatabase.run('CREATE TABLE `blog` ( id INTEGER PRIMARY KEY AUTOINCREMENT, author varchar(255), authorFirstName varchar(255), authorLastName varchar(255), image varchar(255), content text,  date varchar(255), circle varchar(255), recipient varchar(255), likes int, dislikes int, postStrict int)');
+    SQLdatabase.run('CREATE TABLE `blog` ( id INTEGER PRIMARY KEY AUTOINCREMENT, author varchar(255), content text,  date varchar(255), circle varchar(255), recipient varchar(255), likes int, dislikes int, postStrict int)');
     //create base rows
     let rows = [];
     //loop through posts.json to populate rows array
     for (let i = 0; i < postDataJSON.entries.length; i++) {
-      rows[i] = [postDataJSON.entries[i].id, postDataJSON.entries[i].author, postDataJSON.entries[i].authorFirstName, postDataJSON.entries[i].authorLastName, postDataJSON.entries[i].image, postDataJSON.entries[i].content, postDataJSON.entries[i].date, postDataJSON.entries[i].circle,postDataJSON.entries[i].recipient, postDataJSON.entries[i].likes, postDataJSON.entries[i].dislikes, postDataJSON.entries[i].postStrict]
+      rows[i] = [postDataJSON.entries[i].id, postDataJSON.entries[i].author, postDataJSON.entries[i].content, postDataJSON.entries[i].date, postDataJSON.entries[i].circle,postDataJSON.entries[i].recipient, postDataJSON.entries[i].likes, postDataJSON.entries[i].dislikes, postDataJSON.entries[i].postStrict]
     }
     // populate SQL command with rows array populated from posts.json
     rows.forEach( (row) => {
       // insert rows to table
-      SQLdatabase.run('INSERT INTO `blog` VALUES(?,?,?,?,?,?,?,?,?,?,?,?)', row);
+      SQLdatabase.run('INSERT INTO `blog` VALUES(?,?,?,?,?,?,?,?,?)', row);
       // increment users post count according to author of currently processed post      
     });
   })
@@ -582,18 +582,26 @@ app.post('/getFeedByUser', (req, res, next) => {
       return
     }    
     rows.length > 0 || loggedInUsername === userProfileToGet ? isFriendsWithLoggedInUser = true : isFriendsWithLoggedInUser = false;
-
     if (req.body.circle === 'general') {
       SQLdatabase.all(GET_POSTS_BY_AUTHOR_OR_RECIPIENT, [ userProfileToGet, userProfileToGet ], (err, posts) => {
         if (err) {
           console.log("error at database", err);
           res.status(500).send(err.message);
           return;
-        } 
-        res.json({
-          isFriendsWithLoggedInUser: isFriendsWithLoggedInUser,
+        }
+        let postIds = []
+        posts.forEach(post => {
+          postIds.push(post.id);
+          post.images = [];
+          })        
+          SQLdatabase.all("SELECT images.imageLocation, images.postId FROM `images` WHERE postId IN  ("+postIds.join(',')+")", (err, images) => {           
+          images.forEach(image => posts.forEach(post=> {image.postId === post.id ? post.images.push(image.imageLocation): '' }))      
+          console.log(posts)
+          res.json({
+            isFriendsWithLoggedInUser: isFriendsWithLoggedInUser,
           posts: posts
-        });
+          })      
+      })
       })
     } else {
       SQLdatabase.all(GET_POSTS_BY_AUTHOR_BY_CIRCLE, [ userProfileToGet, userProfileToGet ], (err, posts) => {
@@ -602,14 +610,22 @@ app.post('/getFeedByUser', (req, res, next) => {
           res.status(500).send(err.message);
           return;
         }   
-        res.json({
-          isFriendsWithLoggedInUser: isFriendsWithLoggedInUser,
-          posts: posts
-        });
-      });
+        let postIds = []
+        posts.forEach(post => {
+          postIds.push(post.id);
+          post.images = [];
+          })        
+          SQLdatabase.all("SELECT images.imageLocation, images.postId FROM `images` WHERE postId IN  ("+postIds.join(',')+")", (err, images) => {           
+          images.forEach(image => posts.forEach(post=> {image.postId === post.id ? post.images.push(image.imageLocation): '' }))
+          res.json({
+            isFriendsWithLoggedInUser: isFriendsWithLoggedInUser,
+            posts: posts
+          })
+        })
+      })
     }
-  });
-});
+  })
+})
 //#endregion GET FEEDS
 
 //#region GET USER INFO 
@@ -769,29 +785,45 @@ app.post('/getFeedFriendsOnly', (req, res) => {
         return
       }
       rows.forEach(element => element.user1 === user ? friendsList.push("'"+ element.user2 + "'") : friendsList.push("'"+element.user1+"'"))
-      if (req.body.circle === "general") {
-        
-        SQLdatabase.all("SELECT blog.*, users.firstName, users.lastName, users.profilePicture, `images`.`imageLocation` FROM `blog` LEFT OUTER JOIN `users` ON `blog`.`author` = `users`.`username` INNER JOIN `images` ON `blog`.`id` = `images`.`postId`  WHERE author IN  ("+friendsList.join(',')+") AND ((postStrict = 0 OR circle = 'general') AND recipient = ?) ORDER BY id DESC", [ 'none' ],(err, rows) => {
+      if (req.body.circle === "general") {        
+        SQLdatabase.all("SELECT blog.*, users.firstName, users.lastName, users.profilePicture FROM `blog` LEFT OUTER JOIN `users` ON `blog`.`author` = `users`.`username` WHERE author IN  ("+friendsList.join(',')+") AND ((postStrict = 0 OR circle = 'general') AND recipient = ?) ORDER BY id DESC", [ 'none' ],(err, posts) => {
           if (err) {
             console.log(err)
-          }        
-          console.log(rows)  
-          res.json({
-            posts: rows
+          }  
+          let postIds = []
+          posts.forEach(post => {
+            postIds.push(post.id);
+            post.images = [];
+            })        
+            SQLdatabase.all("SELECT images.imageLocation, images.postId FROM `images` WHERE postId IN  ("+postIds.join(',')+")", (err, images) => {           
+            images.forEach(image => posts.forEach(post=> {image.postId === post.id ? post.images.push(image.imageLocation): '' }))      
+            console.log(posts)
+            res.json({
+            posts: posts
             })      
         })
+      })
       } else {
-      SQLdatabase.all("SELECT blog.*, users.firstName, users.lastName, users.profilePicture FROM `blog` LEFT OUTER JOIN `users` ON `blog`.`author` = `users`.`username` WHERE circle = ? AND author IN ("+friendsList.join(',')+") ORDER BY id DESC", req.body.circle, (err, rows) => {
+      SQLdatabase.all("SELECT blog.*, users.firstName, users.lastName, users.profilePicture FROM `blog` LEFT OUTER JOIN `users` ON `blog`.`author` = `users`.`username` WHERE circle = ? AND author IN ("+friendsList.join(',')+") ORDER BY id DESC", req.body.circle, (err, posts) => {
         if (err) {
           console.log(err)
-        }
+        }  
+        let postIds = []
+        posts.forEach(post => {
+          postIds.push(post.id);
+          post.images = [];
+          })        
+          SQLdatabase.all("SELECT images.imageLocation, images.postId FROM `images` WHERE postId IN  ("+postIds.join(',')+")", (err, images) => {           
+          images.forEach(image => posts.forEach(post=> {image.postId === post.id ? post.images.push(image.imageLocation): '' }))      
+          console.log(posts)
         res.json({
-          posts: rows        
+          posts: posts        
         })  
       })
-    }
-  })
-})  
+    })}
+  }) 
+})   
+  
 app.post('/friendRequest', (req, res) => {
   console.log(req.body)
   let type = "friendRequest";  
