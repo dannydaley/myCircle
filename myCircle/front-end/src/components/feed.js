@@ -58,28 +58,15 @@ export default class Feed extends React.Component {
       });
       this.props.getNotifications()
     })
-    
-   
   }
 
-  returnFunction = () => {
-    console.log("HEYYY")
-    return
-  }
   componentDidMount(){
-     this.getFeed(this.state.circle)
-    // this.interval = setInterval(() => this.returnFunction(), 10000);
-    
+     this.getFeed(this.state.circle)    
   }
 
   changeCircle = (newCircle) => { 
   this.getFeed(newCircle); 
   }
-  // componentDidMount(this.state.circle) {
-    
-  // }
-
-
 
   render () {   
     const { onRouteChange, changeMailNotifications, userFirstName, userLastName, loggedInUsername, userProfilePicture } = this.props; 

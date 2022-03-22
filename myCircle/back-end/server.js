@@ -771,10 +771,11 @@ app.post('/getFeedFriendsOnly', (req, res) => {
       rows.forEach(element => element.user1 === user ? friendsList.push("'"+ element.user2 + "'") : friendsList.push("'"+element.user1+"'"))
       if (req.body.circle === "general") {
         
-        SQLdatabase.all("SELECT blog.*, users.firstName, users.lastName, users.profilePicture FROM `blog` LEFT OUTER JOIN `users` ON `blog`.`author` = `users`.`username`  WHERE author IN  ("+friendsList.join(',')+") AND ((postStrict = 0 OR circle = 'general') AND recipient = ?) ORDER BY id DESC", [ 'none' ],(err, rows) => {
+        SQLdatabase.all("SELECT blog.*, users.firstName, users.lastName, users.profilePicture, `images`.`imageLocation` FROM `blog` LEFT OUTER JOIN `users` ON `blog`.`author` = `users`.`username` INNER JOIN `images` ON `blog`.`id` = `images`.`postId`  WHERE author IN  ("+friendsList.join(',')+") AND ((postStrict = 0 OR circle = 'general') AND recipient = ?) ORDER BY id DESC", [ 'none' ],(err, rows) => {
           if (err) {
             console.log(err)
-          }          
+          }        
+          console.log(rows)  
           res.json({
             posts: rows
             })      
