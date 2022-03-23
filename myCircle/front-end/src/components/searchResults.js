@@ -62,7 +62,7 @@ export default class SearchResults extends React.Component {
                             boxShadow: '-1px 3px 5px 0px black'
                             }}>
                         {this.state.results.map(item =>
-                            <Link to={`/${item.username}`}>
+                            <Link key={item.username} to={`/${item.username}`}>
                                 <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
                                     <img 
                                         src={'http://localhost:3001/public/' + item.profilePicture}

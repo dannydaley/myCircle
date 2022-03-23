@@ -1,3 +1,4 @@
+import { Divider } from "@mui/material";
 import React from "react";
 import FriendRequest from './friendRequest'
 import ReactionNotification from './reactionNotification'
@@ -5,24 +6,24 @@ import ReactionNotification from './reactionNotification'
 export default class ShowNotifications extends React.Component {
 	constructor(props) {
 		super(props)
-
 	}
-
-
 	render() {
 		const { notifications, confirmFriendRequest, refuseFriendRequest, getNotifications } = this.props
 		return (
-			<div style={{padding: '0 10px', backgroundColor: 'white', position: 'absolute', marginTop: '50px', marginLeft: '-200px', borderRadius: '5px', boxShadow: '0px 2px 10px 0px grey'}}>
+			<div style={{zIndex: '3', padding: '0 10px', backgroundColor: 'white', marginTop: '50px', position: 'fixed', right: '0',borderRadius: '5px', boxShadow: '0px 2px 10px 0px grey', width: '300px'}}>
 				{notifications.map( item => {
-					console.log(item.seen)
 					if (item.type === "friendRequest") {
-					 return <FriendRequest actionId={item.actionId} seen={item.seen}  firstName={item.firstName} lastName={item.lastName} senderUsername={item.sender} loggedInUser={item.recipient} message={item.message} confirmFriendRequest={confirmFriendRequest} refuseFriendRequest={refuseFriendRequest} getNotifications={getNotifications}/>			
+					 return <FriendRequest key={item.actionId} actionId={item.actionId} seen={item.seen}  firstName={item.firstName} lastName={item.lastName} senderUsername={item.sender} loggedInUser={item.recipient} message={item.message} confirmFriendRequest={confirmFriendRequest} refuseFriendRequest={refuseFriendRequest} getNotifications={getNotifications}/>			
 					} else {
-						return <ReactionNotification actionId={item.actionId}  seen={item.seen} firstName={item.firstName} lastName={item.lastName} senderUsername={item.sender} loggedInUser={item.recipient} message={item.message} relativePost={item.relativePost} recipientUsername={item.recipient} />
+						return <ReactionNotification key={item.actionId} actionId={item.actionId}  seen={item.seen} firstName={item.firstName} lastName={item.lastName} senderUsername={item.sender} loggedInUser={item.recipient} message={item.message} relativePost={item.relativePost} recipientUsername={item.recipient} />
 					}
-					})}
-					{notifications.length > 1 ? <p onClick={() =>  alert("cleared")} >clear all</p>  : ""}
-			
+				})}
+				<Divider sx={{mt: 2}}variant="middle" />
+				{notifications.length > 1 ?
+					<h4 style={{color: '#217cd8', marginLeft: '5px'}}onClick={() =>  alert("cleared")}>Clear all</h4>
+					: 
+					""
+				}			
 			</div>
 		)
 	}

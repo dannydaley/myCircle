@@ -30,8 +30,7 @@ export default class Feed extends React.Component {
   };
 
   //COMPONENT DID MOUNT IS BUILT IN AND RUNS WHEN THE COMPONENT MOUNTS
-  getFeed = async (newCircle) => {
-    console.log("!!!!!!!!!!!!!!!!!")
+  getFeed = async (newCircle) => { 
     if (!newCircle || newCircle === undefined) {
       newCircle = 'general'
     }  
@@ -107,7 +106,7 @@ export default class Feed extends React.Component {
             <div style={{width: '30%', height: '100px'}}></div>
                 <React.Fragment>              
                     <CssBaseline />
-                    <Container maxWidth="lg" sx={{zIndex: 10, bgcolor: '#343434', borderRadius: '0px 0px 30px 30px', width: '100%', pb: 2, ml: 2, mr:2,  mt: 12}}>
+                    <Container maxWidth="lg" sx={{zIndex: 2, bgcolor: '#343434', borderRadius: '0px 0px 30px 30px', width: '100%', pb: 2, ml: 2, mr:2,  mt: 12}}>
                         <NewPost
                           circle={circle}
                           changeCircle={this.changeCircle}
@@ -119,9 +118,10 @@ export default class Feed extends React.Component {
                         <Box sx={{ padding: 2, bgcolor: 'none'}}>
                             <Stack spacing={2} sx={{  width: '100%', margin: '50px auto 0'}}>
                             {/* .MAP IS OUR FOR EACH LOOP, 'ITEM' IS JUST WHAT WE CALL EACH ELEMENT IN THE LIST SO IS INTERCHANGEABLE */}
-                                {this.state.posts.map(item => (                                                             
+                                {this.state.posts.map(item => (
+                                                                                       
                                   /* RENDER THE COMPONENT WITH PROPS PASSED IN FROM THE SPECIFIC ITEM WERE CURRENTLY ON FOR EACH ITEM PASSED OVER BY THE .MAP */
-                                    <FeedPost loggedInUsername={loggedInUsername} authorUsername={item.author} authorFirstName={item.firstName} authorLastName={item.lastName} content={item.content} profilePicture={item.profilePicture} images={item.images} postId={item.id} likes={item.likes} dislikes={item.dislikes}
+                                    <FeedPost key={item.id} loggedInUsername={loggedInUsername} authorUsername={item.author} authorFirstName={item.firstName} authorLastName={item.lastName} content={item.content} profilePicture={item.profilePicture} images={item.images} postId={item.id} likes={item.likes} dislikes={item.dislikes}
                                      onRouteChange={onRouteChange}
                                      />                                     
                                 ))}

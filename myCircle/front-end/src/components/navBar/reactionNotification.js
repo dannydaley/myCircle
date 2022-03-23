@@ -12,7 +12,6 @@ export default class ReactionNotification extends React.Component {
 	}
 
 	setNotificationAsSeen =  () => { 
-		console.log("merrrrrrr")
         //FETCH IS A GET REQUEST BY DEFAULT, POINT IT TO THE ENDPOINT ON THE BACKEND
         fetch('http://localhost:3001/setNotificationAsSeen', {
           method: 'post',
@@ -23,33 +22,32 @@ export default class ReactionNotification extends React.Component {
         })
         //TURN THE RESPONSE INTO A JSON OBJECT
         .then(response => response.json())
-        // WHAT WE DO WITH THE DATA WE RECEIVE (data => console.log(data)) SHOULD SHOW WHAT WE GET
         .then(data => data === "success" ? this.setState({seen: true}) : "")
       }
 
 	render() {
 		const { firstName, lastName, message, senderUsername, recipientUsername, relativePost, loggedInUser, confirmFriendRequest, refuseFriendRequest, getNotifications, seen, actionId } = this.props
 		if (!this.state.seen) {
-			console.log(seen)
 			return(
-			< div style={{display: 'flex', flexDirection: 'row', alignItems: 'center', backgroundColor: 'blue' }}>
-							<Link to={`/${senderUsername}`} onClick={this.setNotificationAsSeen}>
-								<p style={{color: 'black'}}>{firstName} {lastName} </p>
+			< div style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+							<Link to={`/${senderUsername}`} onClick={this.setNotificationAsSeen}>								
+								<h4 style={{color: '#217cd8'}}>{firstName} {lastName}</h4>
 							</Link> 
 							<Link to={`/${recipientUsername}#postId=${relativePost}`} onClick={this.setNotificationAsSeen}>
-							<p style={{color: 'black', marginLeft: '5px'}}> {message}</p>
+							<h4 style={{color: '#217cd8', marginLeft: '5px'}}>{message}</h4>
+							
 							</Link>
 						</div>
 			)		
 		} else {
 			return (
 				< div style={{display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-				<Link to={`/${senderUsername}`}>
-					<p style={{color: 'black'}}>{firstName} {lastName} </p>
-				</Link> 
-				<Link to={`/${recipientUsername}#postId=${relativePost}`}>
-				<p style={{color: 'black', marginLeft: '5px'}}> {message}</p>
-				</Link>
+							<Link to={`/${senderUsername}`} onClick={this.setNotificationAsSeen}>								
+								<h4 style={{color: 'black'}}>{firstName} {lastName}</h4>
+							</Link> 
+							<Link to={`/${recipientUsername}#postId=${relativePost}`} onClick={this.setNotificationAsSeen}>
+							<h4 style={{color: 'black', marginLeft: '5px'}}>{message}</h4>							
+							</Link>
 			</div>
 			)
 

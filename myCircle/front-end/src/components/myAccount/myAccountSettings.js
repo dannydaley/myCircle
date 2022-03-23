@@ -25,9 +25,7 @@ export default class MyAccountSettings extends React.Component {
 
   delayFunction = async () => {
     await this.delay(1000);
-    console.log("LOADING FEED");
   };
-
 
   //COMPONENT DID MOUNT IS BUILT IN AND RUNS WHEN THE COMPONENT MOUNTS
   componentDidMount = async (newSettings) => {

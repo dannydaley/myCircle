@@ -126,10 +126,14 @@ export default class NewPost extends React.Component {
       for (const key of Object.keys(this.state.imagesArray)) {
           formData.append('imagesArray', this.state.imagesArray[key])
       }
+      let recipient = this.props.recipient
+      if (this.props.recipient === undefined){
+        recipient = 'none'
+      }
       formData.append('username', this.props.loggedInUsername)
       formData.append('postContent', this.state.postContent)
       formData.append('postStrict', this.state.postStrict)
-      formData.append('recipient', this.props.recipient)
+      formData.append('recipient', recipient)
       formData.append('circle', this.props.circle)
       await axios.post("http://localhost:3001/newPost", formData, {        
             headers: { "Content-Type": "multipart/form-data" } ,
@@ -152,7 +156,7 @@ export default class NewPost extends React.Component {
         const { onRouteChange, userFirstName, userLastName, circle } = this.props;           
         return (
             <div style={{marginTop: '20px'}}>
-                <label for="file-input">
+                <label htmlFor="file-input">
                     <ImageIcon fontSize="large" sx={{ mt: 3, fontSize: 70,  color: 'white', mr: 2}} />
                 </label>
                 <input id="file-input" type="file" name="file" onChange={this.onImageUploadChange.bind(this)} multiple hidden/>   

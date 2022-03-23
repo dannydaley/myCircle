@@ -16,7 +16,7 @@ export default function FeedPost(props) {
 
     return (
         <div>
-            <CardContent sx={{display: 'flex', mb: 2}}>
+            <CardContent sx={{display: 'flex', mb: 2}} >
                 <Link to={`/${authorUsername}`}>
                     <img src={
                         'http://localhost:3001/public/' + profilePicture
@@ -27,13 +27,13 @@ export default function FeedPost(props) {
                     />
                 </Link>                     
                 <div style={{width: '80%', marginLeft: '5%'}} id={"postId=$" + postId}>
-                    <Link to="/">
+                    <Link to={`/${authorUsername}`} style={{textDecoration: 'none'}}>
                         <Typography
                         variant="h5"
                         component="div"
                         color="white"
                         sx={{textAlign: 'left', ml: -2, mb: 2, fontWeight: 'bold'}}>                            
-                            <a href={authorUsername} style={{color: 'white'}}>{authorFirstName} {authorLastName}</a>
+                            {authorFirstName} {authorLastName}
                         </Typography>
                     </Link>
                     <Typography sx={{ mb: 1.5 , overflowX: 'hidden', color:"white", fontSize: 16 , textAlign: 'left'}}>
@@ -41,7 +41,7 @@ export default function FeedPost(props) {
                     </Typography>
                     {images ? images.map(image => (                                                             
                                   /* RENDER THE COMPONENT WITH PROPS PASSED IN FROM THE SPECIFIC ITEM WERE CURRENTLY ON FOR EACH ITEM PASSED OVER BY THE .MAP */
-                                    <img src={'http://localhost:3001/public/' + image}
+                                    <img key={authorLastName + postId + image} src={'http://localhost:3001/public/' + image}
                                     width={"200px"}
                                      />                                     
                                 )) : ''}

@@ -45,8 +45,7 @@ formatPictures = (imageData) => {
   });  
 }
 
-componentDidMount = () => {  
-  console.log(this.props.loggedInUsername )
+componentDidMount = () => {
   fetch('http://localhost:3001/getAllImagesByUser', {    
     method: 'post',
     headers: {'Content-Type': 'application/json'},
@@ -56,8 +55,7 @@ componentDidMount = () => {
   })
   //TURN THE RESPONSE INTO A JSON OBJECT
   .then(response => response.json())
-  .then(data => {   
-    console.log(data)  
+  .then(data => {
        this.formatPictures(data)
        this.setState({imagesAreLoaded: true})    
     })

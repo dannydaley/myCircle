@@ -90,8 +90,7 @@ export default class MyLoginInfo extends React.Component {
                 <div style={{marginTop: '100px'}}>
                     <ContactMailIcon sx={{mr: 2, color: 'rgba(255, 255, 255, 0.7)'}} />                    
                     <TextField
-                    sx={{maxWidth: '60%', width: '60%', border: '6px solid white', borderRadius: '4px',backgroundColor: 'white'}}                
-                    id="outlined-password-input"
+                    sx={{maxWidth: '60%', width: '60%', border: '6px solid white', borderRadius: '4px',backgroundColor: 'white'}}                   
                     label="Verify email address"
                     type="email"
                     onChange={this.onEmailChange}
@@ -102,7 +101,7 @@ export default class MyLoginInfo extends React.Component {
                     <LockOpenIcon sx={{mr: 2, color: 'rgba(255, 255, 255, 0.7)'}}/> 
                     <TextField
                         sx={{maxWidth: '60%', width: '60%', border: '6px solid white', borderRadius: '4px',backgroundColor: 'white'}}                
-                        id="outlined-password-input"
+                        
                         label="Verify password"
                         type="password"
                         autoComplete="no"
@@ -114,8 +113,7 @@ export default class MyLoginInfo extends React.Component {
                 <div>
                     <ContactMailIcon sx={{mr: 2, color: 'rgba(255, 255, 255, 0.7)'}} />                    
                     <TextField
-                    sx={{maxWidth: '60%', width: '60%', border: '6px solid white', borderRadius: '4px',backgroundColor: 'white'}}                
-                    id="outlined-password-input"
+                    sx={{maxWidth: '60%', width: '60%', border: '6px solid white', borderRadius: '4px',backgroundColor: 'white'}}                    
                     label="New email address (Leave blank if no change)"
                     type="email"
                     onChange={this.onChangeEmailChange}
@@ -124,8 +122,7 @@ export default class MyLoginInfo extends React.Component {
                 <div style={{marginTop: '30px'}}>
                     <LockIcon sx={{mr: 2, color: 'rgba(255, 255, 255, 0.7)'}} />                 
                     <TextField
-                    sx={{maxWidth: '60%', width: '60%', border: '6px solid white', borderRadius: '4px',backgroundColor: 'white'}}                
-                    id="outlined-password-input"
+                    sx={{maxWidth: '60%', width: '60%', border: '6px solid white', borderRadius: '4px',backgroundColor: 'white'}}                   
                     label="New password (Leave blank if no change)"
                     type="password"
                     onChange={this.onChangePasswordChange}
@@ -135,8 +132,7 @@ export default class MyLoginInfo extends React.Component {
                 <div id="confirm" style={{marginTop: '30px',marginBottom: '30px'}}>
                     <ShieldIcon sx={{mr: 2, color: 'rgba(255, 255, 255, 0.7)'}} />
                     <TextField
-                        sx={{maxWidth: '60%', width: '60%', border: '6px solid white', borderRadius: '4px',backgroundColor: 'white'}}                    
-                        id="outlined-password-input"
+                        sx={{maxWidth: '60%', width: '60%', border: '6px solid white', borderRadius: '4px',backgroundColor: 'white'}}                       
                         label="Confirm password (Leave blank if no change)"
                         type="password"
                         onChange={this.onPasswordChangeConfirm}

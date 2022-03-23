@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useState } from 'react';
 import SearchIcon from '@material-ui/icons/Search';
 import { styled, alpha } from '@mui/material/styles';
 import AppBar from '@mui/material/AppBar';
@@ -17,9 +18,12 @@ import NotificationsIcon from '@material-ui/icons/Notifications';
 import MoreIcon from '@material-ui/icons/MoreVert';
 import myCircleText from '../Images/myCircleText.svg'
 import SearchBar from './SearchBar';
-import NotificationsButton from './navBar/notificationsButton';
+
+import ShowNotifications from './navBar/showNotifications';
 
 import { Routes, Route, Link } from "react-router-dom";
+
+import ShowMessages from './navBar/showMessages';
 
 // const Search = styled('div')(({ theme }) => ({
 //   position: 'relative',
@@ -67,6 +71,9 @@ import { Routes, Route, Link } from "react-router-dom";
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
+
+  var [showNotifications, showNotificationsToggle ]  = useState(false)
+  var [showMessages, showMessagesToggle ]  = useState(false)
 
 const delayFunction = async () => {
   await this.delay(1000);
@@ -151,7 +158,7 @@ let openNotifications = false;
         </IconButton>
         <p>Messages</p>
       </MenuItem>     
-      <NotificationsButton alertNotifications={alertNotifications} notifications={notifications} />
+      {/* <NotificationsButton alertNotifications={alertNotifications} notifications={notifications} /> */}
       Notifications 
       <MenuItem 
       >
@@ -215,25 +222,40 @@ let openNotifications = false;
           </Typography>
           <Box sx={{ flexGrow: 0.8 }} />
           <SearchBar />
-          {/* <Search 
-          >
-            <SearchIconWrapper>
-              <SearchIcon />
-            </SearchIconWrapper>
-            <StyledInputBase
-              placeholder="Search…"
-              inputProps={{ 'aria-label': 'search' }}
-            />
-          </Search> */}
           <Box sx={{ flexGrow: 1 }} />
           <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-            <IconButton size="large" aria-label="show 4 new mails" color="inherit" onClick={changeMailNotifications}>
-              <Badge badgeContent={mailNotifications} color="error">
+            {/* Messages button */}
+            <IconButton
+              size="large"
+              aria-label="show 4 new mails"
+              color="inherit"
+              onClick={() => {
+                showMessagesToggle(showMessages = !showMessages)
+                showNotificationsToggle(showMessages = false)}}>
+        	    <Badge badgeContent={mailNotifications} color="error">
                 <MailIcon />
               </Badge>
             </IconButton>
-            <NotificationsButton alertNotifications={alertNotifications} notifications={notifications} confirmFriendRequest={confirmFriendRequest} refuseFriendRequest={refuseFriendRequest} getNotifications={getNotifications}/>
-            <IconButton size="large" edge="end" aria-label="account of current user" aria-controls={menuId} aria-haspopup="true" onClick={handleProfileMenuOpen} color="inherit">
+            {/* Notifications button */}
+            <IconButton
+            size="large"
+            aria-label="show 17 new notifications"
+            color="inherit"
+            onClick={() => {
+              showNotificationsToggle(showNotifications = !showNotifications)
+              showMessagesToggle(showMessages = false)}}>
+              <Badge badgeContent={alertNotifications} color="error">
+                <NotificationsIcon />
+              </Badge>
+            </IconButton>            
+            <IconButton
+              size="large"
+              edge="end"
+              aria-label="account of current user"
+              aria-controls={menuId}
+              aria-haspopup="true"
+              onClick={handleProfileMenuOpen}
+              color="inherit">
               <AccountCircle />
             </IconButton>
           </Box>
@@ -256,6 +278,16 @@ let openNotifications = false;
       {renderMenu}
     </Box>
     </nav>
+    {showNotifications===true ?
+      <ShowNotifications
+        notifications={notifications}
+        confirmFriendRequest={confirmFriendRequest}
+        refuseFriendRequest={refuseFriendRequest}
+        getNotifications={getNotifications}/>
+      : ''}
+      {showMessages===true ?
+      <ShowMessages/>
+      : ''}
     </>
   );
 }

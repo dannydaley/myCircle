@@ -27,12 +27,6 @@ import {
   useParams
 } from "react-router-dom";
 
-// import store from '../src/app/store'
-
-
-
-
-
 export default class App extends Component {
   constructor(useSelector, useDispatch) {
     super();
@@ -47,6 +41,7 @@ export default class App extends Component {
       userLastName: '',
       loggedInUsername: '',
       userProfilePicture: '',
+      userCoverPicture: '',
       UIColor: ''    
     }
   }
@@ -55,11 +50,7 @@ export default class App extends Component {
 
   delayFunction = (time) => {
     this.delay(time);
-  };
-
-
-
-  
+  };  
   getNotifications = async () => {
      fetch('http://localhost:3001/getNotifications', {
       method: 'post',
@@ -72,8 +63,7 @@ export default class App extends Component {
     .then(response => response.json())
     // .then(await this.delayFunction(1000))
     // WHAT WE DO WITH THE DATA WE RECEIVE (data => console.log(data)) SHOULD SHOW WHAT WE GET
-    .then(data => {
-      console.log(data)
+    .then(data => {      
     let count = 0;    
     data.forEach(element => (    
       element.seen === 0 ? count++ : ""))
@@ -83,9 +73,7 @@ export default class App extends Component {
 
 
   componentDidMount() { 
-      if (this.state.isSignedIn) {
-       this.interval = setInterval(() => this.getNotifications(), 5000);     
-      }      
+    this.interval = setInterval(() => this.getNotifications(), 10000);         
   }
   componentWillUnmount() {
     clearInterval(this.interval);
@@ -147,10 +135,15 @@ export default class App extends Component {
   }
 
 
-  updateSession = (firstName, lastName, userName, userProfilePicture) => {
-    this.setState({ userFirstName: firstName, userLastName: lastName, loggedInUsername: userName, userProfilePicture: userProfilePicture, isSignedIn: true })
-    console.log(this.state)
-    
+  updateSession = (firstName, lastName, userName, userProfilePicture, userCoverPicture) => {
+    this.setState({
+      userFirstName: firstName,
+      userLastName: lastName,
+      loggedInUsername: userName,
+      userProfilePicture: userProfilePicture,
+      userCoverPicture: userCoverPicture,
+      isSignedIn: true
+    })   
   }
 
   refreshData = () => {
@@ -235,18 +228,6 @@ export default class App extends Component {
                     />
                   }
                 />
-                {/* <Route path="myProfile"
-                  element={
-                    <ProfilePage
-                    getNotifications={this.getNotifications}
-                      userFirstName={this.state.userFirstName}
-                      userLastName={this.state.userLastName}
-                      username={this.state.loggedInUsername}
-                      changeAlertNotifications={this.changeAlertNotifications}
-                      userProfilePicture={this.state.userProfilePicture}
-                    />
-                  }
-                /> */}
                 <Route path="/:username" component={ProfilePage}
                   element={
                     <ProfileGate
@@ -269,6 +250,7 @@ export default class App extends Component {
                       userFirstName={this.state.userFirstName}
                       userProfilePicture={this.state.userProfilePicture}
                       loggedInUsername={this.state.loggedInUsername}
+                      userCoverPicture={this.state.userCoverPicture}
                     />
                   }
                 />
