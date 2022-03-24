@@ -93,6 +93,8 @@ let userDataJSON = require("./database/users.json");
 let imagesDataJSON = require("./database/images.json");
 let friendshipsDataJSON = require("./database/friendships.json");
 let userActionsDataJSON = require("./database/userActions.json");
+let chatsDataJSON = require("./database/chats.json")
+let messagesDataJSON = require("./database/messages.json")
 const { request } = require('https');
 
 
@@ -267,6 +269,74 @@ app.get('/SQLDatabaseUserActionsSetup', (req, res, next) => {
   res.send("userActions-db-done");
 })
 
+app.get('/SQLDatabaseChatsSetup', (req, res, next) => {  
+  //these queries must run one by one - dont try and delete and create tables at the same time.
+  SQLdatabase.serialize( () => {
+    //delete the table if it exists..
+    SQLdatabase.run('DROP TABLE IF EXISTS `chats`');
+    // create blog table
+
+    SQLdatabase.run('CREATE TABLE `chats` ( chatId INTEGER PRIMARY KEY AUTOINCREMENT, user1 varchar(255), user2 varchar(255), seenByUser1 int, seenByUser2 int, lastActive varchar(255))' ,(err) => {
+      if (err){
+        console.log(err)
+      }
+    })
+    //create base rows
+    let rows = chatsDataJSON.entries;
+    //loop through posts.json to populate rows array
+    // for (let i = 0; i < userActionsDataJSON.userActions.length; i++) {
+    //   rows[i] = [userActionsDataJSON.userActions.[i].user1, userActionsDataJSON.userActions.[i].user2]
+    // }
+    // populate SQL command with rows array populated from posts.json
+    rows.forEach( (row) => {
+      // insert rows to table
+      SQLdatabase.run('INSERT INTO `chats` (chatId, user1, user2, seenByUser1, seenByUser2, lastActive) VALUES(?,?,?,?,?, datetime())', [row.chatId,row.user1, row.user2, row.seenByUser1, row.seenByUser2], (err) => {
+        if (err){
+          console.log(err)
+        }
+      })
+      // increment users post count according to author of currently processed post      
+    })
+  })
+    // render success page
+    console.log("chats table built");
+    res.send("chats-db-done");
+})
+
+app.get('/SQLDatabaseMessagesSetup', (req, res, next) => {  
+  //these queries must run one by one - dont try and delete and create tables at the same time.
+  SQLdatabase.serialize( () => {
+    //delete the table if it exists..
+    SQLdatabase.run('DROP TABLE IF EXISTS `messages`');
+    // create blog table
+
+    SQLdatabase.run('CREATE TABLE `messages` ( chatId INTEGER, messageId INTEGER PRIMARY KEY AUTOINCREMENT, sender varchar(255), recipient varchar(255), message text, date varchar(255), seen int)' ,(err) => {
+      if (err){
+        console.log(err)
+      }
+    })
+    //create base rows
+    let rows = messagesDataJSON.entries;
+    //loop through posts.json to populate rows array
+    // for (let i = 0; i < userActionsDataJSON.userActions.length; i++) {
+    //   rows[i] = [userActionsDataJSON.userActions.[i].user1, userActionsDataJSON.userActions.[i].user2]
+    // }
+    // populate SQL command with rows array populated from posts.json
+    rows.forEach( (row) => {
+      // insert rows to table
+      SQLdatabase.run('INSERT INTO `messages` (chatId, messageId, sender, recipient, message, date, seen) VALUES(?,?,?,?,?,datetime(),?)', [row.chatId,row.messageId, row.sender, row.recipient, row.message, row.seen], (err) => {
+        if (err){
+          console.log(err)
+        }
+      })
+      // increment users post count according to author of currently processed post      
+    });
+  })
+  // render success page
+  console.log("messages table built");
+  res.send("messages-db-done");
+})
+
 /*==============================DEBUGGING AND TESTING ENDPOINTS========================*/
 /* GET all users */
 app.get('/getAllUsers', (req, res, next) => {
@@ -319,6 +389,27 @@ app.get('/getAllFriendships', (req, res, next) => {
 app.get('/getAllUserActions', (req, res, next) => {
   // grab all user data
   SQLdatabase.all("SELECT * FROM userActions", [], (err, rows) => {
+    if (err) {
+      res.status(500).send(err.message);
+      return;
+    }
+    res.send(rows);
+  })
+})
+
+app.get('/getAllChats', (req, res) => {
+  SQLdatabase.all("SELECT * FROM `chats`", (err, rows) => {
+    if (err){
+      console.log(err)
+      return
+    }
+    res.send(rows)
+  })
+})
+
+app.get('/getAllMessages', (req, res, next) => {
+  // grab all user data
+  SQLdatabase.all("SELECT * FROM messages", [], (err, rows) => {
     if (err) {
       res.status(500).send(err.message);
       return;
@@ -436,10 +527,6 @@ app.get('/refreshSessionStatus', (req, res) => {
     lastName: req.session.userData.userLastName,
     username: req.session.userData.loggedInUsername,
     profilePicture: req.session.userData.userProfilePicture
-    // firstName: rows.firstName,
-    // lastName: rows.lastName,
-    // username: rows.username,
-    // profilePicture: rows.profilePicture
   })
 
   }
@@ -767,6 +854,48 @@ app.post('/getNotifications', (req, res) => {
   })
 })
 //#region GET FEEDS
+
+app.post('/getAllUsersChats', (req, res) => {
+  let user = req.body.user  
+  SQLdatabase.all("SELECT chats.*, `users`.`firstName`, `users`.`lastName`, `users`.`profilePicture` FROM chats LEFT OUTER JOIN `users` ON (`chats`.`user1` != ? AND `chats`.`user1` = `users`.`username`) OR (`chats`.`user2` != ? AND `chats`.`user2` = `users`.`username`) WHERE `user1` = ? OR `user2` = ? ORDER BY lastActive DESC", [ user, user, user, user ], (err, rows) => {
+    if (err){                                                            
+      console.log(err)
+    }
+    console.log(rows)
+    res.json(rows)
+  })
+})
+
+app.post('/getChat', (req, res) => {
+  let { user, chatId } = req.body
+  SQLdatabase.all("SELECT chats.*, `users`.`firstName`, `users`.`lastName`, `users`.`profilePicture` FROM chats LEFT OUTER JOIN `users` ON (`chats`.`user1` != ? AND `chats`.`user1` = `users`.`username`) OR (`chats`.`user2` != ? AND `chats`.`user2` = `users`.`username`) WHERE chatId = ?", [user, user, req.body.chatId], (err, chatData) => {
+    if (err){
+      console.log(err)
+    }
+    SQLdatabase.all("SELECT * FROM `messages` WHERE chatId = ? ORDER BY date", [chatId], (err, messages) => {
+      if (err) {
+        console.log(err)
+      }
+      console.log(messages)
+      res.json({
+        chatData: chatData[0],
+        messages: messages
+      })
+    })
+  })
+})
+
+app.post('/newMessage', (req, res) => {
+  let { chatId, sender, message, recipient } = req.body;
+  SQLdatabase.run("INSERT INTO messages (chatId, sender, message, recipient, date, seen) VALUES (?, ?, ?, ?, datetime(), ?)", [ chatId, sender, message, recipient, false], (err, rows) => {
+    if (err) {
+      console.log(err)
+    }
+    res.json("success")
+  })
+})
+
+
 app.post('/getFeedFriendsOnly', (req, res) => { 
   //set up variables from the request body
   let user = req.body.user

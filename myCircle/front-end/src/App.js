@@ -15,6 +15,7 @@ import theme from './theme'
 import { ThemeProvider } from '@material-ui/core/styles'
 import Counter from './features/counter/counter'
 import ProfileGate from './pages/ProfileGate'
+import MessagesPage from './pages/messagesPage'
 
 import { useSelector, useDispatch } from 'react-redux'
 import { signIn } from './actions';
@@ -253,7 +254,22 @@ export default class App extends Component {
                       userCoverPicture={this.state.userCoverPicture}
                     />
                   }
-                />
+                />                            
+                <Route path="messages" 
+                  element={
+                    <MessagesPage
+                      getNotifications={this.getNotifications}
+                      setNotifications={this.setNotifications}
+                      changeMailNotifications={this.changeMailNotifications}
+                      onRouteChange={this.onRouteChange}
+                      userFirstName={this.state.userFirstName}
+                      userLastName={this.state.userLastName}
+                      loggedInUsername={this.state.loggedInUsername}
+                      userProfilePicture={this.state.userProfilePicture}
+                    />
+                  }
+                />    
+                
               </Routes>
             </div> 
           :        

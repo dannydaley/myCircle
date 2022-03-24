@@ -1,5 +1,6 @@
 import { Divider } from "@mui/material";
 import React from "react";
+import { Routes, Route, Link } from "react-router-dom";
 
 export default class ShowMessages extends React.Component {
 	constructor(props) {
@@ -18,8 +19,10 @@ export default class ShowMessages extends React.Component {
 					}
 					})}
 					{notifications.length > 1 ? <p onClick={() =>  alert("cleared")} >clear all</p>  : ""} */}									
-					<Divider sx={{mt: 0}}variant="middle" />					
-					<h4 style={{color: '#217cd8'}}>Go to messages</h4>		
+					<Divider sx={{mt: 0}}variant="middle" />
+					<Link to="/messages">
+              			<h4 style={{color: '#217cd8'}}>Go to messages</h4>	
+            		</Link>					
 			</div>
 		)
 	}

@@ -196,9 +196,7 @@ let openNotifications = false;
     <>
       <nav>
     <Box sx={{ flexGrow: 1, justifyItems: "spaceBetween" }}>
-      <AppBar position="fixed" 
-      // sx={{backgroundColor: UIColor}}
-      >      
+      <AppBar position="fixed" >      
         <Toolbar>
           <IconButton
             size="large"

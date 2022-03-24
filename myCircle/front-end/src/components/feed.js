@@ -118,7 +118,7 @@ export default class Feed extends React.Component {
                         <Box sx={{ padding: 2, bgcolor: 'none'}}>
                             <Stack spacing={2} sx={{  width: '100%', margin: '50px auto 0'}}>
                             {/* .MAP IS OUR FOR EACH LOOP, 'ITEM' IS JUST WHAT WE CALL EACH ELEMENT IN THE LIST SO IS INTERCHANGEABLE */}
-                                {this.state.posts.map(item => (
+                                {posts.map(item => (
                                                                                        
                                   /* RENDER THE COMPONENT WITH PROPS PASSED IN FROM THE SPECIFIC ITEM WERE CURRENTLY ON FOR EACH ITEM PASSED OVER BY THE .MAP */
                                     <FeedPost key={item.id} loggedInUsername={loggedInUsername} authorUsername={item.author} authorFirstName={item.firstName} authorLastName={item.lastName} content={item.content} profilePicture={item.profilePicture} images={item.images} postId={item.id} likes={item.likes} dislikes={item.dislikes}

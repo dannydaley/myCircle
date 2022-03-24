@@ -6,7 +6,7 @@ import ImageIcon from '@mui/icons-material/Image';
 import SendIcon from '@mui/icons-material/Send';
 import Divider from '@mui/material/Divider';
 import LoadingButton from '@mui/lab/LoadingButton';
-import NavBar from './navBar';
+
 import { styled } from '@mui/system';
 import SwitchUnstyled, { switchUnstyledClasses } from '@mui/base/SwitchUnstyled';
 import axios from 'axios';
