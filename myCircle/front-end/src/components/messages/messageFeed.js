@@ -25,6 +25,11 @@ export default class MessageFeed extends React.Component {
     }
   }
 
+  scrollToBottom = () => {
+    document.getElementsByClassName('chatWindow')[0].scrollTop = document.getElementsByClassName('chatWindow')[0].scrollHeight;
+  }
+
+
   //COMPONENT DID MOUNT IS BUILT IN AND RUNS WHEN THE COMPONENT MOUNTS
   getChat = async (loggedInUsername, chatId) => {
     this.setState({ dataIsLoaded: false })   
@@ -120,15 +125,15 @@ export default class MessageFeed extends React.Component {
             loggedInUsername={loggedInUsername}
             getChat={this.getChat}
             />
-          <div style={{backgroundColor: '#010101', display: 'flex', justifyContent: 'space-between', paddingBottom: '100px', minHeight: '100vh'}}>
-            <div style={{width: '30%', height: '100px'}}></div>
+          <div style={{backgroundColor: '#010101', display: 'flex', justifyContent: 'space-between', paddingBottom: '100px', height: '1000px', maxHeight: '1000px'}}>
+            <div style={{width: '30%',}}></div>
                 <React.Fragment>              
                     <CssBaseline />
                     <Container maxWidth="lg" sx={{zIndex: 2, bgcolor: '#343434', borderRadius: '0px 0px 30px 30px', width: '100%', pb: 2, ml: 2, mr:2,  mt: 12}}>
 
                         <p>{this.feedPosts}</p>
-                        <Box sx={{ padding: 2, bgcolor: 'gray', height: '80%', borderRadius: '0px 0px 30px 30px', overflowY: 'scroll'}}>
-                            <Stack spacing={2} sx={{  width: '100%', margin: '50px auto 0'}}>
+                        <Box className="chatWindow"  sx={{ padding: 2, bgcolor: 'gray', height: '80%', maxHeight: '600px', borderRadius: '0px 0px 30px 30px', overflowY: 'scroll'}}>
+                            <Stack spacing={2} sx={{  width: '100%', margin: '50px auto 0'}} style={{ flexDirection: 'column'}}>
                             {/* .MAP IS OUR FOR EACH LOOP, 'ITEM' IS JUST WHAT WE CALL EACH ELEMENT IN THE LIST SO IS INTERCHANGEABLE */}
                             {chatFeed.map(message => (
                                                                                     
@@ -162,6 +167,7 @@ export default class MessageFeed extends React.Component {
                          />
                     </Container>
                 </React.Fragment>
+          
             <div style={{width: '30%', height: '100px'}}></div>
           </div>       
         </div>

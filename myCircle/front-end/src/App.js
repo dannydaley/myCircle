@@ -37,7 +37,7 @@ export default class App extends Component {
       isSignedIn: false,
       mailNotifications: 0,
       notifications: ["1", "2", "3"],
-      alertNotifications: 10,
+      alertNotifications: 0,
       userFirstName: '',
       userLastName: '',
       loggedInUsername: '',
@@ -64,11 +64,8 @@ export default class App extends Component {
     .then(response => response.json())
     // .then(await this.delayFunction(1000))
     // WHAT WE DO WITH THE DATA WE RECEIVE (data => console.log(data)) SHOULD SHOW WHAT WE GET
-    .then(data => {      
-    let count = 0;    
-    data.forEach(element => (    
-      element.seen === 0 ? count++ : ""))
-    this.setState({ alertNotifications: count, notifications: data})  
+    .then(data => {
+      this.setState({ alertNotifications: data.notifications.length, mailNotifications: data.messages.length, notifications: data.notifications})  
     }) 
 }
 

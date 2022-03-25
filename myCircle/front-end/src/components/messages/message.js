@@ -40,7 +40,7 @@ export default function Message(props) {
          if(messageSender === loggedInUsername) {
                 return (
                     <div style={{display: 'flex', flexDirection: 'row', justifyContent:'right', width: '100%'}}>
-                    <div style={{width: '50%'}}>
+                    <div style={{width: '50%', border: '2px solid #1a8afa', borderRadius: '10px', backgroundColor: '#217cd8 ',boxShadow: '0px 2px 10px 0px grey',}}>
                         <CardContent sx={{display: 'flex', mb: 2}} >
                             <Link to={`/${loggedInUsername}`}>
                                 <img src={
@@ -72,7 +72,7 @@ export default function Message(props) {
          } else {
             return (
                 <div style={{display: 'flex', flexDirection: 'row', justifyContent:'left', width: '100%'}}>
-                <div style={{width: '40%'}}>
+                <div style={{width: '50%', border: '2px solid #343434', borderRadius: '10px', backgroundColor: '#343434 ',boxShadow: '0px 2px 10px 0px grey'}}>
                     <CardContent sx={{display: 'flex', mb: 2}} >
                         <Link to={`/${partnerUsername}`}>
                             <img src={

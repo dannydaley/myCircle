@@ -8,7 +8,7 @@ export default class ShowMessages extends React.Component {
 	}
 
 	render() {
-		const {  } = this.props
+		const { showMessages, showMessagesToggle } = this.props
 		return (
 			<div style={{zIndex: '3', padding: '10px 10px 0px', backgroundColor: 'white', marginTop: '50px', position: 'fixed', right: '0',borderRadius: '5px', boxShadow: '0px 2px 10px 0px grey', width: '300px'}}>
 				{/* {notifications.map( item => {
@@ -20,7 +20,7 @@ export default class ShowMessages extends React.Component {
 					})}
 					{notifications.length > 1 ? <p onClick={() =>  alert("cleared")} >clear all</p>  : ""} */}									
 					<Divider sx={{mt: 0}}variant="middle" />
-					<Link to="/messages">
+					<Link to="/messages" onClick={() => showMessagesToggle()}>
               			<h4 style={{color: '#217cd8'}}>Go to messages</h4>	
             		</Link>					
 			</div>
