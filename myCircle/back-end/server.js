@@ -1,14 +1,16 @@
-//#region setup
+//#region SETUP
 var express = require('express');
 const app = express();
 var dotenv = require('dotenv').config();
 const cors = require('cors');
-var bodyParser = require('body-parser')
-app.use(cors())
-app.use(bodyParser.json())
+var bodyParser = require('body-parser');
+app.use(cors());
+app.use(bodyParser.json());
 var path = require('path');
 app.use("/public", express.static(path.join(__dirname, 'public')));
-let uuidv4 = require('uuid/v4')
+let uuidv4 = require('uuid/v4');
+const { request } = require('https');
+
 // Session setup
 var session = require('cookie-session');
 var cookieParser = require('cookie-parser');
@@ -25,17 +27,14 @@ var userSession = {
     secure: false,
     maxAge: 30  
   }
-}
+};
 
-app.use(cookieParser())
-app.use(session(userSession))
+app.use(cookieParser());
+app.use(session(userSession));
 
-
-
-
-// set up crypto middleware
+//#region SECURITY
+// set up crypto middleware for hashing password and checking password hahses
 let crypto = require('crypto');
-const { captureRejectionSymbol } = require('events');
 
 // number of iterations to jumble the hash
 const iterations = 1000;
@@ -55,36 +54,50 @@ function passwordHash(thePassword, theSalt) {
    return crypto.pbkdf2Sync(thePassword, pepper + theSalt, iterations, hashSize, hashAlgorithm).toString('hex');
 }
 
+//#endregion SECURITY
 
 
-//#endregion
+//#endregion SETUP
 
-//#region IMAGE UPLOAD HANDLING
+//#region IMAGES AND IMAGE UPLOAD HANDLING
+
+// default profile picture applied to all users profilePicture field in the users table of the db on account creation
+let defaultProfilePicture = "images/defaultUser.png";
 
 //set up multer middleware for image uploads
 var multer  = require('multer');
 
+// set up storage for file uploads
 const storage = multer.diskStorage({
+  // set destination to public image directory
   destination: "public/images/uploads",
   filename: function(req, file, cb){
-       const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
-     cb(null,"-IMAGE-" + uniqueSuffix + ".png");  
-     let fileName = "images/uploads/" + "-IMAGE-" + uniqueSuffix + ".png"    
-     console.log(fileName) 
+    // create a unique suffix so that image names will never have a duplicate
+    //suffix consists of the date, a hyphen and then a large random number 
+       const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+     cb(null,"IMAGE-" + uniqueSuffix + ".png");
+     // generate the file name of the file to be added to the public image directory
+     // filename contains path to folder to make things easier across the server
+     // we append .png top the filename so that files are recognised as their format
+     let fileName = "images/uploads/" + "IMAGE-" + uniqueSuffix + ".png" ;
+     // update the string attached to the incoming req.body.image field
+     // this is added to the database as the imageLocation
      req.body.imageLocations += fileName + ","}
-})
-let upload = multer({ storage: storage})
+});
+// set up multer function to be called on uploads
+let upload = multer({ storage: storage});
 
-//#endregion IMAGE UPLAOD HANDLING
+//#endregion IMAGES AND IMAGE UPLOAD HANDLING
 
-let defaultProfilePicture = "images/defaultUser.png"
+//#region SQL DATABASE SETUP AND QUERIES 
 
-//#region SQL DATABASE STUFF 
-//get the saved post information from external JSON file
-// mainly for keeping up to date when new post are created etc
-
+// SQLite 3 setup for test db while in development
 var sqlite3 = require('sqlite3').verbose();
+
+// set up variable for access to database
 let SQLdatabase = new sqlite3.Database('./database/SQLdatabase.db');
+
+// set app.locals database to the initialised variable
 app.locals.SQLdatabase = SQLdatabase;
 
 //JSON files for dummy data on table builds
@@ -93,44 +106,35 @@ let userDataJSON = require("./database/users.json");
 let imagesDataJSON = require("./database/images.json");
 let friendshipsDataJSON = require("./database/friendships.json");
 let userActionsDataJSON = require("./database/userActions.json");
-let chatsDataJSON = require("./database/chats.json")
+let chatsDataJSON = require("./database/chats.json");
 let messagesDataJSON = require("./database/messages.json")
-const { request } = require('https');
 
+// SQL QUERIES
+const CHECK_THAT_USERS_ARE_FRIENDS = "SELECT * FROM friendships WHERE (user1 = ? OR user2 = ?) AND (user1 = ? OR user2 = ?)";
+const GET_USER_GENERAL_INFO_BY_USERNAME = "SELECT firstName, lastName, aboutMe, location, education, work, profilePicture, coverPicture FROM users WHERE username = ?";
+const GET_USER_PROFILE_INFO_BY_USERNAME = "SELECT firstName, lastName, aboutMe, profilePicture, coverPicture FROM users WHERE username = ?";
+const GET_POST_VOTES_BY_POST_ID = "SELECT likes, dislikes FROM blog WHERE id = ?";
+const UPDATE_POST_VOTES_BY_POST_ID = "UPDATE blog SET likes = ?, dislikes = ? WHERE id = ?";
+const UPDATE_PASSWORD_BY_EMAIL = "UPDATE users SET password = ?, passwordSalt = ? WHERE email = ?";
+const LOOK_UP_EMAIL_BY_EMAIL = "SELECT email FROM users WHERE email = ?";
+const UPDATE_EMAIL = "UPDATE users SET email = ? WHERE email = ?";
+const UPDATE_USER_GENERAL_INFO = "UPDATE users SET firstName = ?, lastName = ?, aboutMe = ?, location = ?, education = ?, work = ? WHERE username = ?";
+const FIND_USER = "SELECT * FROM users WHERE email = ?";
+const SIGN_UP_USER = "INSERT INTO users (email, username, firstName,lastName, password, passwordSalt, profilePicture) VALUES(?,?,?,?,?,?,?)";
+const GET_ALL_POSTS = "SELECT * FROM `blog` ORDER BY id DESC";
+const GET_ALL_POSTS_BY_CIRCLE = "SELECT * FROM `blog` WHERE circle = ? ORDER BY id DESC";
+const GET_ALL_IMAGES_BY_USER = "SELECT * FROM images WHERE ownerUsername = ? ORDER BY postId DESC";
+const GET_PROFILEPICTURE_BY_USERNAME = "SELECT profilePicture FROM users WHERE username = ?";
+const GET_ALL_USERS_FRIENDS = "SELECT * FROM friendships WHERE user1 =? OR user2 = ?";
+const GET_NOTIFICATIONS = "SELECT userActions.* , users.firstName, users.lastName FROM `userActions` LEFT OUTER JOIN `users` ON `userActions`.`sender` = `users`.`username` WHERE recipient = ? ORDER BY actionId DESC LIMIT 50";
+const GET_POSTS_BY_AUTHOR_OR_RECIPIENT = "SELECT blog.*, users.firstName, users.lastName, users.profilePicture FROM `blog` LEFT OUTER JOIN `users` ON `blog`.`author` = `users`.`username` WHERE author = ? OR recipient = ? ORDER BY id DESC";
+const GET_POSTS_BY_AUTHOR_BY_CIRCLE = "SELECT * FROM `blog` WHERE author = ? AND circle = ? ORDER BY id DESC";
+const SQL_ADD_BLOG_POST = "INSERT INTO `blog` (author, circle, content, date, recipient, likes, dislikes, postStrict) VALUES(?,?,?,date(),?,?,?,?)";
+const GET_ALL_USERS = "SELECT * FROM users";
 
-const CHECK_THAT_USERS_ARE_FRIENDS = "SELECT * FROM friendships WHERE (user1 = ? OR user2 = ?) AND (user1 = ? OR user2 = ?)"
-const GET_USER_GENERAL_INFO_BY_USERNAME = "SELECT firstName, lastName, aboutMe, location, education, work, profilePicture, coverPicture FROM users WHERE username = ?"
-const GET_USER_PROFILE_INFO_BY_USERNAME = "SELECT firstName, lastName, aboutMe, profilePicture, coverPicture FROM users WHERE username = ?"
-const GET_POST_VOTES_BY_POST_ID = "SELECT likes, dislikes FROM blog WHERE id = ?"
-const UPDATE_POST_VOTES_BY_POST_ID = "UPDATE blog SET likes = ?, dislikes = ? WHERE id = ?"
-const UPDATE_PASSWORD_BY_EMAIL = "UPDATE users SET password = ?, passwordSalt = ? WHERE email = ?"
-const LOOK_UP_EMAIL_BY_EMAIL = "SELECT email FROM users WHERE email = ?"
-const UPDATE_EMAIL = "UPDATE users SET email = ? WHERE email = ?"
-const UPDATE_USER_GENERAL_INFO = "UPDATE users SET firstName = ?, lastName = ?, aboutMe = ?, location = ?, education = ?, work = ? WHERE username = ?"
-const FIND_USER = "SELECT * FROM users WHERE email = ?"
-const SIGN_UP_USER = "INSERT INTO users (email, username, firstName,lastName, password, passwordSalt, profilePicture) VALUES(?,?,?,?,?,?,?)"
-const GET_ALL_POSTS = "SELECT * FROM `blog` ORDER BY id DESC"; // SQL command
-const GET_ALL_POSTS_BY_CIRCLE = "SELECT * FROM `blog` WHERE circle = ? ORDER BY id DESC"; // SQL command
-const GET_ALL_IMAGES_BY_USER = "SELECT * FROM images WHERE ownerUsername = ? ORDER BY postId DESC"
-const GET_PROFILEPICTURE_BY_USERNAME = "SELECT profilePicture FROM users WHERE username = ?"
-const GET_ALL_USERS_FRIENDS = "SELECT * FROM friendships WHERE user1 =? OR user2 = ?"
-// const GET_NOTIFICATIONS = "SELECT * FROM userActions WHERE recipient = ? LIMIT 50"
-const GET_NOTIFICATIONS = "SELECT userActions.* , users.firstName, users.lastName FROM `userActions` LEFT OUTER JOIN `users` ON `userActions`.`sender` = `users`.`username` WHERE recipient = ? ORDER BY actionId DESC LIMIT 50 "
-const GET_POSTS_BY_AUTHOR_OR_RECIPIENT = "SELECT blog.*, users.firstName, users.lastName, users.profilePicture FROM `blog` LEFT OUTER JOIN `users` ON `blog`.`author` = `users`.`username` WHERE author = ? OR recipient = ? ORDER BY id DESC" // SQL command
-const GET_POSTS_BY_AUTHOR_BY_CIRCLE = "SELECT * FROM `blog` WHERE author = ? AND circle = ? ORDER BY id DESC" // SQL command
-const SQL_ADD_BLOG_POST = "INSERT INTO `blog` (author, circle, content, date, recipient, likes, dislikes, postStrict) VALUES(?,?,?,date(),?,?,?,?)" // 
-const GET_ALL_USERS = "SELECT * FROM users"; // SQL command
+//#region SQL SETUP ENDPOINTS
 
-app.get('/updateImages', (req, res) => {
-  SQLdatabase.run("UPDATE 'blog' SET image = profilePicture FROM users WHERE username = author", (err, rows) => {
-    if (err){
-      console.log(err)
-    }
-    res.json("success")
-  })
-})
-
-/* Database setup endpoint */
+// users table setup endpoint
 app.get('/SQLDatabaseUserSetup', (req, res, next) => {  
   //these queries must run one by one - dont try and delete and create tables at the same time.
   SQLdatabase.serialize( () => {
@@ -139,34 +143,20 @@ app.get('/SQLDatabaseUserSetup', (req, res, next) => {
     //recreate the users table
     // SQLdatabase.query('CREATE TABLE `users` (id INTEGER PRIMARY KEY AUTOINCREMENT, name varchar(255) UNIQUE COLLATE NOCASE, email varchar(255) UNIQUE, password varchar(255), passwordSalt varchar(512), posts int, joined varchar(255), profilePicture varchar(255), aboutMe text, pinnedPost INTEGER)');
     SQLdatabase.run('CREATE TABLE `users` (id INTEGER PRIMARY KEY AUTOINCREMENT, username varchar(255) UNIQUE, firstName varchar(255), lastName varchar(255), email varchar(255) UNIQUE, password varchar(255), passwordSalt varchar(512), aboutMe text, location varchar(255), education varchar(255), work varchar(255), profilePicture varchar(255), coverPicture varchar(255))');
-    //create test rows
-    let rows = []    
-    for (let i = 0; i < userDataJSON.users.length; i++) {
-      rows[i] = [
-        userDataJSON.users[i].username,
-        userDataJSON.users[i].firstName,
-        userDataJSON.users[i].lastName,
-        userDataJSON.users[i].email,
-        userDataJSON.users[i].password,
-        userDataJSON.users[i].passwordSalt,
-        userDataJSON.users[i].aboutMe,
-        userDataJSON.users[i].location,
-        userDataJSON.users[i].education,
-        userDataJSON.users[i].work,
-        userDataJSON.users[i].profilePicture,
-        userDataJSON.users[i].coverPicture
-    ]
-    }
-    // add rows to database
-    rows.forEach( (row) => {
-      SQLdatabase.run('INSERT INTO `users` (username, firstName, lastName, email, password, passwordSalt, aboutMe, location, education, work, profilePicture, coverPicture) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ? ,?, ?, ?)', row);
+    //create array of users from the dummy data JSON file
+    let users = userDataJSON.users  
+    // insert each element in the array of object into the users table in the database
+    users.forEach( (user) => {
+      // SQL query to run
+      SQLdatabase.run('INSERT INTO `users` (username, firstName, lastName, email, password, passwordSalt, aboutMe, location, education, work, profilePicture, coverPicture) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ? ,?, ?, ?)', 
+        // values passed in from current iteration of the users array
+        [user.username, user.firstName, user.lastName, user.email, user.password, user.passwordSalt, user.aboutMe, user.location, user.education, user.work, user.profilePicture, user.coverPicture ]);
     });
-  })
-  //render success page
-  console.log("user table built");
+  });
+  //respond with success page
   res.send("user-db-done");
 })
-// set up blog table in database
+//blog table setup endpoint
 app.get('/SQLDatabaseBlogSetup', (req, res, next) => {  
   //these queries must run one by one - dont try and delete and create tables at the same time.
   SQLdatabase.serialize( () => {
@@ -420,7 +410,6 @@ app.get('/getAllMessages', (req, res, next) => {
 /*========================END OF DEBUGGING AND TESTING ENDPOINTS========================*/
 
 //#endregion
-
 
 //#region endpoints
 
