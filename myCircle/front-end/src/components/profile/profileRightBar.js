@@ -11,13 +11,13 @@ export default class ProfileRightBar extends React.Component {
     return (
       <div style={{position: 'fixed', width: '100vw'}}>
         <React.Fragment >
-        <CssBaseline />      
-        <Container  maxWidth="sm" sx={{float: 'right',  bgcolor: '#343434', height: '80vh', width: 300, mr: 4 ,mt: 16, display: 'flex', flexDirection: 'column',  justifyContent: 'flex-start', alignItems: 'center'}} >
-        <Typography variant="h6" component="div" color="white" sx={{textAlign: 'center', mt: 2, paddingTop: 1, paddingBottom: 2, bgcolor: 'none' }}>{userFirstName}'s images</Typography>
-          <div style={{height: '100%', overflow: 'hidden'}}>
-            <RightBarImages loggedInUsername={loggedInUsername} userProfileToGet={userProfileToGet} />
-          </div>
-        </Container>
+          <CssBaseline />      
+          <Container  maxWidth="sm" sx={{float: 'right',  bgcolor: '#343434', height: '80vh', width: 300, mr: 4 ,mt: 16, display: 'flex', flexDirection: 'column',  justifyContent: 'flex-start', alignItems: 'center'}} >
+            <Typography variant="h6" component="div" color="white" sx={{textAlign: 'center', mt: 2, paddingTop: 1, paddingBottom: 2, bgcolor: 'none' }}>{userFirstName}'s images</Typography>
+            <div style={{height: '100%', overflow: 'hidden'}}>
+              <RightBarImages loggedInUsername={loggedInUsername} userProfileToGet={userProfileToGet} />
+            </div>
+          </Container>
       </React.Fragment>
       </div>
     );

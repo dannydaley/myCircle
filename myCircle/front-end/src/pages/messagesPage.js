@@ -2,14 +2,13 @@ import MessagesFeed from '../components/messages/messageFeed'
 import * as React from 'react';
 
 export default class MessagesPage extends React.Component {    
-     constructor({ changeCircle, changeMailNotifications, props }) {
+     constructor(props) {
         super(props);
         this.state = {
              circle: 'general'   
           }
      }
      
-
      render()   {  
      const { onRouteChange, userFirstName, userLastName, loggedInUsername, userProfilePicture, getNotifications } = this.props;
                return (

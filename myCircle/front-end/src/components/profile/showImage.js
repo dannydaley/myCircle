@@ -4,9 +4,7 @@ export default class ShowImage extends React.Component {
     constructor(props) {
         super(props)
 
-    }
-
-    
+    }   
 
     render() {
         const { image } = this.props

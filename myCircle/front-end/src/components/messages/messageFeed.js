@@ -3,11 +3,9 @@ import Stack from '@mui/material/Stack';
 import CssBaseline from '@mui/material/CssBaseline';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
-import Typography from '@mui/material/Typography';
 import Message from './message';
 import NewMessage from './newMessage';
 import CircularProgress from '@mui/material/CircularProgress';
-import { Button } from '@mui/material';
 import Divider from '@mui/material/Divider';
 import MessagesOverlay from './messagesOverlay'
 
@@ -29,7 +27,6 @@ export default class MessageFeed extends React.Component {
     document.getElementsByClassName('chatWindow')[0].scrollTop = document.getElementsByClassName('chatWindow')[0].scrollHeight;
   }
 
-
   //COMPONENT DID MOUNT IS BUILT IN AND RUNS WHEN THE COMPONENT MOUNTS
   getChat = async (loggedInUsername, chatId) => {
     this.setState({ dataIsLoaded: false })   
@@ -43,50 +40,48 @@ export default class MessageFeed extends React.Component {
       })    
     })
     //TURN THE RESPONSE INTO A JSON OBJECT
-    .then(response => response.json())
-    // WHAT WE DO WITH THE DATA WE RECEIVE (data => console.log(data)) SHOULD SHOW WHAT WE GET
+    .then(response => response.json())  
     .then(data => {    
       this.setState({
         chatData: data.chatData,
         chatFeed: data.messages,
         dataIsLoaded: true
       });
-    })
+    });
   }
 
   render () {  
-    const { onRouteChange, changeMailNotifications, userFirstName, userLastName, loggedInUsername, userProfilePicture } = this.props; 
+    const { onRouteChange, userFirstName, userLastName, loggedInUsername, userProfilePicture } = this.props; 
     //SETTING UP ACCESS TO THE STATE VARIABLES   
-    const { circle, posts, chatSelected, dataIsLoaded, chatData, chatFeed } = this.state;
-    
+    const { chatSelected, dataIsLoaded, chatData, chatFeed } = this.state;    
     // IF THE DATA ISNT LOADED YET, LOAD AN ALTERNATIVE WHILE WE WAIT   
     if (!chatSelected && !dataIsLoaded) {
       return (
-      <div>
-        <MessagesOverlay
-          changeCircle={this.changeCircle}
-          userProfilePicture={userProfilePicture}
-          loggedInUsername={loggedInUsername}
-          getChat={this.getChat}/>        
-        <div style={{backgroundColor: '#010101', display: 'flex', justifyContent: 'space-between', paddingBottom: '100px', minHeight: '100vh'}}>          
-          <div style={{width: '30%', height: '100px'}}></div>
-            <React.Fragment>              
-            <CssBaseline />
-            <Container maxWidth="lg" sx={{zIndex: 10, bgcolor: '#343434', borderRadius: '0px 0px 30px 30px', width: '100%', pb: 2, ml: 2, mr:2,  mt: 12}}>
+        <div>
+          <MessagesOverlay
+            changeCircle={this.changeCircle}
+            userProfilePicture={userProfilePicture}
+            loggedInUsername={loggedInUsername}
+            getChat={this.getChat}/>        
+          <div style={{backgroundColor: '#010101', display: 'flex', justifyContent: 'space-between', paddingBottom: '100px', minHeight: '100vh'}}>          
+            <div style={{width: '30%', height: '100px'}}></div>
+              <React.Fragment>              
+              <CssBaseline />
+              <Container maxWidth="lg" sx={{zIndex: 10, bgcolor: '#343434', borderRadius: '0px 0px 30px 30px', width: '100%', pb: 2, ml: 2, mr:2,  mt: 12}}>
 
-                {/* <Box sx={{ padding: 2, bgcolor: 'none', display: 'flex', justifyContent: 'center', mt: 2}}>
-                    <CircularProgress />                    
-                </Box> */}
-                <h1 style={{ color: 'white' }}>Select a chat to start talking!</h1>
-                <Divider variant="middle" sx={{mt: 1.5, mb: 1.5}} />                
-                {/* <Typography color="white" sx={{ fontSize: 16, mb: 1.5  }}>
-                    Select a chat to start talking!
-                </Typography> */}
-              </Container>
-            </React.Fragment>
-          <div style={{width: '30%', height: '100px'}}></div>
+                  {/* <Box sx={{ padding: 2, bgcolor: 'none', display: 'flex', justifyContent: 'center', mt: 2}}>
+                      <CircularProgress />                    
+                  </Box> */}
+                  <h1 style={{ color: 'white' }}>Select a chat to start talking!</h1>
+                  <Divider variant="middle" sx={{mt: 1.5, mb: 1.5}} />                
+                  {/* <Typography color="white" sx={{ fontSize: 16, mb: 1.5  }}>
+                      Select a chat to start talking!
+                  </Typography> */}
+                </Container>
+              </React.Fragment>
+            <div style={{width: '30%', height: '100px'}}></div>
+          </div>
         </div>
-      </div>
       )
     } else if (chatSelected && !dataIsLoaded){
       return (
@@ -113,9 +108,6 @@ export default class MessageFeed extends React.Component {
         )
     } else {
     // OTHERWISE RUN THE GOOD STUFF
-    console.log("DATTAAAAAA")
-    console.log(chatData.chatId, chatData.user1,chatData.user2, loggedInUsername, userFirstName, userLastName, userProfilePicture, chatData.firstName)
-
       return (
         <div>
           <MessagesOverlay
@@ -127,47 +119,53 @@ export default class MessageFeed extends React.Component {
             />
           <div style={{backgroundColor: '#010101', display: 'flex', justifyContent: 'space-between', paddingBottom: '100px', height: '1000px', maxHeight: '1000px'}}>
             <div style={{width: '30%',}}></div>
-                <React.Fragment>              
-                    <CssBaseline />
-                    <Container maxWidth="lg" sx={{zIndex: 2, bgcolor: '#343434', borderRadius: '0px 0px 30px 30px', width: '100%', pb: 2, ml: 2, mr:2,  mt: 12}}>
-
-                        <p>{this.feedPosts}</p>
-                        <Box className="chatWindow"  sx={{ padding: 2, bgcolor: 'gray', height: '80%', maxHeight: '600px', borderRadius: '0px 0px 30px 30px', overflowY: 'scroll'}}>
-                            <Stack spacing={2} sx={{  width: '100%', margin: '50px auto 0'}} style={{ flexDirection: 'column'}}>
-                            {/* .MAP IS OUR FOR EACH LOOP, 'ITEM' IS JUST WHAT WE CALL EACH ELEMENT IN THE LIST SO IS INTERCHANGEABLE */}
-                            {chatFeed.map(message => (
-                                                                                    
-                              /* RENDER THE COMPONENT WITH PROPS PASSED IN FROM THE SPECIFIC ITEM WERE CURRENTLY ON FOR EACH ITEM PASSED OVER BY THE .MAP */
-                                <Message
-                                  key={message.messageId}
-                                  chatId={chatData.chatId}
-                                  chatUser1={chatData.user1}
-                                  chatUser2={chatData.user2}
-                                  loggedInUsername={loggedInUsername}
-                                  userFirstName={userFirstName}
-                                  userLastName={userLastName}
-                                  userProfilePicture={userProfilePicture}
-                                  partnerFirstName={chatData.firstName}
-                                  partnerLastName={chatData.lastName}
-                                  partnerProfilePicture={chatData.profilePicture}
-                                  message={message.message}
-                                  messageSender={message.sender}
-                                  date={message.date}/>
-                                                                     
-                            ) ) }
-                            </Stack>
-                        </Box>
-                        <NewMessage
-                          chatId={chatData.chatId}
-                          chatUser1={chatData.user1}
-                          chatUser2={chatData.user2}
-                          userFirstName={userFirstName}
-                          userLastName={userLastName}
-                          loggedInUsername={loggedInUsername}
-                         />
-                    </Container>
-                </React.Fragment>
-          
+            <React.Fragment>              
+              <CssBaseline />
+                <Container
+                  maxWidth="lg"
+                  sx={{zIndex: 2,
+                    bgcolor: '#343434',
+                    borderRadius: '0px 0px 30px 30px',
+                    width: '100%',
+                    pb: 2,
+                    ml: 2,
+                    mr:2,
+                    mt: 12}}
+                >
+                <p>{this.feedPosts}</p>
+                <Box className="chatWindow"  sx={{ padding: 2, bgcolor: 'gray', height: '80%', maxHeight: '600px', borderRadius: '0px 0px 30px 30px', overflowY: 'scroll'}}>
+                  <Stack spacing={2} sx={{  width: '100%', margin: '50px auto 0'}} style={{ flexDirection: 'column'}}>
+                    {/* .MAP IS OUR FOR EACH LOOP, 'ITEM' IS JUST WHAT WE CALL EACH ELEMENT IN THE LIST SO IS INTERCHANGEABLE */}
+                    {chatFeed.map(message => (                                                                                    
+                      /* RENDER THE COMPONENT WITH PROPS PASSED IN FROM THE SPECIFIC ITEM WERE CURRENTLY ON FOR EACH ITEM PASSED OVER BY THE .MAP */
+                      <Message
+                        key={message.messageId}
+                        chatId={chatData.chatId}
+                        chatUser1={chatData.user1}
+                        chatUser2={chatData.user2}
+                        loggedInUsername={loggedInUsername}
+                        userFirstName={userFirstName}
+                        userLastName={userLastName}
+                        userProfilePicture={userProfilePicture}
+                        partnerFirstName={chatData.firstName}
+                        partnerLastName={chatData.lastName}
+                        partnerProfilePicture={chatData.profilePicture}
+                        message={message.message}
+                        messageSender={message.sender}
+                        date={message.date}/>                                                                     
+                    ))}
+                  </Stack>
+                </Box>
+                <NewMessage
+                  chatId={chatData.chatId}
+                  chatUser1={chatData.user1}
+                  chatUser2={chatData.user2}
+                  userFirstName={userFirstName}
+                  userLastName={userLastName}
+                  loggedInUsername={loggedInUsername}
+                  />
+              </Container>
+            </React.Fragment>          
             <div style={{width: '30%', height: '100px'}}></div>
           </div>       
         </div>

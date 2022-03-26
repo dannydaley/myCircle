@@ -1,7 +1,5 @@
-import RadioGroupContext from "@mui/material/RadioGroup/RadioGroupContext";
 import React from "react";
-import { Link, useParams } from 'react-router-dom';
-import Button from '@mui/material/Button';
+import { Link } from 'react-router-dom';
 
 export default class ReactionNotification extends React.Component {
 	constructor(props) {
@@ -23,34 +21,32 @@ export default class ReactionNotification extends React.Component {
         //TURN THE RESPONSE INTO A JSON OBJECT
         .then(response => response.json())
         .then(data => data === "success" ? this.setState({seen: true}) : "")
-      }
+    }
 
 	render() {
-		const { firstName, lastName, message, senderUsername, recipientUsername, relativePost, loggedInUser, confirmFriendRequest, refuseFriendRequest, getNotifications, seen, actionId } = this.props
+		const { firstName, lastName, message, senderUsername, recipientUsername, relativePost } = this.props
 		if (!this.state.seen) {
 			return(
-			< div style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
-							<Link to={`/${senderUsername}`} onClick={this.setNotificationAsSeen}>								
-								<h4 style={{color: '#217cd8'}}>{firstName} {lastName}</h4>
-							</Link> 
-							<Link to={`/${recipientUsername}#postId=${relativePost}`} onClick={this.setNotificationAsSeen}>
-							<h4 style={{color: '#217cd8', marginLeft: '5px'}}>{message}</h4>
-							
-							</Link>
-						</div>
+				<div style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+					<Link to={`/${senderUsername}`} onClick={this.setNotificationAsSeen}>								
+						<h4 style={{color: '#217cd8'}}>{firstName} {lastName}</h4>
+					</Link> 
+					<Link to={`/${recipientUsername}#postId=${relativePost}`} onClick={this.setNotificationAsSeen}>
+						<h4 style={{color: '#217cd8', marginLeft: '5px'}}>{message}</h4>					
+					</Link>
+				</div>
 			)		
 		} else {
 			return (
-				< div style={{display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-							<Link to={`/${senderUsername}`} onClick={this.setNotificationAsSeen}>								
-								<h4 style={{color: 'black'}}>{firstName} {lastName}</h4>
-							</Link> 
-							<Link to={`/${recipientUsername}#postId=${relativePost}`} onClick={this.setNotificationAsSeen}>
-							<h4 style={{color: 'black', marginLeft: '5px'}}>{message}</h4>							
-							</Link>
-			</div>
+				<div style={{display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+					<Link to={`/${senderUsername}`} onClick={this.setNotificationAsSeen}>								
+						<h4 style={{color: 'black'}}>{firstName} {lastName}</h4>
+					</Link> 
+					<Link to={`/${recipientUsername}#postId=${relativePost}`} onClick={this.setNotificationAsSeen}>
+						<h4 style={{color: 'black', marginLeft: '5px'}}>{message}</h4>							
+					</Link>
+				</div>
 			)
-
 		}		
 	}
 }

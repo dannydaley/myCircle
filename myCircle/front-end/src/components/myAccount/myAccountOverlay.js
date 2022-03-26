@@ -4,8 +4,7 @@ import MyAccountLeftBar from "./myAccountLeftBar";
             
 export default class  MyAccountOverlay extends React.Component {
     constructor(props) {
-        super(props);
-        
+        super(props);        
     }
 
     render () {
@@ -15,8 +14,6 @@ export default class  MyAccountOverlay extends React.Component {
                 <MyAccountRightBar userFirstName={userFirstName} userLastName={userLastName} />                
                 <MyAccountLeftBar userFirstName={userFirstName} userLastName={userLastName} changeSettings={changeSettings} userProfilePicture={userProfilePicture}/>
             </div>
-
         )       
     }
-
 }

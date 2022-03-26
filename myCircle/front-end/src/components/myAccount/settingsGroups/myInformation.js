@@ -1,19 +1,16 @@
 import React from "react";
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
-import InputAdornment from '@mui/material/InputAdornment';
 import WorkIcon from '@mui/icons-material/Work';
 import PersonIcon from '@mui/icons-material/Person';
 import LocationCityIcon from '@mui/icons-material/LocationCity';
 import SchoolIcon from '@mui/icons-material/School';
-import Container from '@mui/material/Container';
 import InfoIcon from '@mui/icons-material/Info';
 import Button from '@mui/material/Button';
 import ImageIcon from '@mui/icons-material/Image';
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
 import axios from 'axios';
-
 
 export default class MyInformation extends React.Component {
 
@@ -31,7 +28,6 @@ export default class MyInformation extends React.Component {
             dataIsLoaded: false
         }
     }
-
 
     onFirstNameChange = (event) => {
         this.setState({firstName: event.target.value})
@@ -63,7 +59,6 @@ export default class MyInformation extends React.Component {
     delayFunction = async () => {
       await this.delay(10000);
     };
-
 
     updateProfilePicture = async (image) => {        
         let formData = new FormData()       
@@ -130,8 +125,7 @@ export default class MyInformation extends React.Component {
         if (!newCircle) {
           newCircle = 'general'
         }  
-        this.setState({ dataIsLoaded: false })   
-     
+        this.setState({ dataIsLoaded: false })     
         //FETCH IS A GET REQUEST BY DEFAULT, POINT IT TO THE ENDPOINT ON THE BACKEND
         fetch('http://localhost:3001/getUserGeneralInfo', {
           method: 'post',
@@ -156,7 +150,7 @@ export default class MyInformation extends React.Component {
             dataIsLoaded: true
           });
         })
-      }
+    }
 
     render() {
         const { settings } = this.props; 
@@ -167,8 +161,7 @@ export default class MyInformation extends React.Component {
                     <CircularProgress />                    
                 </Box>
             )
-        }
-        else {
+        } else {
             return (            
                 <div style={{height: '100%'}}>
                     <Typography variant="h3" component="div" color="white" sx={{textAlign: 'center', mt: 2, paddingTop: 1, paddingBottom: 2, bgcolor: 'none' }}>{settings}</Typography>                    
@@ -228,7 +221,7 @@ export default class MyInformation extends React.Component {
                         />
                     </div>
                     <div  style={{marginTop: '30px'}}>
-                    <InfoIcon sx={{mr: 2, color: 'rgba(255, 255, 255, 0.7)'}} /> 
+                        <InfoIcon sx={{mr: 2, color: 'rgba(255, 255, 255, 0.7)'}} /> 
                         <TextField
                             sx={{maxWidth: '60%', width: '60%', border: '6px solid white', borderRadius: '4px',backgroundColor: 'white'}}
                             id="outlined-textarea"

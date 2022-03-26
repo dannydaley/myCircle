@@ -1,12 +1,9 @@
 import React, {useState} from 'react';
-import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
-import { Backdrop } from '@mui/material';
 import ImageIcon from '@mui/icons-material/Image';
 import SendIcon from '@mui/icons-material/Send';
 import Divider from '@mui/material/Divider';
 import LoadingButton from '@mui/lab/LoadingButton';
-
 import { styled } from '@mui/system';
 import SwitchUnstyled, { switchUnstyledClasses } from '@mui/base/SwitchUnstyled';
 import axios from 'axios';
@@ -26,12 +23,9 @@ export default class NewPost extends React.Component {
         this.onPostSubmit = this.onPostSubmit.bind(this);
       }
 
-
-
   blue = {
       500: '#007FFF',
-    };
-    
+    };    
     grey = {
       400: '#BFC7CF',
       500: '#AAB4BE',
@@ -152,8 +146,7 @@ export default class NewPost extends React.Component {
         })
     }
 
-    render () {
-        const { onRouteChange, userFirstName, userLastName, circle } = this.props;           
+    render () {             
         return (
             <div style={{marginTop: '20px'}}>
                 <label htmlFor="file-input">

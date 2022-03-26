@@ -1,7 +1,6 @@
 import React from "react";
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
-import InputAdornment from '@mui/material/InputAdornment';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
 import ContactMailIcon from '@mui/icons-material/ContactMail';
 import ShieldIcon from '@mui/icons-material/Shield';
@@ -10,7 +9,6 @@ import DoneAllIcon from '@mui/icons-material/DoneAll';
 import LockIcon from '@mui/icons-material/Lock';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
-
 
 export default class MyLoginInfo extends React.Component {
 
@@ -63,6 +61,7 @@ export default class MyLoginInfo extends React.Component {
 
     field1 = '';
     field2 = '';
+
     onChangePasswordChange = (event) => {
         this.field1 = event.target.value
         if ((this.field1 === this.field2) && (this.field1.length > 5)) {            
@@ -70,7 +69,8 @@ export default class MyLoginInfo extends React.Component {
         } else {
             this.setState({changePassword: event.target.value, passwordMatch: 'hidden'})
         }
-    }   
+    }
+
     onPasswordChangeConfirm = (event) => {
         this.field2 = event.target.value
         if ((this.field1 === this.field2) && (this.field1.length > 5)) {            
@@ -84,10 +84,14 @@ export default class MyLoginInfo extends React.Component {
         const { settings } = this.props; 
         const { passwordMatch } = this.state        
         return(
-            <form style={{        
-             height: '100%'}}>
+            <form
+            style={{        
+                height: '100%'
+                }}>
                 <Typography variant="h3" component="div" color="white" sx={{textAlign: 'center', mt: 2, paddingTop: 1, paddingBottom: 2, bgcolor: 'none' }}>{settings}</Typography>                
-                <div style={{marginTop: '100px'}}>
+                <div
+                    style={{marginTop: '100px'}}
+                    >
                     <ContactMailIcon sx={{mr: 2, color: 'rgba(255, 255, 255, 0.7)'}} />                    
                     <TextField
                     sx={{maxWidth: '60%', width: '60%', border: '6px solid white', borderRadius: '4px',backgroundColor: 'white'}}                   
@@ -100,8 +104,7 @@ export default class MyLoginInfo extends React.Component {
                 <div style={{marginTop: '30px'}}>
                     <LockOpenIcon sx={{mr: 2, color: 'rgba(255, 255, 255, 0.7)'}}/> 
                     <TextField
-                        sx={{maxWidth: '60%', width: '60%', border: '6px solid white', borderRadius: '4px',backgroundColor: 'white'}}                
-                        
+                        sx={{maxWidth: '60%', width: '60%', border: '6px solid white', borderRadius: '4px',backgroundColor: 'white'}}                       
                         label="Verify password"
                         type="password"
                         autoComplete="no"
@@ -113,19 +116,19 @@ export default class MyLoginInfo extends React.Component {
                 <div>
                     <ContactMailIcon sx={{mr: 2, color: 'rgba(255, 255, 255, 0.7)'}} />                    
                     <TextField
-                    sx={{maxWidth: '60%', width: '60%', border: '6px solid white', borderRadius: '4px',backgroundColor: 'white'}}                    
-                    label="New email address (Leave blank if no change)"
-                    type="email"
-                    onChange={this.onChangeEmailChange}
+                        sx={{maxWidth: '60%', width: '60%', border: '6px solid white', borderRadius: '4px',backgroundColor: 'white'}}                    
+                        label="New email address (Leave blank if no change)"
+                        type="email"
+                        onChange={this.onChangeEmailChange}
                     />
                 </div>
                 <div style={{marginTop: '30px'}}>
                     <LockIcon sx={{mr: 2, color: 'rgba(255, 255, 255, 0.7)'}} />                 
                     <TextField
-                    sx={{maxWidth: '60%', width: '60%', border: '6px solid white', borderRadius: '4px',backgroundColor: 'white'}}                   
-                    label="New password (Leave blank if no change)"
-                    type="password"
-                    onChange={this.onChangePasswordChange}
+                        sx={{maxWidth: '60%', width: '60%', border: '6px solid white', borderRadius: '4px',backgroundColor: 'white'}}                   
+                        label="New password (Leave blank if no change)"
+                        type="password"
+                        onChange={this.onChangePasswordChange}
                     />
                     <DoneIcon sx={{color: 'lightGreen', position: 'absolute', visibility: passwordMatch}} />
                 </div>

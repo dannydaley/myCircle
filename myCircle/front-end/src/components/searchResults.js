@@ -1,7 +1,6 @@
 import React from "react";
 import CircularProgress from '@mui/material/CircularProgress';
 import { Link, useParams } from 'react-router-dom';
-import zIndex from "@material-ui/core/styles/zIndex";
 
 export default class SearchResults extends React.Component {
     constructor(props) {
@@ -11,6 +10,7 @@ export default class SearchResults extends React.Component {
             results: []
         }
     }
+    
     componentDidMount = () => {
         fetch('http://localhost:3001/search', {
             method: 'post',

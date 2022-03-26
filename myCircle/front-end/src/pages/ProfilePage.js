@@ -75,14 +75,11 @@ componentDidMount = () => {
                          changeAlertNotifications={changeAlertNotifications}
                          isFriendsWithLoggedInUser={isFriendsWithLoggedInUser}
                          sendFriendRequest={this.sendFriendRequest}/>
-                         <ProfileHeader  coverPicture={coverPicture}/>
-                        
+                         <ProfileHeader  coverPicture={coverPicture}/>                        
                           <ProfileFeed
                           userProfileToGet={userProfileToGet}
                            isFriendsWithLoggedInUser={isFriendsWithLoggedInUser}
-                           loggedInUsername={loggedInUsername}  userFirstName={userFirstName} userLastName={userLastName} userProfilePicture={userProfilePicture}/> 
-          
-                         {/* <ProfileFeed userProfileToGet={userProfileToGet} loggedInUsername={loggedInUsername}  userFirstName={this.props.userFirstName} userLastName={this.props.userLastName} userProfilePicture={this.props.userProfilePicture}/> */}
+                           loggedInUsername={loggedInUsername}  userFirstName={userFirstName} userLastName={userLastName} userProfilePicture={userProfilePicture}/>
                     </>
                )
           } else {

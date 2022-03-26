@@ -3,11 +3,7 @@ import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import PostActions from './postActions';
-
-import me from '../Images/me.jpg'
-import { Link, useParams } from 'react-router-dom';
-
-
+import { Link } from 'react-router-dom';
 
 export default function FeedPost(props) {
     

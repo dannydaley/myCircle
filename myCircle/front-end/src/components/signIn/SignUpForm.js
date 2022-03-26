@@ -7,7 +7,7 @@ import Divider from '@mui/material/Divider';
 export default class SignUpForm extends React.Component 
   {
       constructor(props) {
-          super();
+          super(props);
           this.state = {
               signUpEmail: '',
               signUpUserName: '',

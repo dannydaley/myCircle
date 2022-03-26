@@ -2,16 +2,15 @@ import Feed from "../components/feed";
 import * as React from 'react';
 
 export default class FeedPage extends React.Component {    
-     constructor({ changeCircle, changeMailNotifications, props }) {
+     constructor(props) {
         super(props);
         this.state = {
              circle: 'general'   
           }
-     }
-     
+     }     
 
      render()   {  
-     const { onRouteChange, userFirstName, userLastName, loggedInUsername, userProfilePicture, getNotifications } = this.props;
+          const { onRouteChange, userFirstName, userLastName, loggedInUsername, userProfilePicture, getNotifications } = this.props;
                return (
                     <div >
                          <Feed

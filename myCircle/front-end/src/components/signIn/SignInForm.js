@@ -11,7 +11,7 @@ const { captureRejectionSymbol } = require('events');
 class SignInForm extends React.Component 
 {
     constructor(props) {
-        super();
+        super(props);
         this.state = {
             signInEmail: '',
             signInPassword: ''            
@@ -59,7 +59,7 @@ onSubmitSignIn = () => {
 }
 
     render () { 
-        const { onRouteChange, updateSession } = this.props;
+        const { onRouteChange } = this.props;
         return (
                 <div style={{width: '30%', padding: '10ch',backgroundColor: 'white'}}>
                     <Box component="form" sx={{'& .MuiTextField-root': { m: 1, width: '30ch' } }} noValidate autoComplete="off">

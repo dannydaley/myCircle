@@ -15,15 +15,12 @@ export default class SearchBar extends React.Component {
       renderChild: true,
       results: []
     }
-
-    this.handleChildUnmount = this.handleChildUnmount.bind(this);
+  this.handleChildUnmount = this.handleChildUnmount.bind(this);
   }
 
-handleChildUnmount(){
-  console.log("working?")
+  handleChildUnmount(){
     this.setState({renderChild: false});
-}
-
+  }
 
   Search = styled('div')(({ theme }) => ({
     position: 'relative',
@@ -35,9 +32,9 @@ handleChildUnmount(){
     width: '100%',
     [theme.breakpoints.up('sm')]: {
       marginLeft: theme.spacing(3),
-      width: 'auto',
-    },
-  }));
+      width: 'auto'},
+    })
+  );
   
   SearchIconWrapper = styled('div')(({ theme }) => ({
     padding: theme.spacing(0, 2),
@@ -63,7 +60,6 @@ handleChildUnmount(){
     },
   }));
 
-
   delay = ms => new Promise(res => setTimeout(res, ms));
 
   delayFunction = async () => {
@@ -73,32 +69,27 @@ handleChildUnmount(){
     this.setState({searchInput: event.target.value, newInput: false})
     await this.delayFunction()
     this.setState({newInput: true, renderChild: true})
-
   }
-
-
 
 render() {
   return (
     <>
-    <this.Search 
-    >
-      <this.SearchIconWrapper>
-        <SearchIcon />
-      </this.SearchIconWrapper>
-      <this.StyledInputBase
-
-        onChange={this.onInputChange}
-        placeholder="Search…"
-        inputProps={{ 'aria-label': 'search' }}
-      />
-      {(this.state.renderChild && this.state.newInput) && this.state.searchInput.length > 2 ? 
-      <SearchResults
-      searchInput={this.state.searchInput}
-      unmountMe={this.handleChildUnmount}/> :
-       ''}
-    </this.Search>    
-      
+      <this.Search 
+      >
+        <this.SearchIconWrapper>
+          <SearchIcon />
+        </this.SearchIconWrapper>
+        <this.StyledInputBase
+          onChange={this.onInputChange}
+          placeholder="Search…"
+          inputProps={{ 'aria-label': 'search' }}
+        />
+        {(this.state.renderChild && this.state.newInput) && this.state.searchInput.length > 2 ? 
+        <SearchResults
+        searchInput={this.state.searchInput}
+        unmountMe={this.handleChildUnmount}/> :
+        ''}
+      </this.Search>    
     </>
   )
 }

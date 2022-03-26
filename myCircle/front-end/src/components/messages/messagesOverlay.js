@@ -23,8 +23,6 @@ export default class  MessagesOverlay extends React.Component {
                 getChat={getChat}
                 />
             </div>
-
         )       
     }
-
 }

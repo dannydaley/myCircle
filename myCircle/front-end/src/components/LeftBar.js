@@ -4,9 +4,8 @@ import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
-import me from '../Images/me.jpg'
 
-import { Routes, Route, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 export default class LeftBar extends React.Component  {
 
