@@ -11,7 +11,10 @@ export default class  MessagesOverlay extends React.Component {
         const { onRouteChange, changeCircle, userProfilePicture, loggedInUsername, getChat } = this.props;
         return (
             <div style={{width: '100vw', display: 'flex', justifyContent: 'space-between', flexDirection: 'row'}}>            
-                <MessagesRightBar />    
+                <MessagesRightBar
+                loggedInUsername={loggedInUsername}
+                getChat={getChat}
+                 />    
                 <MessagesLeftBar
                 changeCircle={changeCircle}
                 onRouteChange={onRouteChange}

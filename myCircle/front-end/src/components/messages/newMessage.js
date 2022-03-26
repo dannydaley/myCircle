@@ -66,7 +66,7 @@ componentDidMount = () => {
                     <ImageIcon fontSize="large" sx={{ mt: 3, fontSize: 70,  color: 'white', mr: 2}} />
                 </label>
                 <input id="file-input" type="file" name="file"  multiple hidden/>   
-                <TextField style={{backgroundColor: 'white', opacity: '0.5', borderRadius: '5px', width: '50%'}} sx={{mt: 2, mr: 2}}
+                <TextField style={{backgroundColor: 'white', opacity: '0.5', borderRadius: '5px', width: '50%', maxHeight: '200px'}} sx={{mt: 2, mr: 2}}
                     id="filled-textarea"
                     label="New message"
                     

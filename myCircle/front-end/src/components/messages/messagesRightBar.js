@@ -9,8 +9,36 @@ import Typography from '@mui/material/Typography';
 
 import me from '../../Images/me.jpg'
 
-export default function MessagesRightBar() {
-  return (
+export default class MessagesRightBar extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      friends: [],
+      dataIsLoaded: false
+    }
+  }
+
+  componentDidMount = () => {
+    this.setState({ chatsAreLoaded: false })
+    fetch('http://localhost:3001/getFriends', {
+      method: 'post',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        user: this.props.loggedInUsername  
+      })    
+    })
+    //TURN THE RESPONSE INTO A JSON OBJECT
+    .then(response => response.json())    
+    // WHAT WE DO WITH THE DATA WE RECEIVE (data => console.log(data)) SHOULD SHOW WHAT WE GET
+    .then(data => {      
+      this.setState({friends: data, dataIsLoaded: true})
+      console.log(data)
+    })
+
+  }
+  render() {
+  return (  
+   
     <div style={{position: 'fixed', width: '100vw'}}>
       <React.Fragment >
       <CssBaseline />      
@@ -38,7 +66,7 @@ export default function MessagesRightBar() {
               textAlign: 'center',
               mt: 2
             }}>
-            Online friends
+            Friends
           </Typography>
           <Stack
             spacing={1}
@@ -47,6 +75,7 @@ export default function MessagesRightBar() {
               margin: '50px auto 0'
             }}>      
                 {/* A FOR EACH LOOP LISTING A BUTTON FOR EACH CIRCLE FOLLOWED IN USER DATA */}
+                {this.state.friends.map(friend => (
             <Button
             variant="contained"
             sx={{
@@ -54,78 +83,26 @@ export default function MessagesRightBar() {
             justifyContent: 'space-between',
             width: '100%'
             }}
+            // onClick={()=>this.props.getChat(loggedInUsername, chat.chatId)}
             color="success">
               <img
-              src={me}
+              src={"http://localhost:3001/public/" + friend.profilePicture}
               width="50px"
               height="50px"
               style={{
                 mb: 3,
                 borderRadius:'50%'
                 }}/>
-              FRIEND ONE
+              {friend.firstName} {friend.lastName}
             </Button>
-            <Button
-              variant="contained"
-              sx={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                width: '100%',
-                mb: 2
-              }}
-              color="success">
-                <img
-                src={me}
-                width="50px"
-                height="50px"
-                style={{
-                  mb: 3,
-                  borderRadius:'50%'
-                }} />
-                FRIEND TWO
-              </Button>
-              <Button
-              variant="contained"
-              sx={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                width: '100%',
-                mb: 2,
-                backgroundColor: 'gray'
-              }}>              
-                <img
-                src={me}
-                width="50px"
-                height="50px"
-                style={{
-                  mb: 3,
-                  borderRadius:'50%'
-                }} />
-                FRIEND THREE
-              </Button>
-              <Button
-              variant="contained"
-              sx={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                width: '100%',
-                mb: 2,
-                backgroundColor: 'gray'
-              }}>
-               <img
-                
-                width="50px"
-                height="50px"
-                style={{
-                  mb: 3,
-                  borderRadius:'50%'
-                }} />
-                FRIEND FOUR
-              </Button>
+               ))}
             </Stack>
         </Box>
       </Container>
     </React.Fragment>
     </div>
-  );
+   
+)
+  }
+
 }

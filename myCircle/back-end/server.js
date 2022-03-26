@@ -834,12 +834,19 @@ app.post('/votePost', (req, res) => {
 app.post('/getNotifications', (req, res) => {
   //set up variables from the request body
   let user = req.body.user
-  SQLdatabase.all(GET_NOTIFICATIONS, [user], (err, rows) => {
+  SQLdatabase.all(GET_NOTIFICATIONS, [user], (err, notifications) => {
     if (err) {
       res.status(500).send(err.message);
       return;
     }
-    res.json(rows)
+    SQLdatabase.all("SELECT * FROM chats WHERE `user1` = ? AND `seenByuser1` = false OR `user2` = ? AND `seenByUser2` = false", [ user, user ], (req, messages) => {
+      
+      res.json({
+        notifications: notifications,
+        messages: messages
+      })
+    })
+    
   })
 })
 //#region GET FEEDS
@@ -876,6 +883,11 @@ app.post('/getChat', (req, res) => {
 
 app.post('/newMessage', (req, res) => {
   let { chatId, sender, message, recipient } = req.body;
+  if (!chatId) {
+    SQLdatabase.run("INSERT INTO chats (user1, user2, seenByUser1, seenByUser2, lastActive) VALUES (?, ?, ?, ?, datetime())", [sender, recipient, true, false], (err, chat) => {
+      chatId = this.lastId
+    })
+  }
   SQLdatabase.run("INSERT INTO messages (chatId, sender, message, recipient, date, seen) VALUES (?, ?, ?, ?, datetime(), ?)", [ chatId, sender, message, recipient, false], (err, rows) => {
     if (err) {
       console.log(err)
@@ -934,6 +946,25 @@ app.post('/getFeedFriendsOnly', (req, res) => {
   }) 
 })   
   
+app.post('/getFriends', (req, res) => {
+  //set up variables from the request body
+  let user = req.body.user
+  let friendsList = []  
+  friendsList[0] = "'" + user + "'";
+  SQLdatabase.all(GET_ALL_USERS_FRIENDS,  [user, user], (err, rows) => {
+    if(err){
+      console.log("error at database with friendships")      
+      return
+    }  
+    rows.forEach(element => element.user1 === user ? friendsList.push("'"+ element.user2 + "'") : friendsList.push("'"+element.user1+"'"))          
+    SQLdatabase.all("SELECT firstName, lastName, profilePicture FROM users WHERE username IN  ("+friendsList.join(',')+")",(err, FriendData) => {
+      if (err) {
+        console.log(err)
+      }
+      res.json(FriendData)
+    })
+  })
+})
 app.post('/friendRequest', (req, res) => {
   
   //set up variables from the request body 
