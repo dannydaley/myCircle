@@ -9,7 +9,7 @@
     "recipient": "none",
     "likes": 21,
     "dislikes": 2,
-    "postStrict": 0
+    "postStrict": "false"
     },
     {
     "id": 35,
@@ -20,7 +20,7 @@
     "recipient": "none",
     "likes": 9,
     "dislikes": 3,
-    "postStrict": 0
+    "postStrict": "false"
     },
     {
     "id": 34,
@@ -31,7 +31,7 @@
     "recipient": "none",
     "likes": 21,
     "dislikes": 5,
-    "postStrict": 0
+    "postStrict": "false"
     },
     {
     "id": 33,
@@ -42,7 +42,7 @@
     "recipient": "none",
     "likes": 54,
     "dislikes": 1,
-    "postStrict": 0
+    "postStrict": "false"
     },
     {
     "id": 32,
@@ -53,7 +53,7 @@
     "recipient": "none",
     "likes": 24,
     "dislikes": 0,
-    "postStrict": 0
+    "postStrict": "false"
     },
     {
     "id": 31,
@@ -64,7 +64,7 @@
     "recipient": "none",
     "likes": 56,
     "dislikes": 4,
-    "postStrict": 0
+    "postStrict": "false"
     },
     {
     "id": 30,
@@ -75,7 +75,7 @@
     "recipient": "none",
     "likes": 40,
     "dislikes": 7,
-    "postStrict": 0
+    "postStrict": "false"
     },
     {
     "id": 29,
@@ -86,7 +86,7 @@
     "recipient": "none",
     "likes": 10,
     "dislikes": 3,
-    "postStrict": 0
+    "postStrict": "false"
     },
     {
     "id": 27,
@@ -97,7 +97,7 @@
     "recipient": "none",
     "likes": 4,
     "dislikes": 5,
-    "postStrict": 0
+    "postStrict": "false"
     },
     {
     "id": 26,
@@ -108,7 +108,7 @@
     "recipient": "none",
     "likes": 3,
     "dislikes": 7,
-    "postStrict": 0
+    "postStrict": "false"
     },
     {
     "id": 25,
@@ -119,7 +119,7 @@
     "recipient": "none",
     "likes": 20,
     "dislikes": 8,
-    "postStrict": 0
+    "postStrict": "false"
     },
     {
     "id": 24,
@@ -130,7 +130,7 @@
     "recipient": "none",
     "likes": 6,
     "dislikes": 9,
-    "postStrict": 0
+    "postStrict": "false"
     },
     {
     "id": 23,
@@ -141,7 +141,7 @@
     "recipient": "none",
     "likes": 5,
     "dislikes": 10,
-    "postStrict": 0
+    "postStrict": "false"
     },
     {
     "id": 22,
@@ -152,7 +152,7 @@
     "recipient": "none",
     "likes": 3,
     "dislikes": 12,
-    "postStrict": 0
+    "postStrict": "false"
     },
     {
     "id": 21,
@@ -163,7 +163,7 @@
     "recipient": "none",
     "likes": 2,
     "dislikes": 5,
-    "postStrict": 0
+    "postStrict": "false"
     },
     {
     "id": 20,
@@ -174,7 +174,7 @@
     "recipient": "none",
     "likes": 40,
     "dislikes": 7,
-    "postStrict": 0
+    "postStrict": "false"
     },
     {
     "id": 19,
@@ -185,7 +185,7 @@
     "recipient": "none",
     "likes": 10,
     "dislikes": 0,
-    "postStrict": 0
+    "postStrict": "false"
     },
     {
     "id": 18,
@@ -196,7 +196,7 @@
     "recipient": "none",
     "likes": 10,
     "dislikes": 1,
-    "postStrict": 0
+    "postStrict": "false"
     },
     {
     "id": 17,
@@ -207,7 +207,7 @@
     "recipient": "none",
     "likes": 1,
     "dislikes": 2,
-    "postStrict": 0
+    "postStrict": "false"
     },
     {
     "id": 16,
@@ -218,7 +218,7 @@
     "recipient": "none",
     "likes": 20,
     "dislikes": 3,
-    "postStrict": 0
+    "postStrict": "false"
     },
     {
     "id": 15,
@@ -229,7 +229,7 @@
     "recipient": "none",
     "likes": 10,
     "dislikes": 5,
-    "postStrict": 0
+    "postStrict": "false"
     },
     {
     "id": 14,
@@ -240,7 +240,7 @@
     "recipient": "none",
     "likes": 12,
     "dislikes": 5,
-    "postStrict": 0
+    "postStrict": "false"
     },
     {
     "id": 13,
@@ -251,7 +251,7 @@
     "recipient": "none",
     "likes": 11,
     "dislikes": 6,
-    "postStrict": 0
+    "postStrict": "false"
     },
     {
     "id": 12,
@@ -261,7 +261,7 @@
     "recipient": "none",
     "likes": 8,
     "dislikes": 7,
-    "postStrict": 0
+    "postStrict": "false"
     },
     {
     "id": 11,
@@ -272,7 +272,7 @@
     "recipient": "none",
     "likes": 2,
     "dislikes": 5,
-    "postStrict": 0
+    "postStrict": "false"
     },
     {
     "id": 10,
@@ -283,7 +283,7 @@
     "recipient": "none",
     "likes": 17,
     "dislikes": 3,
-    "postStrict": 0
+    "postStrict": "false"
     },
     {
     "id": 9,
@@ -294,7 +294,7 @@
     "recipient": "none",
     "likes": 16,
     "dislikes": 5,
-    "postStrict": 0
+    "postStrict": "false"
     },
     {
     "id": 8,
@@ -305,7 +305,7 @@
     "recipient": "none",
     "likes": 10,
     "dislikes": 2,
-    "postStrict": 0
+    "postStrict": "false"
     },
     {
     "id": 7,
@@ -316,7 +316,7 @@
     "recipient": "none",
     "likes": 11,
     "dislikes": 0,
-    "postStrict": 0
+    "postStrict": "false"
     },
     {
     "id": 6,
@@ -327,7 +327,7 @@
     "recipient": "none",
     "likes": 45,
     "dislikes": 1,
-    "postStrict": 0
+    "postStrict": "false"
     },
     {
     "id": 5,
@@ -338,7 +338,7 @@
     "recipient": "none",
     "likes": 32,
     "dislikes": 2,
-    "postStrict": 0
+    "postStrict": "false"
     },
     {
     "id": 4,
@@ -349,7 +349,7 @@
     "recipient": "none",
     "likes": 11,
     "dislikes": 5,
-    "postStrict": 0
+    "postStrict": "false"
     },
     {
     "id": 3,
@@ -360,7 +360,7 @@
     "recipient": "none",
     "likes": 15,
     "dislikes": 7,
-    "postStrict": 0
+    "postStrict": "false"
     },
     {
     "id": 2,
@@ -371,7 +371,7 @@
     "recipient": "none",
     "likes": 22,
     "dislikes": 9,
-    "postStrict": 0
+    "postStrict": "false"
     },
     {
     "id": 1,
@@ -382,7 +382,7 @@
     "recipient": "none",
     "likes": 13,
     "dislikes": 2,
-    "postStrict": 0
+    "postStrict": "false"
     }
   ]
 }

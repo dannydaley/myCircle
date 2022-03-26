@@ -757,7 +757,7 @@ app.post('/getFeedFriendsOnly', (req, res) => {
     // if selected circle is general
     if (req.body.circle === "general") {
       // select all posts and posters firstname, lastname and profile picture where the author of the posts username exists in the above friend list     
-      SQLdatabase.all("SELECT posts.*, users.firstName, users.lastName, users.profilePicture FROM `posts` LEFT OUTER JOIN `users` ON `posts`.`author` = `users`.`username` WHERE author IN  ("+friendsList.join(',')+") AND ((postStrict = 'false' OR circle = 'general') AND recipient = ?) ORDER BY id DESC", 'none',(err, posts) => {
+      SQLdatabase.all("SELECT posts.*, users.firstName, users.lastName, users.profilePicture FROM `posts` LEFT OUTER JOIN `users` ON `posts`.`author` = `users`.`username` WHERE author IN  ("+friendsList.join(',')+") AND (((postStrict = false OR postStrict = 'false') OR circle = 'general') AND recipient = ?) ORDER BY id DESC", 'none',(err, posts) => {
         // if error
         if (err) {
           // respond with error status and error message
