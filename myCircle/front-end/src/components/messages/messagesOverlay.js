@@ -5,7 +5,7 @@ import MessagesLeftBar from "./messagesLeftBar";
 export default class  MessagesOverlay extends React.Component {
     constructor(props) {
         super(props);
-    }    
+    };    
 
     render () {
         const { onRouteChange, changeCircle, userProfilePicture, loggedInUsername, getChat } = this.props;
@@ -23,6 +23,6 @@ export default class  MessagesOverlay extends React.Component {
                 getChat={getChat}
                 />
             </div>
-        )       
-    }
-}
+        );    
+    };
+};
