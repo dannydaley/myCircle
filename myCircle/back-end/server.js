@@ -882,7 +882,7 @@ app.post('/getFriends', (req, res) => {
     // iterate through each returned friendship, and add the username **that is not** the logged in users username to the friend list above
     friendships.forEach(friendship => friendship.user1 === user ? friendsList.push("'" + friendship.user2 + "'") : friendsList.push("'" + friendship.user1 + "'"));
     // get first name, last name and profile picture of all users that appear in the new friendsList array
-    SQLdatabase.all("SELECT firstName, lastName, profilePicture FROM users WHERE username IN  ("+friendsList.join(',')+")",(err, FriendData) => {
+    SQLdatabase.all("SELECT firstName, lastName, profilePicture, username FROM users WHERE username IN  ("+friendsList.join(',')+")",(err, FriendData) => {
       // if error
       if (err) {
         // respond with error status and error message
@@ -1080,19 +1080,7 @@ app.post('/newMessage', (req, res) => {
   //set up variables from the request body
   let { chatId, sender, message, recipient } = req.body;
   // if no chat id currently exists.. 
-  if (!chatId) {
-    // create a chat passing in logged in users username as sender, recipient, and message
-    SQLdatabase.run("INSERT INTO chats (user1, user2, seenByUser1, seenByUser2, lastActive) VALUES (?, ?, ?, ?, datetime())", [sender, recipient, true, false], (err) => {
-      // if error
-      if (err) {
-        // respond with error status and error message
-        res.status(500).send(err.message);
-        return;
-      };
-      // set chatId to the id of the data just added
-      chatId = this.lastId;
-    });
-  };
+
   // add a message to the database with the chatId, sender message and recipient
   SQLdatabase.run("INSERT INTO messages (chatId, sender, message, recipient, date, seen) VALUES (?, ?, ?, ?, datetime(), ?)", [ chatId, sender, message, recipient, false], (err, rows) => {
     // if error
@@ -1125,9 +1113,37 @@ app.post('/getAllUsersChats', (req, res) => {
   });
 });
 
-app.post('/getChat', (req, res) => {
+app.post('/getChat', async (req, res) => {
   //set up variables from the request body
-  let { user, chatId } = req.body;
+  let { user, chatId, partner } = req.body;
+  console.log(req.body)
+   if (!chatId) {                                                                                       
+    await SQLdatabase.get("SELECT `chats`.`chatId` FROM `chats` WHERE ((`chats`.`user1` = ? AND `chats`.`user2` = ?) OR (`chats`.`user1` = ? AND `chats`.`user2` = ?))", [user, partner, partner, user], (err, result) => {
+      // if error
+      if (err) {
+        // respond with error status and error message
+        res.status(500).send(err.message);
+        return;
+      };
+      console.log(result)
+      if (!result) {
+        console.log("creating chat");
+        // create a chat passing in logged in users username as sender, recipient, and message
+        SQLdatabase.run("INSERT INTO chats (user1, user2, seenByUser1, seenByUser2, lastActive) VALUES (?, ?, ?, ?, datetime())", [user, partner, true, false], (err) => {
+          // if error
+          if (err) {
+            // respond with error status and error message
+            res.status(500).send(err.message);
+            return;
+          };
+          // set chatId to the id of the data just added
+          chatId = this.lastId;
+        });
+      } else {
+        chatId = result;
+      };
+    });
+  };
     /* select all chat data and *the user in the chats*
    first name, last name and profile picture from any
    chat in the chats table where the chat id matches 

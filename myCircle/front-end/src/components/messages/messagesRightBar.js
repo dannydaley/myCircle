@@ -33,6 +33,7 @@ export default class MessagesRightBar extends React.Component {
   }
 
   render() {
+    let { getChat, loggedInUsername } = this.props;
     return (   
       <div style={{position: 'fixed', width: '100vw'}}>
         <React.Fragment >
@@ -78,7 +79,7 @@ export default class MessagesRightBar extends React.Component {
                 justifyContent: 'space-between',
                 width: '100%'
                 }}
-                // onClick={()=>this.props.getChat(loggedInUsername, chat.chatId)}
+                onClick={()=>getChat(loggedInUsername, false, friend.username )}
                 color="success">
                   <img
                   src={"http://localhost:3001/public/" + friend.profilePicture}

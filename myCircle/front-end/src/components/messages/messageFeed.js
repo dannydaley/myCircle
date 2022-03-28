@@ -28,7 +28,7 @@ export default class MessageFeed extends React.Component {
   }
 
   //COMPONENT DID MOUNT IS BUILT IN AND RUNS WHEN THE COMPONENT MOUNTS
-  getChat = async (loggedInUsername, chatId) => {
+  getChat = async (loggedInUsername, chatId, partner) => {
     this.setState({ dataIsLoaded: false })   
     //FETCH IS A GET REQUEST BY DEFAULT, POINT IT TO THE ENDPOINT ON THE BACKEND
     await fetch('http://localhost:3001/getChat', {
@@ -36,7 +36,8 @@ export default class MessageFeed extends React.Component {
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
         user: loggedInUsername,
-        chatId: chatId
+        chatId: chatId,
+        partner: partner
       })    
     })
     //TURN THE RESPONSE INTO A JSON OBJECT
