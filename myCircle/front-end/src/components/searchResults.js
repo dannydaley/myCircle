@@ -1,6 +1,7 @@
 import React from "react";
 import CircularProgress from '@mui/material/CircularProgress';
 import { Link, useParams } from 'react-router-dom';
+import { Typography } from "@mui/material";
 
 export default class SearchResults extends React.Component {
     constructor(props) {
@@ -62,7 +63,7 @@ export default class SearchResults extends React.Component {
                             boxShadow: '-1px 3px 5px 0px black'
                             }}>
                         {this.state.results.map(item =>
-                            <Link key={item.username} to={`/${item.username}`}>
+                            <Link key={item.username} to={`/${item.username}`} style={{textDecoration: 'none', color: 'black', marginBottom: '10px'}}>
                                 <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
                                     <img 
                                         src={'http://localhost:3001/public/' + item.profilePicture}
@@ -76,7 +77,7 @@ export default class SearchResults extends React.Component {
                                             borderRadius: '50%'
                                         }}                        
                                     />
-                                    <h1>{item.firstName} {item.lastName}</h1>
+                                    <Typography variant="h5" sx={{":hover": { textDecoration: 'underline'}, fontWeight: 'bold'}}>{item.firstName} {item.lastName}</Typography>
                                 </div>
                             </Link>
                         )}                               

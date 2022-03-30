@@ -54,16 +54,13 @@ export default class SignUpForm extends React.Component
         console.log(data)
           if (data.status === 'success') {            
               this.props.updateSession(data.firstName, data.lastName, data.username, data.profilePicture);
-              console.log(data)
-              this.props.onRouteChange('home')
             }
                else {
                  console.log(data)  
               } 
           }
-      )
+      ).then(this.props.onRouteChange('signin'))
   }
-
 
 render() {
   const { onRouteChange } = this.props
@@ -95,7 +92,7 @@ render() {
                 id="outlined-required"
                 type="text"
                 label="First name"
-                placeholder="Email Address"
+                placeholder="first name"
                 onChange={this.onFirstNameChange}
               />
               <TextField
@@ -104,7 +101,7 @@ render() {
                 id="outlined-required"
                 type="text"
                 label="Last name"
-                placeholder="Email Address"
+                placeholder="last name"
                 onChange={this.onLastNameChange}
               />
               <TextField
@@ -113,6 +110,7 @@ render() {
                 label="Password"
                 type="password"
                 autoComplete="off"
+                placeholder='create password'
                 onChange={this.onPasswordChange}
               />
               <TextField
@@ -121,6 +119,7 @@ render() {
                 label="Confirm Password"
                 type="password"
                 autoComplete="off"
+                placeholder='repeat password'
                 onChange={this.onPasswordConfirmChange}
               />
               <Button variant="contained" sx={{width: '33ch', marginTop: '20px'}}  value="Sign Up" 
