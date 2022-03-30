@@ -7,6 +7,7 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import { styled } from '@mui/system';
 import SwitchUnstyled, { switchUnstyledClasses } from '@mui/base/SwitchUnstyled';
 import axios from 'axios';
+import { Typography } from '@mui/material';
 
 export default class NewPost extends React.Component { 
     constructor(props) {
@@ -170,7 +171,17 @@ export default class NewPost extends React.Component {
                 >
                     Post
                 </LoadingButton>
-                <SwitchUnstyled component={this.Root} {...this.label}  onChange={this.onStrictChange} />                     
+                <div style={{margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+                <Typography
+                  sx={{fontWeight: 'bold', color: 'white'}}
+                  title="Posting strict keeps the post off of the general feed if posting to a circle. (has no affect on general or profiles)">
+                    post strict
+                </Typography>
+                <SwitchUnstyled
+                  component={this.Root}
+                  {...this.label}
+                  onChange={this.onStrictChange}
+                  title="Posting strict keeps the post off of the general feed if posting to a circle. (has no affect on general or profiles)" /></div>                     
                 <Divider variant="middle" sx={{mt: 5}} />
             </div>
         );

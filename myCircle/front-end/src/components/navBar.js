@@ -76,15 +76,46 @@ import ShowMessages from './navBar/showMessages';
     >
       <MenuItem
       //  onClick={()=>onRouteChange('profile')}
-       ><Link to="/myProfile">My Profile</Link>
+       >
+        <Link
+          to="/"
+          onClick={handleMenuClose}
+          style={{textDecoration: 'none',
+            color: 'black',
+            fontWeight: 'bold'
+            }}>
+              My Feed
+        </Link>
+      </MenuItem>
+      <MenuItem>
+        <Link
+          to="/myProfile"
+          onClick={handleMenuClose}
+          style={{textDecoration: 'none',
+            color: 'black',
+            fontWeight: 'bold'
+            }}>
+          My Profile
+        </Link>
+      </MenuItem>
+      <MenuItem>
+        <Link
+          to="/myAccount"
+          onClick={handleMenuClose}
+          style={{textDecoration: 'none',
+          color: 'black',
+          fontWeight: 'bold'
+          }}>
+          My account
+        </Link>
        </MenuItem>
       <MenuItem
-      //  onClick={()=>onRouteChange('myAccount')}
-       ><Link to="/myAccount">My account</Link>
-       </MenuItem>
-      <MenuItem
+        style={{textDecoration: 'none',
+          color: 'black'
+        }}
        onClick={() => onRouteChange('signout')}
-       >Sign Out
+       >
+         Sign Out
        </MenuItem>      
     </Menu>
   );  
