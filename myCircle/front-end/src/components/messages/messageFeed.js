@@ -48,8 +48,34 @@ export default class MessageFeed extends React.Component {
         chatFeed: data.messages,
         dataIsLoaded: true
       });
+    console.log(this.state.chatData);
     });
   }
+
+  setChatAsSeen = (chatId) => {
+    //FETCH IS A GET REQUEST BY DEFAULT, POINT IT TO THE ENDPOINT ON THE BACKEND
+    fetch('http://localhost:3001/setChatAsSeen', {
+      method: 'post',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        user: this.props.loggedInUsername,
+        chatId: chatId,
+        user1: this.state.chatData.user1,
+        user2: this.state.chatData.user2
+      })    
+    })
+    //TURN THE RESPONSE INTO A JSON OBJECT
+    .then(response => response.json())  
+    .then(data => {  
+      data.messages.forEach(message => this.state.chatFeed.push(message))  
+      this.setState({
+        chatData: data.chatData,        
+        dataIsLoaded: true
+      });
+    console.log(this.state.chatFeed);
+    });
+  }
+  
 
   render () {  
     const { onRouteChange, userFirstName, userLastName, loggedInUsername, userProfilePicture } = this.props; 
@@ -153,18 +179,24 @@ export default class MessageFeed extends React.Component {
                         partnerProfilePicture={chatData.profilePicture}
                         message={message.message}
                         messageSender={message.sender}
-                        date={message.date}/>                                                                     
+                        date={message.date}
+                        seenByUser1={chatData.seenByUser1}
+                        seenByUser2={chatData.seenByUser2}
+                        setChatAsSeen={this.setChatAsSeen}/>                                                                                           
                     ))}
                   </Stack>
                 </Box>
+                {this.state.chatData.chatId ? 
                 <NewMessage
                   chatId={chatData.chatId}
                   chatUser1={chatData.user1}
                   chatUser2={chatData.user2}
                   userFirstName={userFirstName}
                   userLastName={userLastName}
-                  loggedInUsername={loggedInUsername}
+                  loggedInUsername={loggedInUsername}                  
+                  getChat={this.getChat}
                   />
+                  : ''}
               </Container>
             </React.Fragment>          
             <div style={{width: '30%', height: '100px'}}></div>

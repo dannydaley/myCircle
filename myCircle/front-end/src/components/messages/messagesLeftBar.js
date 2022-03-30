@@ -35,6 +35,7 @@ export default class MessagesLeftBar extends React.Component  {
       console.log(data)
     })
   }  
+
   
   render () {
     const { userProfilePicture, loggedInUsername, getChat } = this.props;
@@ -104,12 +105,11 @@ export default class MessagesLeftBar extends React.Component  {
                 <Stack
                   spacing={2}
                   sx={{
-                    width: 200,
                     margin: '50px auto 0',
                     display: 'flex',
                     flexDirection: 'column',
                     justifyContent: 'center',
-                    alignItems: 'center'
+                    alignItems: 'center'               
                 }}>
                   {this.state.chats.map(chat => (                    
                     (chat.user1 === loggedInUsername && chat.seenByUser1) || (chat.user2 === loggedInUsername && chat.seenByUser2) ?

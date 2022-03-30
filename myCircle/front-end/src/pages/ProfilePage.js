@@ -68,6 +68,7 @@ componentDidMount = () => {
                return (
                     <>               
                          <ProfileOverlay
+                         loggedInUsername={loggedInUsername}
                          userFirstName={firstName}
                          userLastName={lastName}
                          userProfilePicture={profilePicture}

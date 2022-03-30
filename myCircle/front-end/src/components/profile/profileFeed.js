@@ -38,8 +38,7 @@ export default class ProfileFeed extends React.Component {
       method: 'post',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
-        loggedInUsername: this.props.loggedInUsername,
-   
+        loggedInUsername: this.props.loggedInUsername,   
         userProfileToGet: this.props.userProfileToGet,        
         circle: newCircle
       })    

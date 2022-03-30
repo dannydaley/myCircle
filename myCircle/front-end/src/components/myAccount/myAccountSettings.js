@@ -63,14 +63,14 @@ export default class MyAccountSettings extends React.Component {
     switch (selection) {
       case 'My information' : return <MyInformation updateSession={this.props.updateSession} settings={this.state.settings} remountParent={this.componentDidMount} loggedInUsername={this.props.loggedInUsername} refreshData={this.props.refreshData}/>;
       case 'My Circles' : return <MyCircles settings={this.state.settings}/>;
-      case 'My friends' :return <MyFriends settings={this.state.settings}/>
+      case 'My friends' :return <MyFriends settings={this.state.settings} loggedInUsername={this.props.loggedInUsername} />
       case 'My login info' :return <MyLoginInfo settings={this.state.settings} mountComponent={this.componentDidMount}/>
       default: return <MyInformation settings={this.state.settings}/>
     }
   }
 
   render () {   
-    const { userFirstName, userLastName,userProfilePicture } = this.props; 
+    const { userFirstName, userLastName,userProfilePicture, loggedInUsername } = this.props; 
     //SETTING UP ACCESS TO THE STATE VARIABLES   
     const { dataIsLoaded } = this.state;
     // IF THE DATA ISNT LOADED YET, LOAD AN ALTERNATIVE WHILE WE WAIT   
@@ -78,6 +78,7 @@ export default class MyAccountSettings extends React.Component {
       return (
         <div>
           <MyAccountOverlay
+          loggedInUsername={loggedInUsername}
             changeSettings={this.changeSettings}
             userFirstName={userFirstName}
             userLastName={userLastName}
@@ -110,6 +111,7 @@ export default class MyAccountSettings extends React.Component {
       return (
         <div>
           <MyAccountOverlay
+            loggedInUsername={loggedInUsername}
             changeSettings={this.changeSettings}
             userFirstName={userFirstName}
             userLastName={userLastName}

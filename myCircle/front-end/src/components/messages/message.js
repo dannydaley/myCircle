@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 export default function Message(props) {
     
 const {
+    chatId,
     messageId,    
     chatUser1,
     chatUser2,
@@ -17,7 +18,9 @@ const {
     partnerLastName,
     partnerProfilePicture,
     message,
-    messageSender    
+    messageSender,
+    seenByUser1,
+    seenByUser2 
         } = props; 
 
     let  partnerUsername = '';
@@ -33,6 +36,8 @@ const {
                 <div style={{display: 'flex', flexDirection: 'row', justifyContent:'right', width: '100%'}}>
                     <div style={{width: '50%', border: '2px solid #1a8afa', borderRadius: '10px', backgroundColor: '#217cd8 ',boxShadow: '0px 2px 10px 0px grey',}}>
                         <CardContent sx={{display: 'flex', mb: 2}} >
+                            {(loggedInUsername === chatUser1) && (seenByUser1) === 0 ? props.setChatAsSeen(chatId) : ''}
+                            {(loggedInUsername === chatUser2) && (seenByUser2) === 0 ? props.setChatAsSeen(chatId) : ''}
                             <Link to={`/${loggedInUsername}`}>
                                 <img src={
                                     'http://localhost:3001/public/' + userProfilePicture
@@ -65,6 +70,8 @@ const {
             <div style={{display: 'flex', flexDirection: 'row', justifyContent:'left', width: '100%'}}>
                 <div style={{width: '50%', border: '2px solid #343434', borderRadius: '10px', backgroundColor: '#343434 ',boxShadow: '0px 2px 10px 0px grey'}}>
                     <CardContent sx={{display: 'flex', mb: 2}} >
+                    {loggedInUsername === chatUser1 && seenByUser1 === false ? props.setChatAsSeen(chatId) : ''}
+                            {loggedInUsername === chatUser2 && seenByUser2 === false ? props.setChatAsSeen(chatId) : ''}
                         <Link to={`/${partnerUsername}`}>
                             <img src={
                                 'http://localhost:3001/public/' + partnerProfilePicture

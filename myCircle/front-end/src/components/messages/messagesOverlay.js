@@ -14,9 +14,10 @@ export default class  MessagesOverlay extends React.Component {
                 <MessagesRightBar
                 loggedInUsername={loggedInUsername}
                 getChat={getChat}
+                onRouteChange={onRouteChange}
+                userProfilePicture={userProfilePicture}
                  />    
                 <MessagesLeftBar
-                changeCircle={changeCircle}
                 onRouteChange={onRouteChange}
                 userProfilePicture={userProfilePicture}
                 loggedInUsername={loggedInUsername}

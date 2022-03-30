@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from 'react-router-dom';
+import Button from '@mui/material/Button';
 
 export default class ReactionNotification extends React.Component {
 	constructor(props) {
@@ -24,28 +25,41 @@ export default class ReactionNotification extends React.Component {
     }
 
 	render() {
-		const { firstName, lastName, message, senderUsername, recipientUsername, relativePost } = this.props
+		const { firstName, lastName, message, senderUsername, recipientUsername, relativePost, clearSingleNotification } = this.props
 		if (!this.state.seen) {
 			return(
-				<div style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
-					<Link to={`/${senderUsername}`} onClick={this.setNotificationAsSeen}>								
-						<h4 style={{color: '#217cd8'}}>{firstName} {lastName}</h4>
-					</Link> 
-					<Link to={`/${recipientUsername}#postId=${relativePost}`} onClick={this.setNotificationAsSeen}>
-						<h4 style={{color: '#217cd8', marginLeft: '5px'}}>{message}</h4>					
+				<Button variant="contained" style={{width: '100%',fontSize: '14px',
+				//  display: 'flex',
+				//  flexDirection: 'row', alignItems: 'center', 
+				 lineBreak: 'strict'}}onClick={() => this.setNotificationAsSeen()}>
+					<Link
+					 style={{width: '45%', lineBreak: 'strict', textDecoration: 'none',marginRight: '0'}}
+					 to={`/${senderUsername}`} 
+					 onClick={this.setNotificationAsSeen}>								
+						{firstName}
 					</Link>
-				</div>
+					<p 
+					style={{width: '60%', lineBreak: 'strict', marginLeft: '0'}}
+					>
+						{message}
+						</p>		
+				</Button>
 			)		
 		} else {
 			return (
-				<div style={{display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+				<Button style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
 					<Link to={`/${senderUsername}`} onClick={this.setNotificationAsSeen}>								
-						<h4 style={{color: 'black'}}>{firstName} {lastName}</h4>
-					</Link> 
-					<Link to={`/${recipientUsername}#postId=${relativePost}`} onClick={this.setNotificationAsSeen}>
-						<h4 style={{color: 'black', marginLeft: '5px'}}>{message}</h4>							
-					</Link>
-				</div>
+						<h4 style={{color: '#217cd8'}}>{firstName}</h4>
+					</Link>					
+					<h4 style={{color: '#217cd8', marginLeft: '5px'}} onClick={() => this.setNotificationAsSeen()}>
+						{message}
+					</h4>	
+
+					<Button variant="outlined" style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}
+						onClick={() => clearSingleNotification(this.props.actionId)}>
+						Clear
+					</Button>			
+				</Button>
 			)
 		}		
 	}

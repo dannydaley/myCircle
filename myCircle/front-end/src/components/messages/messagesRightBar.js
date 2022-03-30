@@ -72,6 +72,7 @@ export default class MessagesRightBar extends React.Component {
                 }}>      
                     {/* A FOR EACH LOOP LISTING A BUTTON FOR EACH CIRCLE FOLLOWED IN USER DATA */}
                     {this.state.friends.map(friend => (
+                      friend.username !== loggedInUsername ?
                 <Button
                 variant="contained"
                 sx={{
@@ -91,7 +92,7 @@ export default class MessagesRightBar extends React.Component {
                     }}/>
                   {friend.firstName} {friend.lastName}
                 </Button>
-                  ))}
+                  : ''))}
               </Stack>
             </Box>
           </Container>

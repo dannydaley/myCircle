@@ -52,8 +52,10 @@ export default class App extends Component {
   delayFunction = (time) => {
     this.delay(time);
   };  
+
   getNotifications = async () => {
-     fetch('http://localhost:3001/getNotifications', {
+    console.log("workingggggggggggg")
+      fetch('http://localhost:3001/getNotifications', {
       method: 'post',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
@@ -65,7 +67,10 @@ export default class App extends Component {
     // .then(await this.delayFunction(1000))
     // WHAT WE DO WITH THE DATA WE RECEIVE (data => console.log(data)) SHOULD SHOW WHAT WE GET
     .then(data => {
-      this.setState({ alertNotifications: data.notifications.length, mailNotifications: data.messages.length, notifications: data.notifications})  
+      this.setState({
+        alertNotifications: data.unseenNotifications.length,
+        mailNotifications: data.messages.length,
+        notifications: data.notifications})  
     }) 
 }
 
@@ -186,6 +191,7 @@ export default class App extends Component {
           
             <div>
               <NavBar
+                loggedInUsername={this.state.loggedInUsername}
                 getNotifications={this.getNotifications}
                 refuseFriendRequest={this.refuseFriendRequest}
                 confirmFriendRequest={this.confirmFriendRequest}
@@ -242,9 +248,9 @@ export default class App extends Component {
                  <Route path="myAccount"
                   element={
                     <MyAccountPage
-                    refreshData={this.refreshData}
-                    updateSession={this.updateSession}
-                    getNotifications={this.getNotifications}
+                      refreshData={this.refreshData}
+                      updateSession={this.updateSession}
+                      getNotifications={this.getNotifications}
                       userFirstName={this.state.userFirstName}
                       userProfilePicture={this.state.userProfilePicture}
                       loggedInUsername={this.state.loggedInUsername}

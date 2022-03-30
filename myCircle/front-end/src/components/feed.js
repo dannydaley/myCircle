@@ -7,7 +7,6 @@ import Typography from '@mui/material/Typography';
 import FeedPost from './feedPost';
 import NewPost from './newPost';
 import CircularProgress from '@mui/material/CircularProgress';
-import { Button } from '@mui/material';
 import Divider from '@mui/material/Divider';
 import Overlay from './overlay'
 

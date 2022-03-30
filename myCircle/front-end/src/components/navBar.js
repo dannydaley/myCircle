@@ -1,31 +1,32 @@
 import * as React from 'react';
 import { useState } from 'react';
-import SearchIcon from '@material-ui/icons/Search';
-import { styled, alpha } from '@mui/material/styles';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
-import InputBase from '@mui/material/InputBase';
 import Badge from '@mui/material/Badge';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
-import MenuIcon from '@material-ui/icons/Menu';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import MailIcon from '@material-ui/icons/Mail';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import MoreIcon from '@material-ui/icons/MoreVert';
 import myCircleText from '../Images/myCircleText.svg'
 import SearchBar from './SearchBar';
-
 import ShowNotifications from './navBar/showNotifications';
-
-import { Routes, Route, Link } from "react-router-dom";
-
+import { Link } from "react-router-dom";
 import ShowMessages from './navBar/showMessages';
 
- function NavBar({ getNotifications, refuseFriendRequest,confirmFriendRequest,notifications, onRouteChange, alertNotifications, mailNotifications, changeMailNotifications,changeAlertNotifications, onColorChange, UIColor }) {
+ function NavBar({
+   getNotifications,
+    refuseFriendRequest,
+    confirmFriendRequest,
+    notifications,
+    onRouteChange,
+    alertNotifications,
+    mailNotifications,
+    loggedInUsername}) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
   const isMenuOpen = Boolean(anchorEl);
@@ -33,15 +34,12 @@ import ShowMessages from './navBar/showMessages';
 
   var [showNotifications, showNotificationsToggle ]  = useState(false)
   var [showMessages, showMessagesToggle = () => ShowMessages = !showMessages ]  = useState(false)
-
-const delayFunction = async () => {
-  await this.delay(1000);
-  console.log("LOADING FEED");
-};
-let openNotifications = false;
  
-  const handleProfileMenuOpen = (event) => {
+  const handleProfileMenuOpen = (event) => { 
+    showMessagesToggle(showMessages = false)
+    showNotificationsToggle(showNotifications = false)
     setAnchorEl(event.currentTarget);
+
   };
 
   const handleMobileMenuClose = () => {
@@ -150,7 +148,6 @@ let openNotifications = false;
     </Menu>
   );
 
-
   return (
     <>
       <nav>
@@ -173,7 +170,9 @@ let openNotifications = false;
             sx={{ display: { xs: 'none', sm: 'block' }, ml: 6 ,width: 125, mt: 1, ":hover": { cursor: 'pointer' } }}
             onClick={()=>onRouteChange('home')}
           >
-            <Link to="/">
+            <Link to="/"
+            onClick={() => {showMessagesToggle(showMessages = false)
+              showNotificationsToggle(showNotifications = false)}}>
               <img src={myCircleText} />
             </Link>
           </Typography>
@@ -211,7 +210,7 @@ let openNotifications = false;
               aria-label="account of current user"
               aria-controls={menuId}
               aria-haspopup="true"
-              onClick={handleProfileMenuOpen}
+              onClick={handleProfileMenuOpen}             
               color="inherit">
               <AccountCircle />
             </IconButton>
@@ -229,18 +228,19 @@ let openNotifications = false;
             </IconButton>
           </Box>
         </Toolbar>
-      </AppBar>
-      
+      </AppBar>      
       {renderMobileMenu}
       {renderMenu}
     </Box>
     </nav>
     {showNotifications===true ?
       <ShowNotifications
+        loggedInUsername={loggedInUsername}
         notifications={notifications}
         confirmFriendRequest={confirmFriendRequest}
         refuseFriendRequest={refuseFriendRequest}
-        getNotifications={getNotifications}/>
+        getNotifications={getNotifications}
+        logged/>
       : ''}
       {showMessages===true ?
       <ShowMessages  showMessagesToggle={showMessagesToggle}/>

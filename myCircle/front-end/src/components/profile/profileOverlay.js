@@ -13,6 +13,7 @@ export default class  ProfileOverlay extends React.Component {
             <div style={{width: '100vw', display: 'flex', justifyContent: 'space-between', flexDirection: 'row'}}>            
                 <ProfileRightBar userFirstName={userFirstName} userLastName={userLastName} userProfileToGet={userProfileToGet} />                
                 <ProfileLeftBar
+                userProfileToGet={userProfileToGet}
                 sendFriendRequest={sendFriendRequest}
                 userFirstName={userFirstName}
                 userLastName={userLastName}

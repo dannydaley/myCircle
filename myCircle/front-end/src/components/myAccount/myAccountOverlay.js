@@ -8,10 +8,10 @@ export default class  MyAccountOverlay extends React.Component {
     }
 
     render () {
-        const { userFirstName, userLastName, changeSettings, userProfilePicture } = this.props
+        const { userFirstName, userLastName, changeSettings, userProfilePicture, loggedInUsername  } = this.props
         return (
             <div style={{width: '100vw', display: 'flex', justifyContent: 'space-between', flexDirection: 'row'}}>            
-                <MyAccountRightBar userFirstName={userFirstName} userLastName={userLastName} />                
+                <MyAccountRightBar userFirstName={userFirstName} userLastName={userLastName} loggedInUsername={loggedInUsername} />                
                 <MyAccountLeftBar userFirstName={userFirstName} userLastName={userLastName} changeSettings={changeSettings} userProfilePicture={userProfilePicture}/>
             </div>
         )       

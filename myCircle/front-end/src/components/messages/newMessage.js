@@ -12,7 +12,8 @@ export default class NewMessage extends React.Component {
     this.state = {
         'sender': this.props.loggedInUsername,
         'message': '',
-        "recipient": ''      
+        "recipient": '',
+            
       }
   }
 
@@ -36,19 +37,22 @@ export default class NewMessage extends React.Component {
         chatId: this.props.chatId,
         sender: this.props.loggedInUsername,
         message: this.state.message,
-        recipient: this.state.recipient
+        recipient: this.state.recipient,
+        user1: this.props.chatUser1,
+        user2: this.props.chatUser2
       })    
     })
     .then(data => {    
-      if (data.data.data === 'success') {              
+      if (data) {              
         console.log("successs")
+        this.props.getChat(this.props.loggedInUsername, this.props.chatId, null)
       } else {
         console.log(data)
       }
     })
   }
 
-  render () {           
+  render () {         
     return (
       <div style={{marginTop: '20px'}}>
         <Divider variant="middle" sx={{mt: 5}} />

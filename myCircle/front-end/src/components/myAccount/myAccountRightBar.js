@@ -1,15 +1,42 @@
 import * as React from 'react';
+import Stack from '@mui/material/Stack';
+import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
-import Grid from '@mui/material/Grid';
-import me from '../../Images/me.jpg'
+import { Link } from 'react-router-dom';
 
 export default class MyAccountRightBar extends React.Component {  
-  render () {
-    const { userFirstName } = this.props
-    return (
+  constructor(props) {
+    super(props);
+    this.state = {
+      friends: [],
+      dataIsLoaded: false
+    }
+  }
+
+  componentDidMount = () => {
+    this.setState({ chatsAreLoaded: false })
+    fetch('http://localhost:3001/getFriends', {
+      method: 'post',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        user: this.props.loggedInUsername  
+      })    
+    })
+    //TURN THE RESPONSE INTO A JSON OBJECT
+    .then(response => response.json())    
+    // WHAT WE DO WITH THE DATA WE RECEIVE (data => console.log(data)) SHOULD SHOW WHAT WE GET
+    .then(data => {      
+      this.setState({friends: data, dataIsLoaded: true})
+    })
+  }
+  
+
+  render() {
+    let { loggedInUsername } = this.props;
+    return (   
       <div style={{position: 'fixed', width: '100vw'}}>
         <React.Fragment >
           <CssBaseline />      
@@ -24,43 +51,115 @@ export default class MyAccountRightBar extends React.Component {
               mt: 16,
               justifyContent: 'flex-start',
               alignItems: 'center'
+            }}>
+            <Box
+              sx={{paddingTop: 1,
+                bgcolor: 'none'
               }}>
-              <Typography variant="h6" component="div" color="white" sx={{textAlign: 'center', mt: 2, paddingTop: 1, paddingBottom: 2, bgcolor: 'none' }}>{userFirstName}'s images</Typography>
-              <Box sx={{ bgcolor: 'none'}}>
-                  {/* FOREACH HERE FOR USERS PICTURES */}
-                    <Grid container spacing={1}>
-                      <Grid item xs={6} md={4} style={{display:'flex'}}>
-                        <img src={me} style={{width: '100%'}}/>
-                      </Grid>
-                      <Grid item xs={6} md={4} style={{display:'flex'}}>
-                        <img src={me} style={{width: '100%'}}/>
-                      </Grid>
-                      <Grid item xs={6} md={4} style={{display:'flex'}}>
-                        <img src={me} style={{width: '100%'}}/>
-                      </Grid>
-                      <Grid item xs={6} md={4} style={{display:'flex'}}>
-                        <img src={me} style={{width: '100%'}}/>
-                      </Grid>
-                      <Grid item xs={6} md={4} style={{display:'flex'}}>
-                        <img src={me} style={{width: '100%'}}/>
-                      </Grid>
-                      <Grid item xs={6} md={4} style={{display:'flex'}}>
-                        <img src={me} style={{width: '100%'}}/>
-                      </Grid>
-                      <Grid item xs={6} md={4} style={{display:'flex'}}>
-                        <img src={me} style={{width: '100%'}}/>
-                      </Grid>
-                    </Grid>
-                    
-                  
-                  {/* <Stack spacing={1} sx={{  width: 250, margin: '50px auto 0'       }}>      
-                      
-
-                  </Stack> */}
-              </Box>
+              <Typography
+                variant="h6"
+                component="div"
+                color="white"
+                sx={{
+                  textAlign: 'center',
+                  mt: 2
+                }}>
+                Friends
+              </Typography>
+              <Stack
+                spacing={1}
+                sx={{
+                  width: 250,
+                  margin: '50px auto 0'
+                }}>      
+                {/* A FOR EACH LOOP LISTING A BUTTON FOR EACH CIRCLE FOLLOWED IN USER DATA */}
+                {this.state.friends.map(friend => (
+                  friend.username !== loggedInUsername ?                    
+                    <Link to={`/${friend.username}`} style={{textDecoration: 'none'}}>
+                      <Button
+                      variant="contained"
+                      sx={{
+                        display: 'flex',
+                      justifyContent: 'space-between',
+                      width: '100%'
+                      }}
+                      color="success">
+                        <img
+                        src={"http://localhost:3001/public/" + friend.profilePicture}
+                        width="50px"
+                        height="50px"
+                        style={{
+                          mb: 3,
+                          borderRadius:'50%'
+                          }}/>
+                        {friend.firstName} {friend.lastName}
+                      </Button>
+                    </Link>
+                  : ''))}
+              </Stack>
+            </Box>
           </Container>
         </React.Fragment>
       </div>
-    );
+    )
   }
 }
+
+// export default class MyAccountRightBar extends React.Component {  
+//   render () {
+//     const { userFirstName } = this.props
+//     return (
+//       <div style={{position: 'fixed', width: '100vw'}}>
+//         <React.Fragment >
+//           <CssBaseline />      
+//           <Container
+//             maxWidth="sm"
+//             sx={{
+//               float: 'right',
+//               bgcolor: '#343434',
+//               height: '80vh',
+//               width: 300,
+//               mr: 4,
+//               mt: 16,
+//               justifyContent: 'flex-start',
+//               alignItems: 'center'
+//               }}>
+//               <Typography variant="h6" component="div" color="white" sx={{textAlign: 'center', mt: 2, paddingTop: 1, paddingBottom: 2, bgcolor: 'none' }}>{userFirstName}'s images</Typography>
+//               <Box sx={{ bgcolor: 'none'}}>
+//                   {/* FOREACH HERE FOR USERS PICTURES */}
+//                     <Grid container spacing={1}>
+//                       <Grid item xs={6} md={4} style={{display:'flex'}}>
+//                         <img src={me} style={{width: '100%'}}/>
+//                       </Grid>
+//                       <Grid item xs={6} md={4} style={{display:'flex'}}>
+//                         <img src={me} style={{width: '100%'}}/>
+//                       </Grid>
+//                       <Grid item xs={6} md={4} style={{display:'flex'}}>
+//                         <img src={me} style={{width: '100%'}}/>
+//                       </Grid>
+//                       <Grid item xs={6} md={4} style={{display:'flex'}}>
+//                         <img src={me} style={{width: '100%'}}/>
+//                       </Grid>
+//                       <Grid item xs={6} md={4} style={{display:'flex'}}>
+//                         <img src={me} style={{width: '100%'}}/>
+//                       </Grid>
+//                       <Grid item xs={6} md={4} style={{display:'flex'}}>
+//                         <img src={me} style={{width: '100%'}}/>
+//                       </Grid>
+//                       <Grid item xs={6} md={4} style={{display:'flex'}}>
+//                         <img src={me} style={{width: '100%'}}/>
+//                       </Grid>
+//                     </Grid>
+                    
+                  
+//                   {/* <Stack spacing={1} sx={{  width: 250, margin: '50px auto 0'       }}>      
+                      
+
+//                   </Stack> */}
+//               </Box>
+//           </Container>
+//         </React.Fragment>
+//       </div>
+//     );
+//   }
+// }
