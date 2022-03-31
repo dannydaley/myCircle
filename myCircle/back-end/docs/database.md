@@ -106,3 +106,11 @@ SQLite3 database set up in server.js under the variable **SQLdatabase**, table s
 #### |`seen` INT|
 
 ----
+
+### TABLE: circles
+
+**FIELDS & DATA TYPES:**
+#### |`circleName` VARCHAR(255)|
+#### |`users` INT|
+
+----
