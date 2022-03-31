@@ -73,8 +73,7 @@ export default class SearchBar extends React.Component {
 render() {
   return (
     <>
-      <this.Search 
-      >
+      <this.Search>
         <this.SearchIconWrapper>
           <SearchIcon />
         </this.SearchIconWrapper>
