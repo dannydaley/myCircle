@@ -100,12 +100,18 @@ export default class App extends Component {
   onRouteChange = (route) => {
     if (route === 'signout') {
       this.setState({isSignedIn: false})
+      fetch(process.env.REACT_APP_SERVER + '/signout', {
+        method: 'post',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+             sender: this.props.loggedInUsername
+        }) 
+      })      
     } else if (route === 'home') {
       this.setState({isSignedIn: true})
     }
     this.setState({route: route})
   }
-
 
   updateSession = (firstName, lastName, userName, userProfilePicture, userCoverPicture) => {
     this.setState({

@@ -575,6 +575,13 @@ app.post('/signin', (req, res) => {
   });
 });
 
+app.post('/signout', (req, res) => {
+  // delete session
+  req.session = null;
+  // respond with success
+  res.json("success");
+});
+
 //#endregion SIGN UP & SIGN IN 
 
 //#region UPDATE ACCOUNT INFO
