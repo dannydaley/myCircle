@@ -1,6 +1,5 @@
 import './App.css';
 import React , { Component } from "react";
-import DocumentMeta from 'react-document-meta';
 import SignIn from './pages/SignIn';
 import NavBar from './components/navBar';
 import FeedPage from './pages/FeedPage';
@@ -13,7 +12,7 @@ import MessagesPage from './pages/messagesPage';
 import { Routes, Route} from "react-router-dom";
 
 export default class App extends Component {
-  constructor(useSelector, useDispatch) {
+  constructor() {
     super();
     this.state = {
       input: '',
@@ -38,7 +37,6 @@ export default class App extends Component {
   };  
 
   getNotifications = async () => {
-    ("workingggggggggggg")
       fetch(process.env.REACT_APP_SERVER + '/getNotifications', {
       method: 'post',
       headers: {'Content-Type': 'application/json'},
@@ -156,7 +154,7 @@ export default class App extends Component {
 
     return (
       <ThemeProvider theme={theme} >
-      <DocumentMeta >      
+         
       <div className="App"  >
         { this.state.isSignedIn === true ? 
           
@@ -250,7 +248,7 @@ export default class App extends Component {
             <SignIn onRouteChange={this.onRouteChange} route={this.state.route} updateSession={this.updateSession} />
          }  
       </div>
-      </DocumentMeta>
+     
       </ThemeProvider>
     );
   }
