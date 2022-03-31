@@ -20,7 +20,7 @@ export default class MessagesLeftBar extends React.Component  {
 
   componentDidMount = () => {
     this.setState({ chatsAreLoaded: false })
-    fetch('http://localhost:3001/getAllUsersChats', {
+    fetch(process.env.REACT_APP_SERVER + '/getAllUsersChats', {
       method: 'post',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
@@ -32,7 +32,6 @@ export default class MessagesLeftBar extends React.Component  {
     // WHAT WE DO WITH THE DATA WE RECEIVE (data => console.log(data)) SHOULD SHOW WHAT WE GET
     .then(data => {      
       this.setState({chats: data, chatsAreLoaded: true})
-      console.log(data)
     })
   }  
 
@@ -63,7 +62,8 @@ export default class MessagesLeftBar extends React.Component  {
             <Box sx={{ padding: 2, bgcolor: 'none'}}>
             <Link to="/myProfile">
               <img
-                src={"http://localhost:3001/public/" + userProfilePicture}
+                alt=""
+                src={process.env.REACT_APP_SERVER + '/public/' + userProfilePicture}
                 width="200px" height="150px"
                 sx={{ ":hover": { cursor: 'pointer' }}}
                 style={{
@@ -89,7 +89,7 @@ export default class MessagesLeftBar extends React.Component  {
             <Container position="fixed" maxWidth="sm" sx={{ position: 'fixed', bgcolor: '#343434', border: '', height: '80vh', width: 300, ml: 2, mr:2,  mt: 16, justifyContent: 'flex-start', alignItems: 'center'}} >
               <Box sx={{ padding: 2, bgcolor: 'none'}}>
                 <Link to="/myProfile">
-                    <img src={"http://localhost:3001/public/" + userProfilePicture} width="200px" height="150px" sx={{ ":hover": { cursor: 'pointer' }}} style={{ boxShadow: "1px 3px 5px 0px black", mb: 3, "hover": { cursor: 'pointer' } }}  
+                    <img alt="" src={process.env.REACT_APP_SERVER + '/public/' + userProfilePicture} width="200px" height="150px" sx={{ ":hover": { cursor: 'pointer' }}} style={{ boxShadow: "1px 3px 5px 0px black", mb: 3, "hover": { cursor: 'pointer' } }}  
                     // onClick={()=>this.props.onRouteChange('profile')}
                     />
                 </Link>    
@@ -114,6 +114,7 @@ export default class MessagesLeftBar extends React.Component  {
                   {this.state.chats.map(chat => (                    
                     (chat.user1 === loggedInUsername && chat.seenByUser1) || (chat.user2 === loggedInUsername && chat.seenByUser2) ?
                       <Button variant="contained"
+                        key={chat.chatId}
                         sx={{
                           display: 'flex',
                           justifyContent: 'space-between',
@@ -122,7 +123,8 @@ export default class MessagesLeftBar extends React.Component  {
                           onClick={()=>getChat(loggedInUsername, chat.chatId)}
                         >
                         <img 
-                          src={"http://localhost:3001/public/" + chat.profilePicture}
+                        alt=""
+                          src={process.env.REACT_APP_SERVER + '/public/' + chat.profilePicture}
                           width="50px"
                           height="50px"
                           style={{
@@ -132,13 +134,15 @@ export default class MessagesLeftBar extends React.Component  {
                       </Button> 
                     : 
                       <Button variant="contained"
+                      key={chat.chatId}
                         sx={{
                           display: 'flex',
                           justifyContent: 'space-between',  
                           width: '270px'}}
                         onClick={()=>getChat(loggedInUsername, chat.chatId)}>
                         <img 
-                          src={"http://localhost:3001/public/" + chat.profilePicture}
+                        alt=""
+                          src={process.env.REACT_APP_SERVER + '/public/' + chat.profilePicture}
                           width="50px"
                           height="50px"
                           style={{

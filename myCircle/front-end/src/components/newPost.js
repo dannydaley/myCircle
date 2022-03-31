@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 import TextField from '@mui/material/TextField';
 import ImageIcon from '@mui/icons-material/Image';
 import SendIcon from '@mui/icons-material/Send';
@@ -102,7 +102,6 @@ export default class NewPost extends React.Component {
   onStrictChange = async() => {
     this.setState({postStrict: !this.state.postStrict})
     await this.delayFunction(2000)
-    console.log(this.state.postStrict)
   }
   onContentChange = (event) => {
     this.setState({postContent: event.target.value})        
@@ -114,7 +113,6 @@ export default class NewPost extends React.Component {
 
   onPostSubmit = async () => {
       if (this.state.postContent.length < 5) {
-          console.log("post not long enough")
           return
       }  
       let formData = new FormData();
@@ -130,7 +128,7 @@ export default class NewPost extends React.Component {
       formData.append('postStrict', this.state.postStrict)
       formData.append('recipient', recipient)
       formData.append('circle', this.props.circle)
-      await axios.post("http://localhost:3001/newPost", formData, {        
+      await axios.post(process.env.REACT_APP_SERVER + '/newPost', formData, {        
             headers: { "Content-Type": "multipart/form-data" } ,
             body: JSON.stringify({
                 "username": this.props.loggedInUsername,
@@ -141,8 +139,6 @@ export default class NewPost extends React.Component {
       .then(data => {    
             if (data.data.data === 'success') {              
                 this.props.changeCircle(this.props.circle) 
-            } else {
-                console.log(data)
             }
         })
     }

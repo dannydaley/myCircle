@@ -17,7 +17,7 @@ export default class MessagesRightBar extends React.Component {
 
   componentDidMount = () => {
     this.setState({ chatsAreLoaded: false })
-    fetch('http://localhost:3001/getFriends', {
+    fetch(process.env.REACT_APP_SERVER + '/getFriends', {
       method: 'post',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
@@ -74,6 +74,7 @@ export default class MessagesRightBar extends React.Component {
                     {this.state.friends.map(friend => (
                       friend.username !== loggedInUsername ?
                 <Button
+                key={friend.username}
                 variant="contained"
                 sx={{
                   display: 'flex',
@@ -83,7 +84,9 @@ export default class MessagesRightBar extends React.Component {
                 onClick={()=>getChat(loggedInUsername, false, friend.username )}
                 color="success">
                   <img
-                  src={"http://localhost:3001/public/" + friend.profilePicture}
+                  key={friend.profilePicture}
+                  alt=""
+                  src={process.env.REACT_APP_SERVER + '/public/' + friend.profilePicture}
                   width="50px"
                   height="50px"
                   style={{

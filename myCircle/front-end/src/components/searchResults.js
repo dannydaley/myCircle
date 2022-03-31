@@ -1,6 +1,6 @@
 import React from "react";
 import CircularProgress from '@mui/material/CircularProgress';
-import { Link, useParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Typography } from "@mui/material";
 
 export default class SearchResults extends React.Component {
@@ -13,7 +13,7 @@ export default class SearchResults extends React.Component {
     }
     
     componentDidMount = () => {
-        fetch('http://localhost:3001/search', {
+        fetch(process.env.REACT_APP_SERVER + '/search', {
             method: 'post',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({
@@ -24,10 +24,7 @@ export default class SearchResults extends React.Component {
         .then(data => {
             if (data.status === 'success') {   
                 this.setState({results: data.results, dataIsLoaded: true})
-            }   else {
-                   console.log(data)  
-                } 
-            }
+            }}
         )
     }
  
@@ -66,7 +63,8 @@ export default class SearchResults extends React.Component {
                             <Link key={item.username} to={`/${item.username}`} style={{textDecoration: 'none', color: 'black', marginBottom: '10px'}}>
                                 <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
                                     <img 
-                                        src={'http://localhost:3001/public/' + item.profilePicture}
+                                        alt=""
+                                        src={process.env.REACT_APP_SERVER + '/public/' + item.profilePicture}
                                         width="50px"
                                         height="50px"
                                         style={{

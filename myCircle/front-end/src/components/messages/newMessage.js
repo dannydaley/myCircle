@@ -30,7 +30,7 @@ export default class NewMessage extends React.Component {
   }
 
   onPostSubmit = async () => {    
-    fetch('http://localhost:3001/newMessage', {
+    fetch(process.env.REACT_APP_SERVER + '/newMessage', {
       method: 'post',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
@@ -44,7 +44,6 @@ export default class NewMessage extends React.Component {
     })
     .then(data => {    
       if (data) {              
-        console.log("successs")
         this.props.getChat(this.props.loggedInUsername, this.props.chatId, null)
       } else {
         console.log(data)

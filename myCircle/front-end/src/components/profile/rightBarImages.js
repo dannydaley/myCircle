@@ -2,7 +2,6 @@ import * as React from 'react';
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
 import CircularProgress from '@mui/material/CircularProgress';
-import ShowImage from './showImage';
 
 export default class RightBarImages extends React.Component {
   constructor (props) {
@@ -30,14 +29,14 @@ export default class RightBarImages extends React.Component {
     imageData.forEach(element => {    
       if (counter === 2) {
         this.images.push(  {
-          img: "http://localhost:3001/public/" + element.imageLocation,      
+          img: process.env.REACT_APP_SERVER + '/public/' + element.imageLocation,      
           rows: 2,
           cols: 4
         })
         counter = 0;  
       } else {
         this.images.push(  {
-          img: "http://localhost:3001/public/" + element.imageLocation,     
+          img: process.env.REACT_APP_SERVER + '/public/' + element.imageLocation,     
           rows: 1,
           cols: 2
         })
@@ -47,7 +46,7 @@ export default class RightBarImages extends React.Component {
   }
 
   componentDidMount = () => {
-    fetch('http://localhost:3001/getAllImagesByUser', {    
+    fetch(process.env.REACT_APP_SERVER + '/getAllImagesByUser', {    
       method: 'post',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({

@@ -14,8 +14,10 @@ export default function FeedPost(props) {
         <div>
             <CardContent sx={{display: 'flex', mb: 2}} >
                 <Link to={`/${authorUsername}`}>
-                    <img src={
-                        'http://localhost:3001/public/' + profilePicture
+                    <img 
+                    alt=""
+                    src={
+                        process.env.REACT_APP_SERVER + '/public/' + profilePicture
                         }
                         width="100px"
                         height="100px"
@@ -37,7 +39,8 @@ export default function FeedPost(props) {
                     </Typography>
                     {images ? images.map(image => (                                                             
                                   /* RENDER THE COMPONENT WITH PROPS PASSED IN FROM THE SPECIFIC ITEM WERE CURRENTLY ON FOR EACH ITEM PASSED OVER BY THE .MAP */
-                                    <img key={authorLastName + postId + image} src={'http://localhost:3001/public/' + image}
+                                    <img alt=""
+                                    key={authorLastName + postId + image} src={process.env.REACT_APP_SERVER + '/public/' + image}
                                     width={"200px"}
                                      />                                     
                                 )) : ''}

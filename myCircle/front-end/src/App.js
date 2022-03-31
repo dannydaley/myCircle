@@ -1,32 +1,16 @@
-import logo from './logo.svg';
 import './App.css';
-
 import React , { Component } from "react";
-import * as ReactDOM from "react-dom";
-import { BrowserRouter } from "react-router-dom";
 import DocumentMeta from 'react-document-meta';
-import Button from '@mui/material/Button'
 import SignIn from './pages/SignIn';
 import NavBar from './components/navBar';
 import FeedPage from './pages/FeedPage';
-import ProfilePage from './pages/ProfilePage'
-import MyAccountPage from './pages/myAccountPage'
-import theme from './theme'
-import { ThemeProvider } from '@material-ui/core/styles'
-import Counter from './features/counter/counter'
-import ProfileGate from './pages/ProfileGate'
-import MessagesPage from './pages/messagesPage'
-
-import { useSelector, useDispatch } from 'react-redux'
-import { signIn } from './actions';
-
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Link,
-  useParams
-} from "react-router-dom";
+import ProfilePage from './pages/ProfilePage';
+import MyAccountPage from './pages/myAccountPage';
+import theme from './theme';
+import { ThemeProvider } from '@material-ui/core/styles';
+import ProfileGate from './pages/ProfileGate';
+import MessagesPage from './pages/messagesPage';
+import { Routes, Route} from "react-router-dom";
 
 export default class App extends Component {
   constructor(useSelector, useDispatch) {
@@ -54,8 +38,8 @@ export default class App extends Component {
   };  
 
   getNotifications = async () => {
-    console.log("workingggggggggggg")
-      fetch('http://localhost:3001/getNotifications', {
+    ("workingggggggggggg")
+      fetch(process.env.REACT_APP_SERVER + '/getNotifications', {
       method: 'post',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
@@ -65,7 +49,7 @@ export default class App extends Component {
     //TURN THE RESPONSE INTO A JSON OBJECT
     .then(response => response.json())
     // .then(await this.delayFunction(1000))
-    // WHAT WE DO WITH THE DATA WE RECEIVE (data => console.log(data)) SHOULD SHOW WHAT WE GET
+    // WHAT WE DO WITH THE DATA WE RECEIVE (data => (data)) SHOULD SHOW WHAT WE GET
     .then(data => {
       this.setState({
         alertNotifications: data.unseenNotifications.length,
@@ -85,53 +69,40 @@ export default class App extends Component {
 
 
   confirmFriendRequest = (sender, loggedInUser) => {
-    fetch('http://localhost:3001/confirmFriendRequest', {
+    fetch(process.env.REACT_APP_SERVER + '/confirmFriendRequest', {
       method: 'post',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
         sender: sender,
         recipient: loggedInUser
    })    
- }).then(response => response.json())
- .then(data => {
-      console.log(data)
- })
-	}
+ }).then(response => response.json())}
 
 	refuseFriendRequest = (sender, loggedInUser) => {
-    fetch('http://localhost:3001/refuseFriendRequest', {
+    fetch(process.env.REACT_APP_SERVER + '/refuseFriendRequest', {
       method: 'post',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
            sender: sender,
            recipient: loggedInUser
       })    
- }).then(response => response.json())
- .then(data => {
-      console.log(data)
- })
-}
+ }).then(response => response.json())}
 
 
   sendFriendRequest = () => {
-    fetch('http://localhost:3001/friendRequest', {
+    fetch(process.env.REACT_APP_SERVER + '/friendRequest', {
          method: 'post',
          headers: {'Content-Type': 'application/json'},
          body: JSON.stringify({
               sender: this.props.loggedInUsername,
               recipient: this.props.userProfileToGet
          })    
-    }).then(response => response.json())
-    .then(data => {
-         console.log(data)
-    })
-}
+    }).then(response => response.json())}
 
   onRouteChange = (route) => {
     if (route === 'signout') {
       this.setState({isSignedIn: false})
     } else if (route === 'home') {
-      // this.dispatch({ type: 'SIGN_IN' })
       this.setState({isSignedIn: true})
     }
     this.setState({route: route})
@@ -150,7 +121,7 @@ export default class App extends Component {
   }
 
   refreshData = () => {
-    fetch('http://localhost:3001/refreshData', {
+    fetch(process.env.REACT_APP_SERVER + '/refreshData', {
       method: 'post',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
@@ -159,7 +130,7 @@ export default class App extends Component {
  })
  //TURN THE RESPONSE INTO A JSON OBJECT
  .then(response => response.json())     
- // WHAT WE DO WITH THE DATA WE RECEIVE (data => console.log(data)) SHOULD SHOW WHAT WE GET
+ // WHAT WE DO WITH THE DATA WE RECEIVE (data => (data)) SHOULD SHOW WHAT WE GET
  .then(data => {  
       this.setState({           
            userFirstName: data.firstName,
@@ -171,10 +142,10 @@ export default class App extends Component {
   
   // THESE FUNCTIONS HANDLE INCREMENTING THE NOTIFICATIONS. THESE ARE CURRENTLY PASSED INTO THE NAV BAR
   changeMailNotifications = (mailNotifications) => {    
-    this.setState({mailNotifications: this.state.mailNotifications+=1})
+    this.setState({mailNotifications: this.state.mailNotifications+1})
   }
   changeAlertNotifications = (mailNotifications) => {    
-    this.setState({alertNotifications: this.state.alertNotifications+=1})
+    this.setState({alertNotifications: this.state.alertNotifications+1})
   }
 
   onColorChange = (event) => {

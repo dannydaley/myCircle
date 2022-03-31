@@ -107,7 +107,8 @@ let imagesDataJSON = require("./database/images.json");
 let friendshipsDataJSON = require("./database/friendships.json");
 let userActionsDataJSON = require("./database/userActions.json");
 let chatsDataJSON = require("./database/chats.json");
-let messagesDataJSON = require("./database/messages.json")
+let messagesDataJSON = require("./database/messages.json");
+let circlesDataJSON = require("./database/circles.json");
 
 //#region SQL QUERIES
 
@@ -134,6 +135,7 @@ const GET_POSTS_BY_AUTHOR_OR_RECIPIENT = "SELECT posts.*, users.firstName, users
 const GET_POSTS_BY_AUTHOR_BY_CIRCLE = "SELECT * FROM `posts` WHERE author = ? AND circle = ? ORDER BY id DESC";
 const ADD_POST_TO_POSTS = "INSERT INTO `posts` (author, circle, content, date, recipient, likes, dislikes, postStrict) VALUES(?,?,?,date(),?,?,?,?)";
 const GET_ALL_USERS = "SELECT * FROM users";
+const GET_USERS_FOLLOWED_CIRCLES = "SELECT `users`.`circles` FROM `users` WHERE `users`.`username` = ?";
 
 //#endregion SQL QUERIES
 
@@ -145,15 +147,15 @@ app.get('/usersSetup', (req, res, next) => {
     //delete the table if it exists..
     SQLdatabase.run('DROP TABLE IF EXISTS `users`');
     //recreate the users table  
-    SQLdatabase.run('CREATE TABLE `users` (id INTEGER PRIMARY KEY AUTOINCREMENT, username varchar(255) UNIQUE, firstName varchar(255), lastName varchar(255), email varchar(255) UNIQUE, password varchar(255), passwordSalt varchar(512), aboutMe text, location varchar(255), education varchar(255), work varchar(255), profilePicture varchar(255), coverPicture varchar(255))');
+    SQLdatabase.run('CREATE TABLE `users` (id INTEGER PRIMARY KEY AUTOINCREMENT, username varchar(255) UNIQUE, firstName varchar(255), lastName varchar(255), email varchar(255) UNIQUE, password varchar(255), passwordSalt varchar(512), aboutMe text, location varchar(255), education varchar(255), work varchar(255), profilePicture varchar(255), coverPicture varchar(255), circles text)');
     //create array of users from the dummy data JSON file
     let users = userDataJSON.users; 
     // insert each element in the array of objects into the users table in the database
     users.forEach((user) => {
       // SQL query to run
-      SQLdatabase.run('INSERT INTO `users` (username, firstName, lastName, email, password, passwordSalt, aboutMe, location, education, work, profilePicture, coverPicture) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ? ,?, ?, ?)', 
+      SQLdatabase.run('INSERT INTO `users` (username, firstName, lastName, email, password, passwordSalt, aboutMe, location, education, work, profilePicture, coverPicture, circles) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ? ,?, ?, ?, ?)', 
         // values passed in from current iteration of the users array
-        [user.username, user.firstName, user.lastName, user.email, user.password, user.passwordSalt, user.aboutMe, user.location, user.education, user.work, user.profilePicture, user.coverPicture ]);
+        [user.username, user.firstName, user.lastName, user.email, user.password, user.passwordSalt, user.aboutMe, user.location, user.education, user.work, user.profilePicture, user.coverPicture, user.circles ]);
     });
   });
   // respond with success page
@@ -288,6 +290,28 @@ app.get('/messagesSetup', (req, res, next) => {
   // respond with success page
   console.log("messages table built");
   res.send("messages-db-done");
+});
+
+// circles table setup endpoint
+app.get('/circlesSetup', (req, res, next) => {
+  SQLdatabase.serialize(() => {
+    //delete the table if it exists..
+    SQLdatabase.run('DROP TABLE IF EXISTS `circles`');
+    // recreate circles table
+    SQLdatabase.run('CREATE TABLE `circles` ( circleName varchar(255), users INT)');
+    //create array of circle objects from the dummy data JSON file
+    let circles = circlesDataJSON.circles;
+    // insert each element in the array of objects into the circle table in the database
+    circles.forEach((circle) => {
+      // SQL query to run 
+      SQLdatabase.run('INSERT INTO `circles` (circleName, users) VALUES(?,?)',
+        // values passed in from current iteration of the circles array
+        [ circle.circleName, circle.users ]);  
+    });
+  });
+  // respond with success page
+  console.log("circles table set up");
+  res.send("circles-db-done");
 });
 
 //#endregion SQL SETUP ENDPOINTS
@@ -560,7 +584,6 @@ app.post('/updateUserGeneralInfo', (req, res) => {
 app.post('/updateUserLoginInfo', (req, res) => {
   //pull variables from request body for better readability
   let { email, password, changeEmail, changePassword, changePasswordConfirm  } = req.body;
-  console.log(req.body)
   //search for user by email
   SQLdatabase.get(FIND_USER, email, (err, userData) => {
     // if error
@@ -852,7 +875,6 @@ app.post('/refreshData', (req, res) => {
 app.post('/getUserGeneralInfo', (req, res) => {
   //set up variables from the request body
   let user = req.body.user
-  console.log(req.body)
   // get general user info from the users table where username matches user in the request
    SQLdatabase.get(GET_USER_GENERAL_INFO_BY_USERNAME, user , (err, userData) => {
      // if error
@@ -861,10 +883,123 @@ app.post('/getUserGeneralInfo', (req, res) => {
       res.status(500).send(err.message);
       return;
       };
-      console.log(userData)
       res.json(userData);
   });
 });
+
+app.post('/getAllCircles', (req, res) => {
+  //set up variables from the request body
+  let user = req.body.user;
+  SQLdatabase.all("SELECT * FROM circles", (err, circles) => {
+    // if error
+    if (err) {
+    // respond with error status and error message
+    res.status(500).send(err.message);
+    return;
+    }
+    SQLdatabase.get(GET_USERS_FOLLOWED_CIRCLES, user , (err, followedCircles) => {
+      // turn the returned string of circles into an array
+      let currentCircles = followedCircles.circles.split(",");
+      // if error
+      if (err) {
+        // respond with error status and error message
+        res.status(500).send(err.message);
+        return;
+      };
+      //respond with circles on success
+      res.json({
+        circles: circles,
+        followedCircles: currentCircles
+      });
+    });
+  });
+});
+
+app.post('/addCircle', (req, res) => {
+  //set up variables from the request body
+  let { user, circleName } = req.body;
+  SQLdatabase.get(GET_USERS_FOLLOWED_CIRCLES, user , (err, circles) => {
+    // if error
+    if (err) {
+      // respond with error status and error message
+      res.status(500).send(err.message);
+      return;
+    };
+    // turn the returned string of circles into an array
+    let currentCircles = circles.circles.split(",");
+   // add the circle from the request to the array
+    currentCircles.push(circleName); 
+    // ready a new string format list
+    let newCirclesList = "";
+    // add each element of the array to the string, seperated by a comma
+    currentCircles.forEach(circle => circle.length > 2 ? newCirclesList += (circle + ",") : '');
+    // update the circles column in the users table where the username matches the request
+    SQLdatabase.run("UPDATE users SET circles = ? WHERE username = ?", [ newCirclesList, user ], (err) => {
+      // if error
+      if (err) {
+      // respond with error status and error message
+      res.status(500).send(err.message);
+      return;
+      };
+      //respond with circles on success
+      res.json("success");
+    });    
+  });  
+});
+
+app.post('/deleteCircle', (req, res) => {
+  //set up variables from the request body
+  let { user, circleName } = req.body;
+  SQLdatabase.get(GET_USERS_FOLLOWED_CIRCLES, user , (err, circles) => {
+    // if error
+    if (err) {
+      // respond with error status and error message
+      res.status(500).send(err.message);
+      return;
+    };
+
+    // turn the returned string of circles into an array
+    let currentCircles = circles.circles.split(",");
+   // add the circle from the request to the array
+    // ready a new string format list
+    let newCirclesList = "";
+    // add each element of the array to the string, seperated by a comma
+    currentCircles.forEach(circle => circle.length > 2 && circle !== circleName && newCirclesList.indexOf(circle) === -1 ? newCirclesList += (circle + ",") : '');
+    // update the circles column in the users table where the username matches the request
+ 
+    
+    SQLdatabase.run("UPDATE users SET circles = ? WHERE username = ?", [ newCirclesList, user ], (err) => {
+      // if error
+      if (err) {
+      // respond with error status and error message
+      res.status(500).send(err.message);
+      return;
+      };
+      //respond with circles on success
+      res.json("success");
+    });    
+  });  
+});
+
+
+
+app.post('/getUsersCircles', (req, res) => {
+  let user = req.body.user;
+  SQLdatabase.get(GET_USERS_FOLLOWED_CIRCLES, user , (err, circles) => {
+    // turn the returned string of circles into an array
+    let currentCircles = circles.circles.split(",");
+    // if error
+    if (err) {
+      // respond with error status and error message
+      res.status(500).send(err.message);
+      return;
+    };
+    //respond with circles on success
+    res.json(currentCircles);
+  });  
+});
+
+
 
 app.post('/getFriends', (req, res) => {
   //set up variables from the request body
@@ -965,8 +1100,8 @@ app.post('/getNotifications', (req, res) => {
 });
 
 app.post('/clearSingleNotification', (req, res) => {
+  //set up variables from the request body
   let actionId = req.body.actionId;
-  console.log(req.body)
   SQLdatabase.run("DELETE FROM userActions WHERE actionId = ?", actionId, (err) => {
     // if error
     if (err) {
@@ -1171,7 +1306,6 @@ app.post('/getAllUsersChats', (req, res) => {
 
 app.post('/getChat', async (req, res) => {
   //set up variables from the request body
-  console.log(req.body)
   let { user, chatId, partner } = req.body;
   if (chatId === false || chatId === undefined) {                                                                        
     await SQLdatabase.get("SELECT chatId FROM chats WHERE ((user1 = ? OR user2 = ?) AND (user1 = ? OR user2 = ?))", [req.body.user, req.body.user, req.body.partner, req.body.partner], async function(err, result){
@@ -1248,7 +1382,7 @@ app.post('/getChat', async (req, res) => {
 });
 
 app.post('/setChatAsSeen', (req, res) => {
-  console.log("runninggg")
+  //set up variables from the request body
   let { chatId, user1, user2, user } = req.body;
   let userToUpdate = '';
   if (user1 === user) {
@@ -1364,8 +1498,8 @@ app.post('/votePost', (req, res) => {
 });
 
 app.post('/clearNotifications', (req, res) => {
+  //set up variables from the request body
   let user = req.body.user;
-  console.log(req.body)
   SQLdatabase.run("DELETE FROM userActions WHERE recipient = ? AND seen = ?", [user, true] , (err) => {
     // if error
     if (err) {

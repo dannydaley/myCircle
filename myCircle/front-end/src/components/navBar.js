@@ -106,7 +106,7 @@ import ShowMessages from './navBar/showMessages';
           color: 'black',
           fontWeight: 'bold'
           }}>
-          My account
+          My Account
         </Link>
        </MenuItem>
       <MenuItem
@@ -204,7 +204,7 @@ import ShowMessages from './navBar/showMessages';
             <Link to="/"
             onClick={() => {showMessagesToggle(showMessages = false)
               showNotificationsToggle(showNotifications = false)}}>
-              <img src={myCircleText} />
+              <img alt="" src={myCircleText} />
             </Link>
           </Typography>
           <Box sx={{ flexGrow: 0.8 }} />

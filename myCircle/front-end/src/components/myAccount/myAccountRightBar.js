@@ -18,7 +18,7 @@ export default class MyAccountRightBar extends React.Component {
 
   componentDidMount = () => {
     this.setState({ chatsAreLoaded: false })
-    fetch('http://localhost:3001/getFriends', {
+    fetch(process.env.REACT_APP_SERVER + '/getFriends', {
       method: 'post',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
@@ -75,7 +75,7 @@ export default class MyAccountRightBar extends React.Component {
                 {/* A FOR EACH LOOP LISTING A BUTTON FOR EACH CIRCLE FOLLOWED IN USER DATA */}
                 {this.state.friends.map(friend => (
                   friend.username !== loggedInUsername ?                    
-                    <Link to={`/${friend.username}`} style={{textDecoration: 'none'}}>
+                    <Link to={`/${friend.username}`} style={{textDecoration: 'none'}} key={friend.username}>
                       <Button
                       variant="contained"
                       sx={{
@@ -84,8 +84,8 @@ export default class MyAccountRightBar extends React.Component {
                       width: '100%'
                       }}
                       color="success">
-                        <img
-                        src={"http://localhost:3001/public/" + friend.profilePicture}
+                        <img alt=""
+                        src={process.env.REACT_APP_SERVER + '/public/' + friend.profilePicture}
                         width="50px"
                         height="50px"
                         style={{
@@ -104,62 +104,3 @@ export default class MyAccountRightBar extends React.Component {
     )
   }
 }
-
-// export default class MyAccountRightBar extends React.Component {  
-//   render () {
-//     const { userFirstName } = this.props
-//     return (
-//       <div style={{position: 'fixed', width: '100vw'}}>
-//         <React.Fragment >
-//           <CssBaseline />      
-//           <Container
-//             maxWidth="sm"
-//             sx={{
-//               float: 'right',
-//               bgcolor: '#343434',
-//               height: '80vh',
-//               width: 300,
-//               mr: 4,
-//               mt: 16,
-//               justifyContent: 'flex-start',
-//               alignItems: 'center'
-//               }}>
-//               <Typography variant="h6" component="div" color="white" sx={{textAlign: 'center', mt: 2, paddingTop: 1, paddingBottom: 2, bgcolor: 'none' }}>{userFirstName}'s images</Typography>
-//               <Box sx={{ bgcolor: 'none'}}>
-//                   {/* FOREACH HERE FOR USERS PICTURES */}
-//                     <Grid container spacing={1}>
-//                       <Grid item xs={6} md={4} style={{display:'flex'}}>
-//                         <img src={me} style={{width: '100%'}}/>
-//                       </Grid>
-//                       <Grid item xs={6} md={4} style={{display:'flex'}}>
-//                         <img src={me} style={{width: '100%'}}/>
-//                       </Grid>
-//                       <Grid item xs={6} md={4} style={{display:'flex'}}>
-//                         <img src={me} style={{width: '100%'}}/>
-//                       </Grid>
-//                       <Grid item xs={6} md={4} style={{display:'flex'}}>
-//                         <img src={me} style={{width: '100%'}}/>
-//                       </Grid>
-//                       <Grid item xs={6} md={4} style={{display:'flex'}}>
-//                         <img src={me} style={{width: '100%'}}/>
-//                       </Grid>
-//                       <Grid item xs={6} md={4} style={{display:'flex'}}>
-//                         <img src={me} style={{width: '100%'}}/>
-//                       </Grid>
-//                       <Grid item xs={6} md={4} style={{display:'flex'}}>
-//                         <img src={me} style={{width: '100%'}}/>
-//                       </Grid>
-//                     </Grid>
-                    
-                  
-//                   {/* <Stack spacing={1} sx={{  width: 250, margin: '50px auto 0'       }}>      
-                      
-
-//                   </Stack> */}
-//               </Box>
-//           </Container>
-//         </React.Fragment>
-//       </div>
-//     );
-//   }
-// }

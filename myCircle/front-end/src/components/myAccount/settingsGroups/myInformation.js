@@ -64,7 +64,7 @@ export default class MyInformation extends React.Component {
         let formData = new FormData()       
         formData.append('image', image)   
         formData.append('username', this.props.loggedInUsername)    
-        await axios.post("http://localhost:3001/changeProfilePicture", formData, {        
+        await axios.post(process.env.REACT_APP_SERVER + '/changeProfilePicture', formData, {        
             headers: { "Content-Type": "multipart/form-data" } ,
             body: JSON.stringify({
                 "username": this.props.loggedInUsername
@@ -78,12 +78,11 @@ export default class MyInformation extends React.Component {
         )
     }
 
-    updateCoverPicture = async (image) => {   
-        console.log("runinnnggg")     
+    updateCoverPicture = async (image) => {
         let formData = new FormData()       
         formData.append('image', image)   
         formData.append('username', this.props.loggedInUsername)    
-        await axios.post("http://localhost:3001/changeCoverPicture", formData, {        
+        await axios.post(process.env.REACT_APP_SERVER + '/changeCoverPicture', formData, {        
             headers: { "Content-Type": "multipart/form-data" } ,
             body: JSON.stringify({
                 "username": this.props.loggedInUsername
@@ -99,7 +98,7 @@ export default class MyInformation extends React.Component {
 
     updateUserGeneralInfo = () => {
         const { firstName, lastName, aboutMe, location, education, work } = this.state
-        fetch('http://localhost:3001/updateUserGeneralInfo', {
+        fetch(process.env.REACT_APP_SERVER + '/updateUserGeneralInfo', {
             method: 'post',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({
@@ -127,7 +126,7 @@ export default class MyInformation extends React.Component {
         }  
         this.setState({ dataIsLoaded: false })     
         //FETCH IS A GET REQUEST BY DEFAULT, POINT IT TO THE ENDPOINT ON THE BACKEND
-        fetch('http://localhost:3001/getUserGeneralInfo', {
+        fetch(process.env.REACT_APP_SERVER + '/getUserGeneralInfo', {
           method: 'post',
           headers: {'Content-Type': 'application/json'},
           body: JSON.stringify({
@@ -168,10 +167,10 @@ export default class MyInformation extends React.Component {
                     <div style={{marginTop: '30px', display: 'block'}}>
                         <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', width: '70%', margin: '0 auto'}}>
                             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-                                <img 
+                                <img alt=""
                                     src={
-                                        'http://localhost:3001/public/' + profilePicture
-                                        // process.env.SERVER + process.env.SERVERPUBLICDIRECTORY + props.profilePicture 
+                                        process.env.REACT_APP_SERVER + '/public/' + profilePicture
+                                        // process.env.REACT_APP_SERVER + process.env.REACT_APP_SERVERPUBLICDIRECTORY + props.profilePicture 
                                         } width="200px" height="150px" style={{ boxShadow: "1px 3px 5px 0px black", mb: 3 }}
                                         // onClick={()=>this.props.onRouteChange('profile')}
                                         />            
@@ -184,10 +183,10 @@ export default class MyInformation extends React.Component {
                                 <input id="file-input" type="file" name="file" onChange={this.onProfilePictureChange.bind(this)} hidden/>  
                             </div>
                             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-                                <img 
+                                <img alt=""
                                     src={
-                                        'http://localhost:3001/public/' + coverPicture
-                                        // process.env.SERVER + process.env.SERVERPUBLICDIRECTORY + props.profilePicture 
+                                        process.env.REACT_APP_SERVER + '/public/' + coverPicture
+                                        // process.env.REACT_APP_SERVER + process.env.REACT_APP_SERVERPUBLICDIRECTORY + props.profilePicture 
                                         } width="200px" height="150px" style={{ boxShadow: "1px 3px 5px 0px black", mb: 3 }}
                                         // onClick={()=>this.props.onRouteChange('profile')}
                                         />            

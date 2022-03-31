@@ -9,9 +9,6 @@ import WorkIcon from '@mui/icons-material/Work';
 import PersonIcon from '@mui/icons-material/Person';
 import LocationCityIcon from '@mui/icons-material/LocationCity';
 import SchoolIcon from '@mui/icons-material/School';
-import InfoIcon from '@mui/icons-material/Info';
-import CircularProgress from '@mui/material/CircularProgress';
-
 
 export default class ProfileLeftBar extends React.Component  {
   constructor(props) {
@@ -35,7 +32,7 @@ export default class ProfileLeftBar extends React.Component  {
     }  
     this.setState({ dataIsLoaded: false })     
     //FETCH IS A GET REQUEST BY DEFAULT, POINT IT TO THE ENDPOINT ON THE BACKEND
-    fetch('http://localhost:3001/getUserGeneralInfo', {
+    fetch(process.env.REACT_APP_SERVER + '/getUserGeneralInfo', {
       method: 'post',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
@@ -69,7 +66,7 @@ export default class ProfileLeftBar extends React.Component  {
         <CssBaseline />
         <Container position="fixed" maxWidth="sm" sx={{ position: 'fixed', bgcolor: '#343434', border: '', height: '80vh', width: 300, ml: 2, mr:2,  mt: 16, justifyContent: 'flex-start', alignItems: 'center'}} >
           <Box sx={{ padding: 2, bgcolor: 'none'}}>
-            <img src={"http://localhost:3001/public/" + userProfilePicture} width="200px" height="150px" style={{ boxShadow: "1px 3px 5px 0px black", mb: 3, ":hover": { cursor: 'pointer' } }} />
+            <img alt="" src={process.env.REACT_APP_SERVER + '/public/' + userProfilePicture} width="200px" height="150px" style={{ boxShadow: "1px 3px 5px 0px black", mb: 3, ":hover": { cursor: 'pointer' } }} />
             <Typography variant="h5" component="div" color="white" sx={{textAlign: 'center', mt: 2}}>{userFirstName} {userLastName}</Typography>
             {isFriendsWithLoggedInUser? "" : <Button variant="contained"  startIcon={<PersonAddIcon />} sx={{textTransform: 'none', mt: 2}} onClick={sendFriendRequest}>Add Friend</Button>}
           </Box>

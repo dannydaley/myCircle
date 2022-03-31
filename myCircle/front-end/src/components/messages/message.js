@@ -39,8 +39,9 @@ const {
                             {(loggedInUsername === chatUser1) && (seenByUser1) === 0 ? props.setChatAsSeen(chatId) : ''}
                             {(loggedInUsername === chatUser2) && (seenByUser2) === 0 ? props.setChatAsSeen(chatId) : ''}
                             <Link to={`/${loggedInUsername}`}>
-                                <img src={
-                                    'http://localhost:3001/public/' + userProfilePicture
+                                <img alt=""
+                                src={
+                                    process.env.REACT_APP_SERVER + '/public/' + userProfilePicture
                                     }
                                     width="100px"
                                     height="100px"
@@ -73,8 +74,9 @@ const {
                     {loggedInUsername === chatUser1 && seenByUser1 === false ? props.setChatAsSeen(chatId) : ''}
                             {loggedInUsername === chatUser2 && seenByUser2 === false ? props.setChatAsSeen(chatId) : ''}
                         <Link to={`/${partnerUsername}`}>
-                            <img src={
-                                'http://localhost:3001/public/' + partnerProfilePicture
+                            <img alt=""
+                            src={
+                                process.env.REACT_APP_SERVER + '/public/' + partnerProfilePicture
                                 }
                                 width="100px"
                                 height="100px"

@@ -21,7 +21,7 @@ export default class ProfilePage extends React.Component {
 
 componentDidMount = () => {   
      //FETCH IS A GET REQUEST BY DEFAULT, POINT IT TO THE ENDPOINT ON THE BACKEND
-     fetch('http://localhost:3001/getUserProfile', {
+     fetch(process.env.REACT_APP_SERVER + '/getUserProfile', {
           method: 'post',
           headers: {'Content-Type': 'application/json'},
           body: JSON.stringify({
@@ -47,8 +47,7 @@ componentDidMount = () => {
 }
 
      sendFriendRequest = () => {
-          console.log("cliccckedddd")
-          fetch('http://localhost:3001/friendRequest', {
+          fetch(process.env.REACT_APP_SERVER + '/friendRequest', {
                method: 'post',
                headers: {'Content-Type': 'application/json'},
                body: JSON.stringify({
@@ -56,14 +55,11 @@ componentDidMount = () => {
                     recipient: this.props.userProfileToGet
                })    
           }).then(response => response.json())
-          .then(data => {
-               console.log(data)
-          })
      }
      
      render() {       
           const { changeAlertNotifications, loggedInUsername, userProfileToGet, userFirstName, userLastName, userProfilePicture } = this.props 
-          const {  firstName,lastName,aboutMe, profilePicture, contentIsLoaded, coverPicture, isFriendsWithLoggedInUser } = this.state
+          const {  firstName,lastName,profilePicture, contentIsLoaded, coverPicture, isFriendsWithLoggedInUser } = this.state
           if (contentIsLoaded) {
                return (
                     <>               

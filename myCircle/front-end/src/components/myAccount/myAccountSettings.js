@@ -34,7 +34,7 @@ export default class MyAccountSettings extends React.Component {
     }  
     this.setState({ dataIsLoaded: false, settings: newSettings })   
     //FETCH IS A GET REQUEST BY DEFAULT, POINT IT TO THE ENDPOINT ON THE BACKEND
-    fetch('http://localhost:3001/getFeedByUser', {
+    fetch(process.env.REACT_APP_SERVER + '/getFeedByUser', {
       method: 'post',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
@@ -62,7 +62,7 @@ export default class MyAccountSettings extends React.Component {
   settingsGroup = (selection) => {
     switch (selection) {
       case 'My information' : return <MyInformation updateSession={this.props.updateSession} settings={this.state.settings} remountParent={this.componentDidMount} loggedInUsername={this.props.loggedInUsername} refreshData={this.props.refreshData}/>;
-      case 'My Circles' : return <MyCircles settings={this.state.settings}/>;
+      case 'My Circles' : return <MyCircles settings={this.state.settings} loggedInUsername={this.props.loggedInUsername}/>;
       case 'My friends' :return <MyFriends settings={this.state.settings} loggedInUsername={this.props.loggedInUsername} />
       case 'My login info' :return <MyLoginInfo settings={this.state.settings} mountComponent={this.componentDidMount}/>
       default: return <MyInformation settings={this.state.settings}/>

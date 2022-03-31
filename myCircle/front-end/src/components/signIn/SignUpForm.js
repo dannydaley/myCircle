@@ -37,7 +37,7 @@ export default class SignUpForm extends React.Component
       }
   
   onSubmitSignUp = () => {
-      fetch('http://localhost:3001/signUp', {
+      fetch(process.env.REACT_APP_SERVER + '/signUp', {
           method: 'post',
           headers: {'Content-Type': 'application/json'},
           body: JSON.stringify({
@@ -51,13 +51,9 @@ export default class SignUpForm extends React.Component
       })
       .then(response => response.json())
       .then(data => {
-        console.log(data)
           if (data.status === 'success') {            
               this.props.updateSession(data.firstName, data.lastName, data.username, data.profilePicture);
             }
-               else {
-                 console.log(data)  
-              } 
           }
       ).then(this.props.onRouteChange('signin'))
   }
@@ -123,7 +119,6 @@ render() {
                 onChange={this.onPasswordConfirmChange}
               />
               <Button variant="contained" sx={{width: '33ch', marginTop: '20px'}}  value="Sign Up" 
-                // onClick={() => onRouteChange('home')}
                 onClick={() => this.onSubmitSignUp()}
                 >Sign Up
               </Button>

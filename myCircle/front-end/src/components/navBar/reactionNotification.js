@@ -12,7 +12,7 @@ export default class ReactionNotification extends React.Component {
 
 	setNotificationAsSeen =  () => { 
         //FETCH IS A GET REQUEST BY DEFAULT, POINT IT TO THE ENDPOINT ON THE BACKEND
-        fetch('http://localhost:3001/setNotificationAsSeen', {
+        fetch(process.env.REACT_APP_SERVER + '/setNotificationAsSeen', {
           method: 'post',
           headers: {'Content-Type': 'application/json'},
           body: JSON.stringify({
@@ -25,7 +25,7 @@ export default class ReactionNotification extends React.Component {
     }
 
 	render() {
-		const { firstName, lastName, message, senderUsername, recipientUsername, relativePost, clearSingleNotification } = this.props
+		const { firstName, message, senderUsername, clearSingleNotification } = this.props
 		if (!this.state.seen) {
 			return(
 				<Button variant="contained" style={{width: '100%',fontSize: '14px',

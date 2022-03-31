@@ -3,10 +3,6 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
-// import passwordHash from './hasher';
-
-
-const { captureRejectionSymbol } = require('events');
 
 class SignInForm extends React.Component 
 {
@@ -30,7 +26,7 @@ applySession = (firstName, lastName, username, profilePicture) => {
 }
 
     componentDidMount() {     
-        fetch('http://localhost:3001/refreshSessionStatus', {
+        fetch(process.env.REACT_APP_SERVER + '/refreshSessionStatus', {
           status: 'session-exists'
         }).then(response => response.json())
           .then(data => data.status === "session-exists" ? this.applySession(data.firstName, data.lastName, data.username, data.profilePicture) :''
@@ -38,7 +34,7 @@ applySession = (firstName, lastName, username, profilePicture) => {
           }
 
 onSubmitSignIn = () => {
-    fetch('http://localhost:3001/signin', {
+    fetch(process.env.REACT_APP_SERVER + '/signin', {
         method: 'post',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
@@ -51,9 +47,6 @@ onSubmitSignIn = () => {
         if (data.status === 'success') {            
             this.props.updateSession(data.firstName, data.lastName, data.username, data.profilePicture, data.coverPicture);
             this.props.onRouteChange('home')}
-             else {
-               console.log(data)
-            }
         }
     )
 }
@@ -79,13 +72,12 @@ onSubmitSignIn = () => {
                             autoComplete="current-password"
                             onChange={this.onPasswordChange}
                             />
-                            <Button variant="contained" sx={{width: '33ch'}} 
-                            // type='submit'
+                            <Button variant="contained" sx={{width: '33ch'}}        
                             onSubmit={()=> this.onSubmitSignIn()}                            
                             onClick={()=> this.onSubmitSignIn()}>
                                 Sign In
                             </Button>
-                            <p><a href="#">Forgotten Password?</a></p>
+                            <p>Forgotten Password?</p>
                         </div>
                         <Divider variant="middle" style={{marginTop: '20px', marginBottom: '40px'}}/>
                         <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>

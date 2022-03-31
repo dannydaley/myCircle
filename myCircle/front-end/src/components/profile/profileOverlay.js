@@ -3,9 +3,6 @@ import ProfileRightBar from "./profileRightBar";
 import ProfileLeftBar from "./profileLeftBar";
             
 export default class  ProfileOverlay extends React.Component {
-    constructor(props) {
-        super(props);
-    }    
 
     render () {
         const { userFirstName, userLastName, changeAlertNotifications, userProfilePicture, isFriendsWithLoggedInUser, sendFriendRequest, userProfileToGet } = this.props

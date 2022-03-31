@@ -4,14 +4,10 @@ import FriendRequest from './friendRequest'
 import ReactionNotification from './reactionNotification'
 
 export default class ShowNotifications extends React.Component {
-	constructor(props) {
-		super(props)
-	}
-
 
 	clearSingleNotification = (actionId) => {
 	//FETCH IS A GET REQUEST BY DEFAULT, POINT IT TO THE ENDPOINT ON THE BACKEND
-	fetch('http://localhost:3001/clearSingleNotification', {
+	fetch(process.env.REACT_APP_SERVER + '/clearSingleNotification', {
 		method: 'post',
 		headers: {'Content-Type': 'application/json'},
 		body: JSON.stringify({
@@ -25,9 +21,8 @@ export default class ShowNotifications extends React.Component {
 		});
 	}
 	clearNotifications  = () => {
-		console.log("working")
 		//FETCH IS A GET REQUEST BY DEFAULT, POINT IT TO THE ENDPOINT ON THE BACKEND
-		fetch('http://localhost:3001/clearNotifications', {
+		fetch(process.env.REACT_APP_SERVER + '/clearNotifications', {
 		  method: 'post',
 		  headers: {'Content-Type': 'application/json'},
 		  body: JSON.stringify({
@@ -89,7 +84,7 @@ export default class ShowNotifications extends React.Component {
 					sx={{mt: 2}}
 					variant="middle"
 				/>
-				{notifications.length >= 1 ?				
+				{notifications.length >= 1 ?
 					<Typography
 					variant="h7"
 					noWrap					

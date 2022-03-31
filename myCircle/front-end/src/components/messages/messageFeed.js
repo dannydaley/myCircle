@@ -31,7 +31,7 @@ export default class MessageFeed extends React.Component {
   getChat = async (loggedInUsername, chatId, partner) => {
     this.setState({ dataIsLoaded: false })   
     //FETCH IS A GET REQUEST BY DEFAULT, POINT IT TO THE ENDPOINT ON THE BACKEND
-    await fetch('http://localhost:3001/getChat', {
+    await fetch(process.env.REACT_APP_SERVER + '/getChat', {
       method: 'post',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
@@ -48,13 +48,12 @@ export default class MessageFeed extends React.Component {
         chatFeed: data.messages,
         dataIsLoaded: true
       });
-    console.log(this.state.chatData);
     });
   }
 
   setChatAsSeen = (chatId) => {
     //FETCH IS A GET REQUEST BY DEFAULT, POINT IT TO THE ENDPOINT ON THE BACKEND
-    fetch('http://localhost:3001/setChatAsSeen', {
+    fetch(process.env.REACT_APP_SERVER + '/setChatAsSeen', {
       method: 'post',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
@@ -72,7 +71,6 @@ export default class MessageFeed extends React.Component {
         chatData: data.chatData,        
         dataIsLoaded: true
       });
-    console.log(this.state.chatFeed);
     });
   }
   

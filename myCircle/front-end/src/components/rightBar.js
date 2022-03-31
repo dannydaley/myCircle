@@ -17,8 +17,8 @@ export default class MessagesRightBar extends React.Component {
   }
 
   componentDidMount = () => {
-    this.setState({ chatsAreLoaded: false })
-    fetch('http://localhost:3001/getFriends', {
+    this.setState({ dataIsLoaded: false })
+    fetch(process.env.REACT_APP_SERVER + '/getFriends', {
       method: 'post',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
@@ -34,7 +34,7 @@ export default class MessagesRightBar extends React.Component {
   }
 
   render() {
-    let { getChat, loggedInUsername } = this.props;
+    let { loggedInUsername } = this.props;
     return (   
       <div style={{position: 'fixed', width: '100vw'}}>
         <React.Fragment >
@@ -74,8 +74,8 @@ export default class MessagesRightBar extends React.Component {
                 {/* A FOR EACH LOOP LISTING A BUTTON FOR EACH CIRCLE FOLLOWED IN USER DATA */}
                 {this.state.friends.map(friend => (
                   friend.username !== loggedInUsername ?                    
-                    <Link to={`/${friend.username}`} style={{textDecoration: 'none'}}>
-                      <Button
+                    <Link to={`/${friend.username}`} style={{textDecoration: 'none'}}key={friend.username}>
+                      <Button                      
                       variant="contained"
                       sx={{
                         display: 'flex',
@@ -84,7 +84,9 @@ export default class MessagesRightBar extends React.Component {
                       }}
                       color="success">
                         <img
-                        src={"http://localhost:3001/public/" + friend.profilePicture}
+                        alt=""
+                        key={friend.profilePicture}
+                        src={process.env.REACT_APP_SERVER + '/public/' + friend.profilePicture}
                         width="50px"
                         height="50px"
                         style={{

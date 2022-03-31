@@ -17,7 +17,7 @@ export default class MyFriends extends React.Component {
 
     deleteFriend = (friend) => {
    
-        fetch('http://localhost:3001/deleteFriend', {
+        fetch(process.env.REACT_APP_SERVER + '/deleteFriend', {
             method: 'post',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({
@@ -33,7 +33,7 @@ export default class MyFriends extends React.Component {
 
     componentDidMount = () => {
     this.setState({ dataIsLoaded: false })
-    fetch('http://localhost:3001/getFriends', {
+    fetch(process.env.REACT_APP_SERVER + '/getFriends', {
         method: 'post',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
@@ -107,8 +107,8 @@ export default class MyFriends extends React.Component {
                                 style={{
                                     textDecoration: 'none'     
                                 }}>
-                                <img
-                                src={"http://localhost:3001/public/" + friend.profilePicture}
+                                <img alt=""
+                                src={process.env.REACT_APP_SERVER + '/public/' + friend.profilePicture}
                                 width="100px"
                                 height="100px"
                                 style={{

@@ -13,7 +13,8 @@
             "education":"Falmouth University",
             "work":"Full time student",
             "profilePicture": "images/profilePictures/Daley-update-profile-picture-1640184634605-875098110.png",
-            "coverPicture": "images/uploads/hero.jpg"
+            "coverPicture": "images/uploads/hero.jpg",
+            "circles": "Animation,Coding,Gaming"
         },
         {
             "id": 2,
@@ -28,7 +29,8 @@
             "education" : "",
             "work": "",
             "profilePicture": "images/uploads/defaultUser.png",
-            "coverPicture": ""
+            "coverPicture": "",
+            "circles": ""
         },
         {
             "id": 3,
@@ -43,7 +45,8 @@
             "education" : "",
             "work": "",
             "profilePicture": "images/uploads/defaultUser.png",
-            "coverPicture": ""
+            "coverPicture": "",
+            "circles": ""
         },
         {
             "id": 4,
@@ -58,7 +61,8 @@
             "education" : "",
             "work": "",
             "profilePicture": "images/uploads/defaultUser.png",
-            "coverPicture": ""
+            "coverPicture": "",
+            "circles": ""
         },
         {
             "id": 5,
@@ -73,7 +77,8 @@
             "education" : "the code",
             "work": "I am the code",
             "profilePicture": "images/uploads/defaultUser.png",
-            "coverPicture": ""
+            "coverPicture": "",
+            "circles": ""
         },
         {
             "id": 6,
@@ -88,7 +93,8 @@
             "education" : "Mortimer Wilson School, Alfreton",
             "work": "A school in Sweden",
             "profilePicture": "images/uploads/defaultUser.png",
-            "coverPicture": ""
+            "coverPicture": "",
+            "circles": ""
         },
         {
             "id": 7,
@@ -103,7 +109,8 @@
             "education" : "",
             "work": "Eurocell",
             "profilePicture": "images/uploads/defaultUser.png",
-            "coverPicture": ""
+            "coverPicture": "",
+            "circles": ""
         },
         {
             "id": 8,
@@ -118,7 +125,8 @@
             "education" : "Mortimer wilson school, Alfreton",
             "work": "ROYAL MARINES",
             "profilePicture": "images/uploads/defaultUser.png",
-            "coverPicture": ""
+            "coverPicture": "",
+            "circles": ""
         },
         {
             "id": 9,
@@ -133,7 +141,8 @@
             "education" : "NV3 LVL3+ Chesterfirld College",
             "work": "M.A Autos, Alfreton",
             "profilePicture": "images/profilePictures/mjpswanwick-update-profile-picture-1641157595596-588140937.png",
-            "coverPicture": ""
+            "coverPicture": "",
+            "circles": ""
         },
         {
             "id": 10,
@@ -148,7 +157,8 @@
             "education" : "",
             "work": "",
             "profilePicture": "images/profilePictures/tester-update-profile-picture-1643116188746-79637386.png",
-            "coverPicture": ""
+            "coverPicture": "",
+            "circles": ""
         },
         {
             "id": 11,
@@ -163,7 +173,8 @@
             "education" : "Falmouth University",
             "work": "Full time student",
             "profilePicture": "images/uploads/Daley-change-image-1640183949137-977696531.png",
-            "coverPicture": "images/uploads/life-cycle-facebook-cover.jpg"
+            "coverPicture": "images/uploads/life-cycle-facebook-cover.jpg",
+            "circles": ""
         }            
     ]
 }

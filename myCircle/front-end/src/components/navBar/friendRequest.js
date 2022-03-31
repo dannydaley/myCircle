@@ -14,7 +14,7 @@ export default class FriendRequest extends React.Component {
 		return (
 			<>
 				<Link to={`/${senderUsername}`}>
-				<h4 style={{color: '#217cd8'}}>{firstName} {lastName} {message}</h4>
+					<h4 style={{color: '#217cd8'}}>{firstName} {lastName} {message}</h4>
 				</Link>
 				<Button variant="contained" color="error" onClick={() => {
 					refuseFriendRequest(senderUsername, loggedInUser)

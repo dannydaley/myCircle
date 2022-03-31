@@ -27,7 +27,7 @@ export default class MyLoginInfo extends React.Component {
 
       updateUserLoginInfo = () => {
         const { email, password, changeEmail, changePassword, changePasswordConfirm } = this.state
-        fetch('http://localhost:3001/updateUserLoginInfo', {
+        fetch(process.env.REACT_APP_SERVER + '/updateUserLoginInfo', {
             method: 'post',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({
