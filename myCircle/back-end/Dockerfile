@@ -15,6 +15,6 @@ RUN npm ci
 USER root
 RUN chown node:node -R /app/public/images
 
-EXPOSE 3000
+EXPOSE 3001
 
 CMD ["npm", "run", "deploy"]

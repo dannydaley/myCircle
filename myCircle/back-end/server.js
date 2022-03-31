@@ -9,8 +9,27 @@ app.use(cors());
 app.use(bodyParser.json());
 var path = require('path');
 app.use("/public", express.static(path.join(__dirname, 'public')));
-let uuidv4 = require('uuid/v4');
-const { request } = require('https');
+
+app.use(express.static(path.join(__dirname, 'build')));
+
+app.get('/', function (req, res) {
+  res.sendFile(path.join(__dirname, 'build', 'index.html'));
+});
+
+let mysql = require('mysql');
+
+var SQLdatabase = mysql.createConnection({
+host: process.env.DATABASEHOST,
+port: process.env.DATABASEPORT,
+user: process.env.DATABASEUSER,
+password: process.env.DATABASEPASSWORD,
+database: process.env.DATABASENAME
+})
+
+SQLdatabase.connect(function(err) {
+  if (err) throw err;
+  console.log("Database Connected!");
+});
 
 // Session setup
 var session = require('cookie-session');
@@ -95,7 +114,7 @@ let upload = multer({ storage: storage});
 var sqlite3 = require('sqlite3').verbose();
 
 // set up variable for access to database
-let SQLdatabase = new sqlite3.Database('./database/SQLdatabase.db');
+// let SQLdatabase = new sqlite3.Database('./database/SQLdatabase.db');
 
 // set app.locals database to the initialised variable
 app.locals.SQLdatabase = SQLdatabase;
@@ -143,17 +162,17 @@ const GET_USERS_FOLLOWED_CIRCLES = "SELECT `users`.`circles` FROM `users` WHERE 
 
 // users table setup endpoint
 app.get('/usersSetup', (req, res, next) => {
-  SQLdatabase.serialize(() => {
+  SQLdatabase.query(() => {
     //delete the table if it exists..
-    SQLdatabase.run('DROP TABLE IF EXISTS `users`');
+    SQLdatabase.query('DROP TABLE IF EXISTS `users`');
     //recreate the users table  
-    SQLdatabase.run('CREATE TABLE `users` (id INTEGER PRIMARY KEY AUTOINCREMENT, username varchar(255) UNIQUE, firstName varchar(255), lastName varchar(255), email varchar(255) UNIQUE, password varchar(255), passwordSalt varchar(512), aboutMe text, location varchar(255), education varchar(255), work varchar(255), profilePicture varchar(255), coverPicture varchar(255), circles text)');
+    SQLdatabase.query('CREATE TABLE `users` (id INTEGER PRIMARY KEY AUTOINCREMENT, username varchar(255) UNIQUE, firstName varchar(255), lastName varchar(255), email varchar(255) UNIQUE, password varchar(255), passwordSalt varchar(512), aboutMe text, location varchar(255), education varchar(255), work varchar(255), profilePicture varchar(255), coverPicture varchar(255), circles text)');
     //create array of users from the dummy data JSON file
     let users = userDataJSON.users; 
     // insert each element in the array of objects into the users table in the database
     users.forEach((user) => {
       // SQL query to run
-      SQLdatabase.run('INSERT INTO `users` (username, firstName, lastName, email, password, passwordSalt, aboutMe, location, education, work, profilePicture, coverPicture, circles) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ? ,?, ?, ?, ?)', 
+      SQLdatabase.query('INSERT INTO `users` (username, firstName, lastName, email, password, passwordSalt, aboutMe, location, education, work, profilePicture, coverPicture, circles) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ? ,?, ?, ?, ?)', 
         // values passed in from current iteration of the users array
         [user.username, user.firstName, user.lastName, user.email, user.password, user.passwordSalt, user.aboutMe, user.location, user.education, user.work, user.profilePicture, user.coverPicture, user.circles ]);
     });
@@ -165,17 +184,17 @@ app.get('/usersSetup', (req, res, next) => {
 
 // posts table setup endpoint
 app.get('/postsSetup', (req, res, next) => {   
-  SQLdatabase.serialize(() => {
+  SQLdatabase.query(() => {
     // delete the table if it exists..
-    SQLdatabase.run('DROP TABLE IF EXISTS `posts`');
+    SQLdatabase.query('DROP TABLE IF EXISTS `posts`');
     // recreate the posts table
-    SQLdatabase.run('CREATE TABLE `posts` ( id INTEGER PRIMARY KEY AUTOINCREMENT, author varchar(255), content text,  date varchar(255), circle varchar(255), recipient varchar(255), likes int, dislikes int, postStrict int)');
+    SQLdatabase.query('CREATE TABLE `posts` ( id INTEGER PRIMARY KEY AUTOINCREMENT, author varchar(255), content text,  date varchar(255), circle varchar(255), recipient varchar(255), likes int, dislikes int, postStrict int)');
     //create array of post objects from the dummy data JSON file
     let posts = postDataJSON.entries;
     // insert each element in the array of objects into the posts table in the database    
     posts.forEach((post) => {
       // SQL query to run
-      SQLdatabase.run('INSERT INTO `posts` (id, author, content, date, circle, recipient, likes, dislikes, postStrict) VALUES(?,?,?,?,?,?,?,?,?)',
+      SQLdatabase.query('INSERT INTO `posts` (id, author, content, date, circle, recipient, likes, dislikes, postStrict) VALUES(?,?,?,?,?,?,?,?,?)',
       // values passed in from current iteration of the posts array
       [ post.id, post.author, post.content, post.date, post.circle, post.recipient ,post.likes, post.dislikes, post.postStrict ]);
     });
@@ -187,17 +206,17 @@ app.get('/postsSetup', (req, res, next) => {
 
 // images table setup endpoint
 app.get('/imagesSetup', (req, res, next) => {
-  SQLdatabase.serialize(() => {
+  SQLdatabase.query(() => {
     // delete the table if it exists..
-    SQLdatabase.run('DROP TABLE IF EXISTS `images`');
+    SQLdatabase.query('DROP TABLE IF EXISTS `images`');
     // recreate images table
-    SQLdatabase.run('CREATE TABLE `images` ( ownerUsername varchar(255), imageLocation varchar(255), postId int)');
+    SQLdatabase.query('CREATE TABLE `images` ( ownerUsername varchar(255), imageLocation varchar(255), postId int)');
     //create array of image objects from the dummy data JSON file
     let images = imagesDataJSON.images;
     // insert each element in the array of objects into the images table in the database
     images.forEach((image) => {
       // SQL query to run
-      SQLdatabase.run('INSERT INTO `images` (ownerUsername, imageLocation, postId) VALUES(?,?,?)',
+      SQLdatabase.query('INSERT INTO `images` (ownerUsername, imageLocation, postId) VALUES(?,?,?)',
       // values passed in from current iteration of the images array
        [ image.ownerUsername, image.imageLocation, image.postId ]);    
     });
@@ -209,17 +228,17 @@ app.get('/imagesSetup', (req, res, next) => {
 
 // friendships table setup endpoint
 app.get('/friendshipsSetup', (req, res, next) => {
-  SQLdatabase.serialize(() => {
+  SQLdatabase.query(() => {
     //delete the table if it exists..
-    SQLdatabase.run('DROP TABLE IF EXISTS `friendships`');
+    SQLdatabase.query('DROP TABLE IF EXISTS `friendships`');
     // recreate friendships table
-    SQLdatabase.run('CREATE TABLE `friendships` ( user1 varchar(255), user2 varchar(255))');
+    SQLdatabase.query('CREATE TABLE `friendships` ( user1 varchar(255), user2 varchar(255))');
     //create array of friendship objects from the dummy data JSON file
     let friendships = friendshipsDataJSON.friendships;
     // insert each element in the array of objects into the friendships table in the database
     friendships.forEach((friendship) => {
       // SQL query to run 
-      SQLdatabase.run('INSERT INTO `friendships` (user1, user2) VALUES(?,?)',
+      SQLdatabase.query('INSERT INTO `friendships` (user1, user2) VALUES(?,?)',
         // values passed in from current iteration of the friendships array
         [ friendship.user1, friendship.user2 ]);  
     });
@@ -230,17 +249,17 @@ app.get('/friendshipsSetup', (req, res, next) => {
 });
 
 app.get('/userActionsSetup', (req, res, next) => {
-  SQLdatabase.serialize(() => {
+  SQLdatabase.query(() => {
     //delete the table if it exists..
-    SQLdatabase.run('DROP TABLE IF EXISTS `userActions`');
+    SQLdatabase.query('DROP TABLE IF EXISTS `userActions`');
     // recreate userActions table
-    SQLdatabase.run('CREATE TABLE `userActions` ( actionId INTEGER PRIMARY KEY AUTOINCREMENT, type varchar(255), sender varchar(255), recipient varchar(255), message varchar(255), seen int, approved int, date varchar(255), relativePost int)');
+    SQLdatabase.query('CREATE TABLE `userActions` ( actionId INTEGER PRIMARY KEY AUTOINCREMENT, type varchar(255), sender varchar(255), recipient varchar(255), message varchar(255), seen int, approved int, date varchar(255), relativePost int)');
     //create array of userActions from the dummy data JSON file
     let rows = userActionsDataJSON.userActions;
     // insert each element in the array of object into the userActions table in the database
     rows.forEach((row) => {
       // SQL query to run
-      SQLdatabase.run('INSERT INTO `userActions` (actionId, type, sender, recipient, message, seen, approved, date, relativePost) VALUES (?,?,?,?,?,?,?,?,?)',
+      SQLdatabase.query('INSERT INTO `userActions` (actionId, type, sender, recipient, message, seen, approved, date, relativePost) VALUES (?,?,?,?,?,?,?,?,?)',
       // values passed in from current iteration of the userActions array
       [ row.id, row.type, row.sender, row.recipient, row.message, row.seen, row.approved, row.date, row.relativePost]);    
     });
@@ -251,17 +270,17 @@ app.get('/userActionsSetup', (req, res, next) => {
 });
 
 app.get('/chatsSetup', (req, res, next) => {
-  SQLdatabase.serialize(() => {
+  SQLdatabase.query(() => {
     // delete the table if it exists..
-    SQLdatabase.run('DROP TABLE IF EXISTS `chats`');
+    SQLdatabase.query('DROP TABLE IF EXISTS `chats`');
     // recreate chats table
-    SQLdatabase.run('CREATE TABLE `chats` ( chatId INTEGER PRIMARY KEY AUTOINCREMENT, user1 varchar(255), user2 varchar(255), seenByUser1 int, seenByUser2 int, lastActive varchar(255))');
+    SQLdatabase.query('CREATE TABLE `chats` ( chatId INTEGER PRIMARY KEY AUTOINCREMENT, user1 varchar(255), user2 varchar(255), seenByUser1 int, seenByUser2 int, lastActive varchar(255))');
     //create array of chats from the dummy data JSON file
     let chats = chatsDataJSON.chats;
     // insert each element in the array of objects into the chats table in the database
     chats.forEach((chat) => {
       // SQL query to run
-      SQLdatabase.run('INSERT INTO `chats` (chatId, user1, user2, seenByUser1, seenByUser2, lastActive) VALUES(?,?,?,?,?, datetime())',
+      SQLdatabase.query('INSERT INTO `chats` (chatId, user1, user2, seenByUser1, seenByUser2, lastActive) VALUES(?,?,?,?,?, datetime())',
         // values passed in from current iteration of the chats array
         [chat.chatId, chat.user1, chat.user2, chat.seenByUser1, chat.seenByUser2]);    
     });
@@ -272,17 +291,17 @@ app.get('/chatsSetup', (req, res, next) => {
 });
 
 app.get('/messagesSetup', (req, res, next) => {
-  SQLdatabase.serialize( () => {
+  SQLdatabase.query( () => {
     //delete the table if it exists..
-    SQLdatabase.run('DROP TABLE IF EXISTS `messages`');
+    SQLdatabase.query('DROP TABLE IF EXISTS `messages`');
     // recreate messages table
-    SQLdatabase.run('CREATE TABLE `messages` ( chatId INTEGER, messageId INTEGER PRIMARY KEY AUTOINCREMENT, sender varchar(255), recipient varchar(255), message text, date varchar(255), seen int)');
+    SQLdatabase.query('CREATE TABLE `messages` ( chatId INTEGER, messageId INTEGER PRIMARY KEY AUTOINCREMENT, sender varchar(255), recipient varchar(255), message text, date varchar(255), seen int)');
     //create array of messages from the dummy data JSON file
     let messages = messagesDataJSON.messages;
     // insert each element in the array of objects into the messages table in the database
     messages.forEach((message) => {
       // SQL query to run
-      SQLdatabase.run('INSERT INTO `messages` (chatId, messageId, sender, recipient, message, date, seen) VALUES(?,?,?,?,?,datetime(),?)',
+      SQLdatabase.query('INSERT INTO `messages` (chatId, messageId, sender, recipient, message, date, seen) VALUES(?,?,?,?,?,datetime(),?)',
       // values passed in from current iteration of the messages array
        [message.chatId,message.messageId, message.sender, message.recipient, message.message, message.seen]);
     });
@@ -294,17 +313,17 @@ app.get('/messagesSetup', (req, res, next) => {
 
 // circles table setup endpoint
 app.get('/circlesSetup', (req, res, next) => {
-  SQLdatabase.serialize(() => {
+  SQLdatabase.query(() => {
     //delete the table if it exists..
-    SQLdatabase.run('DROP TABLE IF EXISTS `circles`');
+    SQLdatabase.query('DROP TABLE IF EXISTS `circles`');
     // recreate circles table
-    SQLdatabase.run('CREATE TABLE `circles` ( circleName varchar(255), users INT)');
+    SQLdatabase.query('CREATE TABLE `circles` ( circleName varchar(255), users INT)');
     //create array of circle objects from the dummy data JSON file
     let circles = circlesDataJSON.circles;
     // insert each element in the array of objects into the circle table in the database
     circles.forEach((circle) => {
       // SQL query to run 
-      SQLdatabase.run('INSERT INTO `circles` (circleName, users) VALUES(?,?)',
+      SQLdatabase.query('INSERT INTO `circles` (circleName, users) VALUES(?,?)',
         // values passed in from current iteration of the circles array
         [ circle.circleName, circle.users ]);  
     });
@@ -321,7 +340,7 @@ app.get('/circlesSetup', (req, res, next) => {
 // get all users
 app.get('/getAllUsers', (req, res, next) => {
   // grab all user data
-  SQLdatabase.all(GET_ALL_USERS, [], (err, userData) => {
+  SQLdatabase.query(GET_ALL_USERS, [], (err, userData) => {
     // if error
     if (err) {
       // respond with error status and error message
@@ -336,7 +355,7 @@ app.get('/getAllUsers', (req, res, next) => {
 // get all images
 app.get('/getAllImages', (req, res, next) => {  
   // grab all image data
-  SQLdatabase.all("SELECT * FROM images",  (err, imageData) => {
+  SQLdatabase.query("SELECT * FROM images",  (err, imageData) => {
     // if error
     if (err) {
       // respond with error status and error message
@@ -351,7 +370,7 @@ app.get('/getAllImages', (req, res, next) => {
 // get all posts posts 
 app.get('/getAllPosts', (req, res, next) => {  
   // grab all posts data
-  SQLdatabase.all(GET_ALL_POSTS, [], (err, postData) => {
+  SQLdatabase.query(GET_ALL_POSTS, [], (err, postData) => {
     // if error
     if (err) {
       // respond with error status and error message
@@ -366,7 +385,7 @@ app.get('/getAllPosts', (req, res, next) => {
 // get all friendships
 app.get('/getAllFriendships', (req, res, next) => {
   // grab all friendships data
-  SQLdatabase.all("SELECT * FROM friendships", [], (err, friendshipData) => {
+  SQLdatabase.query("SELECT * FROM friendships", [], (err, friendshipData) => {
     // if error
     if (err) {
       // respond with error status and error message
@@ -381,7 +400,7 @@ app.get('/getAllFriendships', (req, res, next) => {
 // get all UserActions
 app.get('/getAllUserActions', (req, res, next) => {
   // grab all user actions data
-  SQLdatabase.all("SELECT * FROM userActions", [], (err, userActionsData) => {
+  SQLdatabase.query("SELECT * FROM userActions", [], (err, userActionsData) => {
     // if error
     if (err) {
       // respond with error status and error message
@@ -396,7 +415,7 @@ app.get('/getAllUserActions', (req, res, next) => {
 // get all chats
 app.get('/getAllChats', (req, res) => {
   // grab all chat data
-  SQLdatabase.all("SELECT * FROM `chats`", (err, chatData) => {
+  SQLdatabase.query("SELECT * FROM `chats`", (err, chatData) => {
     // if error
     if (err){      
       // respond with error status and error message
@@ -411,7 +430,7 @@ app.get('/getAllChats', (req, res) => {
 // get all messages
 app.get('/getAllMessages', (req, res, next) => {
   // grab all message data
-  SQLdatabase.all("SELECT * FROM messages", [], (err, messageData) => {
+  SQLdatabase.query("SELECT * FROM messages", [], (err, messageData) => {
     // if error
     if (err) {
       // respond with error status and error message
@@ -431,18 +450,11 @@ app.get('/getAllMessages', (req, res, next) => {
 
 //#region GENERAL FUNCTIONALITY
 
-app.get('/', (req, res) => {
-  //console.log to show port is being accessed
-    console.log("port" + process.env.PORT + " '/' visited");
-    // respond with confirm message
-    res.send("BACK END IS LISTENING ON PORT " + process.env.PORT);
-});
-
 app.post('/search', (req, res) => {
   //set up variables from the request body
   let searchQuery = req.body.search;
   // select firstname, lastname, profile picture and username from any users that part match our search query
-  SQLdatabase.all("SELECT firstName, lastName, username, profilePicture, firstname || ' ' || lastname AS full_name FROM users WHERE full_name LIKE '%' || ? || '%' OR username LIKE ? || '%'", [searchQuery , searchQuery ], (err, results) => {
+  SQLdatabase.query("SELECT firstName, lastName, username, profilePicture, firstname || ' ' || lastname AS full_name FROM users WHERE full_name LIKE '%' || ? || '%' OR username LIKE ? || '%'", [searchQuery , searchQuery ], (err, results) => {
       // if error
       if (err) {
         // respond with error status and error message
@@ -491,7 +503,7 @@ app.post('/signUp', (req, res) => {
     //assign default profile picture
     let profilePicture = defaultProfilePicture;
     //Create a new user in the user database with the fields from the form, the default profile picture and the generated password hash and salt
-    SQLdatabase.run(SIGN_UP_USER, [ signUpEmail, signUpUserName, signUpFirstName, signUpLastName, storePassword, passwordSalt, profilePicture ], (err, rows) => {
+    SQLdatabase.query(SIGN_UP_USER, [ signUpEmail, signUpUserName, signUpFirstName, signUpLastName, storePassword, passwordSalt, profilePicture ], (err, rows) => {
       if (err) {
         console.log("failed to add user to database")
         // if username already exists in database
@@ -523,7 +535,7 @@ app.post('/signin', (req, res) => {
   // pull data from request body for better readbility
   let { email, password } = req.body;
   // search if user exists using email address
-  SQLdatabase.get(FIND_USER, email, (err, userData) => {
+  SQLdatabase.query(FIND_USER, email, (err, userData) => {
     if (err) {
       console.log("error at database");
       res.status(500).send(err)
@@ -571,7 +583,7 @@ app.post('/updateUserGeneralInfo', (req, res) => {
   //pull variables from request body for better readability
   const { firstName, lastName, aboutMe, location, education, work, username  } = req.body;  
   //update users general information in database
-  SQLdatabase.run(UPDATE_USER_GENERAL_INFO, firstName, lastName, aboutMe, location, education, work, username, (err) => {
+  SQLdatabase.query(UPDATE_USER_GENERAL_INFO, firstName, lastName, aboutMe, location, education, work, username, (err) => {
     if (err){
       //error response
       res.json("ERROR AT DATABASE")
@@ -585,7 +597,7 @@ app.post('/updateUserLoginInfo', (req, res) => {
   //pull variables from request body for better readability
   let { email, password, changeEmail, changePassword, changePasswordConfirm  } = req.body;
   //search for user by email
-  SQLdatabase.get(FIND_USER, email, (err, userData) => {
+  SQLdatabase.query(FIND_USER, email, (err, userData) => {
     // if error
     if (err) {
       // respond with error status and error message
@@ -605,7 +617,7 @@ app.post('/updateUserLoginInfo', (req, res) => {
           //generate a new password hash to store using the hashing function, passing in the new password entry and the newly generated salt
           let storePassword = passwordHash(changePassword, passwordSalt);          
           // apply the password to the database where the email matches the users
-          SQLdatabase.run(UPDATE_PASSWORD_BY_EMAIL, [ storePassword, passwordSalt, email ], (err) => {
+          SQLdatabase.query(UPDATE_PASSWORD_BY_EMAIL, [ storePassword, passwordSalt, email ], (err) => {
             // if error
             if (err) {
               // respond with error status and error message
@@ -620,7 +632,7 @@ app.post('/updateUserLoginInfo', (req, res) => {
       // if changeEmail field has been updated
       if (changeEmail) {
         // look up user using their existing email adress
-        SQLdatabase.get(LOOK_UP_EMAIL_BY_EMAIL, email, (err, emailFound) => {
+        SQLdatabase.query(LOOK_UP_EMAIL_BY_EMAIL, email, (err, emailFound) => {
           // if error
           if (err) {
             console.log("error getting email")
@@ -636,7 +648,7 @@ app.post('/updateUserLoginInfo', (req, res) => {
             return;
           }  else {
             //otherwise, update the email with the new changeEmail entry
-            SQLdatabase.run(UPDATE_EMAIL, [ changeEmail, email], (err)=> {
+            SQLdatabase.query(UPDATE_EMAIL, [ changeEmail, email], (err)=> {
               // if error
               if (err) {
                 console.log("error changing email")
@@ -666,7 +678,7 @@ app.post("/changeProfilePicture", upload.single('image'), (req, res) => {
   //remove any commas from filename after being processed by multer  
   let image = req.body.imageLocations.replace(',','');            
   // update the profilePicture attached to the user where username matches the logged in users from the request
-  SQLdatabase.run("UPDATE users SET profilePicture = ? WHERE username = ?", [image, req.body.username], (err, result) => {
+  SQLdatabase.query("UPDATE users SET profilePicture = ? WHERE username = ?", [image, req.body.username], (err, result) => {
     // if error
     if (err) {
       // respond with error status and error message
@@ -674,7 +686,7 @@ app.post("/changeProfilePicture", upload.single('image'), (req, res) => {
       return;
     };
     // grab users first name and lastname from database by username from request
-    SQLdatabase.all("SELECT users.firstName, users.lastName FROM users WHERE username = ? LIMIT 1", req.body.username, (err, rows) => {
+    SQLdatabase.query("SELECT users.firstName, users.lastName FROM users WHERE username = ? LIMIT 1", req.body.username, (err, rows) => {
       // if error
       if (err) {
         // respond with error status and error message
@@ -683,7 +695,7 @@ app.post("/changeProfilePicture", upload.single('image'), (req, res) => {
       };
       //USE A REGULAR FUNCTION DECLARATION AT THE END OF THIS LINE AS this.LastID FOR GETTING THE LATEST ENTRY DOESNT SUPPORT ES6
       // create a post passing in first and last name with the content about the picture change
-      SQLdatabase.run(ADD_POST_TO_POSTS, [ req.body.username, "general",  `${rows[0].firstName} ${rows[0].lastName} has changed their profile picture!`,"none", 0, 0, false], function(err, result) {                  
+      SQLdatabase.query(ADD_POST_TO_POSTS, [ req.body.username, "general",  `${rows[0].firstName} ${rows[0].lastName} has changed their profile picture!`,"none", 0, 0, false], function(err, result) {                  
       // if error
       if (err) {
         // respond with error status and error message
@@ -693,7 +705,7 @@ app.post("/changeProfilePicture", upload.single('image'), (req, res) => {
       // set post Id to the id from the post just created
       let postId = this.lastID;
       // insert image into the images database with the post Id above as the relative post Id
-      SQLdatabase.run("INSERT INTO images (ownerUsername, imageLocation, postId) VALUES (?,?,?)", [req.body.username, image, postId], (err, rows) => {
+      SQLdatabase.query("INSERT INTO images (ownerUsername, imageLocation, postId) VALUES (?,?,?)", [req.body.username, image, postId], (err, rows) => {
       // if error
         if (err) {
           // respond with error status and error message
@@ -715,7 +727,7 @@ app.post("/changeCoverPicture", upload.single('image'), (req, res) => {
   // remove any commas from the string after being processed by multer
   let image = req.body.imageLocations.replace(',','');
   // update the coverPicture attached to the user where username matches the logged in users from the request
-  SQLdatabase.run("UPDATE users SET coverPicture = ? WHERE username = ?", [image, req.body.username], (err) => {
+  SQLdatabase.query("UPDATE users SET coverPicture = ? WHERE username = ?", [image, req.body.username], (err) => {
     // if error
     if (err) {
       // respond with error status and error message
@@ -723,7 +735,7 @@ app.post("/changeCoverPicture", upload.single('image'), (req, res) => {
       return;
     };
     // grab users first name and lastname from database by username from request
-    SQLdatabase.all("SELECT users.firstName, users.lastName FROM users WHERE username = ? LIMIT 1", req.body.username, (err, rows) => {
+    SQLdatabase.query("SELECT users.firstName, users.lastName FROM users WHERE username = ? LIMIT 1", req.body.username, (err, rows) => {
       // if error
       if (err) {
         // respond with error status and error message
@@ -732,7 +744,7 @@ app.post("/changeCoverPicture", upload.single('image'), (req, res) => {
       };
       //USE A REGULAR FUNCTION DECLARATION AT THE END OF THIS LINE AS this.LastID FOR GETTING THE LATEST ENTRY DOESNT SUPPORT ES6
       // create a post passing in first and last name with the content about the picture change
-      SQLdatabase.run(ADD_POST_TO_POSTS, [ req.body.username, "general",  `${rows[0].firstName} ${rows[0].lastName} has changed their profile cover picture!`,"none", 0, 0, false], function(err, result) {                  
+      SQLdatabase.query(ADD_POST_TO_POSTS, [ req.body.username, "general",  `${rows[0].firstName} ${rows[0].lastName} has changed their profile cover picture!`,"none", 0, 0, false], function(err, result) {                  
         // if error
         if (err) {
           // respond with error status and error message
@@ -742,7 +754,7 @@ app.post("/changeCoverPicture", upload.single('image'), (req, res) => {
         // set post Id to the id from the post just created
         let postId = this.lastID;
         // insert image into the images database with the post Id above as the relative post Id
-        SQLdatabase.run("INSERT INTO images (ownerUsername, imageLocation, postId) VALUES (?,?,?)", [req.body.username, image, postId], (err, rows) => {
+        SQLdatabase.query("INSERT INTO images (ownerUsername, imageLocation, postId) VALUES (?,?,?)", [req.body.username, image, postId], (err, rows) => {
           // if error
           if (err) {
             // respond with error status and error message
@@ -768,7 +780,7 @@ app.post('/getFeedFriendsOnly', (req, res) => {
   // add the logged in user to the friends array so we also get posts from the user
   friendsList[0] = "'" + user + "'";
   // get all entries from the friendships table that contain the logged in users username
-  SQLdatabase.all(GET_ALL_USERS_FRIENDS,  [user, user], (err, friendships) => {
+  SQLdatabase.query(GET_ALL_USERS_FRIENDS,  [user, user], (err, friendships) => {
     // if error
     if (err) {
       // respond with error status and error message
@@ -780,7 +792,7 @@ app.post('/getFeedFriendsOnly', (req, res) => {
     // if selected circle is general
     if (req.body.circle === "general") {
       // select all posts and posters firstname, lastname and profile picture where the author of the posts username exists in the above friend list     
-      SQLdatabase.all("SELECT posts.*, users.firstName, users.lastName, users.profilePicture FROM `posts` LEFT OUTER JOIN `users` ON `posts`.`author` = `users`.`username` WHERE author IN  ("+friendsList.join(',')+") AND (((postStrict = false OR postStrict = 'false') OR circle = 'general') AND recipient = ?) ORDER BY id DESC", 'none',(err, posts) => {
+      SQLdatabase.query("SELECT posts.*, users.firstName, users.lastName, users.profilePicture FROM `posts` LEFT OUTER JOIN `users` ON `posts`.`author` = `users`.`username` WHERE author IN  ("+friendsList.join(',')+") AND (((postStrict = false OR postStrict = 'false') OR circle = 'general') AND recipient = ?) ORDER BY id DESC", 'none',(err, posts) => {
         // if error
         if (err) {
           // respond with error status and error message
@@ -797,7 +809,7 @@ app.post('/getFeedFriendsOnly', (req, res) => {
           post.images = [];
         });
         // get all images from the database from the images table relating to any of the postId's in the above list       
-        SQLdatabase.all("SELECT images.imageLocation, images.postId FROM `images` WHERE postId IN  ("+postIds.join(',')+")", (err, images) => {
+        SQLdatabase.query("SELECT images.imageLocation, images.postId FROM `images` WHERE postId IN  ("+postIds.join(',')+")", (err, images) => {
           // for each image in the images list, loop through the posts and add the image to the post if postId and relativePostId's match
           images.forEach(image => posts.forEach(post=> {image.postId === post.id ? post.images.push(image.imageLocation): '' }));      
           // if error
@@ -816,7 +828,7 @@ app.post('/getFeedFriendsOnly', (req, res) => {
       // select all posts and posters firstname, lastname and profile picture
       // where the author of the posts username exists in the above friend list
       // but only if the posts circle matches the circle coming in from the request 
-      SQLdatabase.all("SELECT posts.*, users.firstName, users.lastName, users.profilePicture FROM `posts` LEFT OUTER JOIN `users` ON `posts`.`author` = `users`.`username` WHERE circle = ? AND author IN ("+friendsList.join(',')+") ORDER BY id DESC", req.body.circle, (err, posts) => {
+      SQLdatabase.query("SELECT posts.*, users.firstName, users.lastName, users.profilePicture FROM `posts` LEFT OUTER JOIN `users` ON `posts`.`author` = `users`.`username` WHERE circle = ? AND author IN ("+friendsList.join(',')+") ORDER BY id DESC", req.body.circle, (err, posts) => {
         // if error
         if (err) {
           // respond with error status and error message
@@ -833,7 +845,7 @@ app.post('/getFeedFriendsOnly', (req, res) => {
           post.images = [];
         });
         // get all images from the database from the images table relating to any of the postId's in the above list       
-        SQLdatabase.all("SELECT images.imageLocation, images.postId FROM `images` WHERE postId IN  ("+postIds.join(',')+")", (err, images) => {
+        SQLdatabase.query("SELECT images.imageLocation, images.postId FROM `images` WHERE postId IN  ("+postIds.join(',')+")", (err, images) => {
           // for each image in the images list, loop through the posts and add the image to the post if postId and relativePostId's match
           images.forEach(image => posts.forEach(post=> {image.postId === post.id ? post.images.push(image.imageLocation): '' }));      
           // if error
@@ -860,7 +872,7 @@ app.post('/refreshData', (req, res) => {
   //set up variables from the request body
   let user = req.body.loggedInUsername;
   // grab userData from the users table where the user name matches the logged in users
-  SQLdatabase.get("SELECT firstName, lastName, profilePicture FROM users WHERE username = ?", user, (err, userData)=> {
+  SQLdatabase.query("SELECT firstName, lastName, profilePicture FROM users WHERE username = ?", user, (err, userData)=> {
     // if error
     if (err) {
     // respond with error status and error message
@@ -876,7 +888,7 @@ app.post('/getUserGeneralInfo', (req, res) => {
   //set up variables from the request body
   let user = req.body.user
   // get general user info from the users table where username matches user in the request
-   SQLdatabase.get(GET_USER_GENERAL_INFO_BY_USERNAME, user , (err, userData) => {
+   SQLdatabase.query(GET_USER_GENERAL_INFO_BY_USERNAME, user , (err, userData) => {
      // if error
     if (err) {
       // respond with error status and error message
@@ -890,14 +902,14 @@ app.post('/getUserGeneralInfo', (req, res) => {
 app.post('/getAllCircles', (req, res) => {
   //set up variables from the request body
   let user = req.body.user;
-  SQLdatabase.all("SELECT * FROM circles", (err, circles) => {
+  SQLdatabase.query("SELECT * FROM circles", (err, circles) => {
     // if error
     if (err) {
     // respond with error status and error message
     res.status(500).send(err.message);
     return;
     }
-    SQLdatabase.get(GET_USERS_FOLLOWED_CIRCLES, user , (err, followedCircles) => {
+    SQLdatabase.query(GET_USERS_FOLLOWED_CIRCLES, user , (err, followedCircles) => {
       // turn the returned string of circles into an array
       let currentCircles = followedCircles.circles.split(",");
       // if error
@@ -918,7 +930,7 @@ app.post('/getAllCircles', (req, res) => {
 app.post('/addCircle', (req, res) => {
   //set up variables from the request body
   let { user, circleName } = req.body;
-  SQLdatabase.get(GET_USERS_FOLLOWED_CIRCLES, user , (err, circles) => {
+  SQLdatabase.query(GET_USERS_FOLLOWED_CIRCLES, user , (err, circles) => {
     // if error
     if (err) {
       // respond with error status and error message
@@ -934,7 +946,7 @@ app.post('/addCircle', (req, res) => {
     // add each element of the array to the string, seperated by a comma
     currentCircles.forEach(circle => circle.length > 2 ? newCirclesList += (circle + ",") : '');
     // update the circles column in the users table where the username matches the request
-    SQLdatabase.run("UPDATE users SET circles = ? WHERE username = ?", [ newCirclesList, user ], (err) => {
+    SQLdatabase.query("UPDATE users SET circles = ? WHERE username = ?", [ newCirclesList, user ], (err) => {
       // if error
       if (err) {
       // respond with error status and error message
@@ -950,7 +962,7 @@ app.post('/addCircle', (req, res) => {
 app.post('/deleteCircle', (req, res) => {
   //set up variables from the request body
   let { user, circleName } = req.body;
-  SQLdatabase.get(GET_USERS_FOLLOWED_CIRCLES, user , (err, circles) => {
+  SQLdatabase.query(GET_USERS_FOLLOWED_CIRCLES, user , (err, circles) => {
     // if error
     if (err) {
       // respond with error status and error message
@@ -968,7 +980,7 @@ app.post('/deleteCircle', (req, res) => {
     // update the circles column in the users table where the username matches the request
  
     
-    SQLdatabase.run("UPDATE users SET circles = ? WHERE username = ?", [ newCirclesList, user ], (err) => {
+    SQLdatabase.query("UPDATE users SET circles = ? WHERE username = ?", [ newCirclesList, user ], (err) => {
       // if error
       if (err) {
       // respond with error status and error message
@@ -985,7 +997,7 @@ app.post('/deleteCircle', (req, res) => {
 
 app.post('/getUsersCircles', (req, res) => {
   let user = req.body.user;
-  SQLdatabase.get(GET_USERS_FOLLOWED_CIRCLES, user , (err, circles) => {
+  SQLdatabase.query(GET_USERS_FOLLOWED_CIRCLES, user , (err, circles) => {
     // turn the returned string of circles into an array
     let currentCircles = circles.circles.split(",");
     // if error
@@ -1009,7 +1021,7 @@ app.post('/getFriends', (req, res) => {
   // add the logged in user to the friends array so we also get the user
   friendsList[0] = "'" + user + "'";
   // get all entries from the friendships table that contain the logged in users username
-  SQLdatabase.all(GET_ALL_USERS_FRIENDS,  [user, user], (err, friendships) => {
+  SQLdatabase.query(GET_ALL_USERS_FRIENDS,  [user, user], (err, friendships) => {
     // if error
     if (err) {
       // respond with error status and error message
@@ -1019,7 +1031,7 @@ app.post('/getFriends', (req, res) => {
     // iterate through each returned friendship, and add the username **that is not** the logged in users username to the friend list above
     friendships.forEach(friendship => friendship.user1 === user ? friendsList.push("'" + friendship.user2 + "'") : friendsList.push("'" + friendship.user1 + "'"));
     // get first name, last name and profile picture of all users that appear in the new friendsList array
-    SQLdatabase.all("SELECT firstName, lastName, profilePicture, username FROM users WHERE username IN  ("+friendsList.join(',')+")",(err, FriendData) => {
+    SQLdatabase.query("SELECT firstName, lastName, profilePicture, username FROM users WHERE username IN  ("+friendsList.join(',')+")",(err, FriendData) => {
       // if error
       if (err) {
         // respond with error status and error message
@@ -1036,7 +1048,7 @@ app.post('/getAllFriends', (req, res) => {
   //set up variables from the request body
   let user = req.body.user
   // get any friendships from friendships that contain the logged in users username
-  SQLdatabase.all(GET_ALL_USERS_FRIENDS, user, user, (err, friendships) => {
+  SQLdatabase.query(GET_ALL_USERS_FRIENDS, user, user, (err, friendships) => {
     // if error
     if (err) {
       // respond with error status and error message
@@ -1055,7 +1067,7 @@ app.post('/getAllFriends', (req, res) => {
 app.post('/deleteFriend', (req, res) => {
   let { user, friend } = req.body;
   // delete the friendship containing both users' names from the friendships table
-  SQLdatabase.run("DELETE FROM friendships WHERE (user1 = ? AND user2 = ?) OR (user1 = ? AND user2 = ?)", [user, friend, friend, user], (err) => {
+  SQLdatabase.query("DELETE FROM friendships WHERE (user1 = ? AND user2 = ?) OR (user1 = ? AND user2 = ?)", [user, friend, friend, user], (err) => {
         // if error
         if (err) {
           // respond with error status and error message
@@ -1071,7 +1083,7 @@ app.post('/getNotifications', (req, res) => {
   //set up variables from the request body
   let user = req.body.user;
   // get the 50 latest entries and sender user data from userActions where recipient is the logged in user
-  SQLdatabase.all(GET_NOTIFICATIONS, user, (err, notifications) => {
+  SQLdatabase.query(GET_NOTIFICATIONS, user, (err, notifications) => {
     // if error
     if (err) {
       // respond with error status and error message
@@ -1082,7 +1094,7 @@ app.post('/getNotifications', (req, res) => {
     notifications.forEach(notification =>
       !notification.seen ? unseenNotifications.push(notification) : '');
     // get all chats where user and matching 'seen by user' is the logged in user and false, so we only get unseen message notifications 
-    SQLdatabase.all("SELECT * FROM chats WHERE `user1` = ? AND `seenByuser1` = false OR `user2` = ? AND `seenByUser2` = false", [ user, user ], (err, messages) => {
+    SQLdatabase.query("SELECT * FROM chats WHERE `user1` = ? AND `seenByuser1` = false OR `user2` = ? AND `seenByUser2` = false", [ user, user ], (err, messages) => {
       // if error
       if (err) {
         // respond with error status and error message
@@ -1102,7 +1114,7 @@ app.post('/getNotifications', (req, res) => {
 app.post('/clearSingleNotification', (req, res) => {
   //set up variables from the request body
   let actionId = req.body.actionId;
-  SQLdatabase.run("DELETE FROM userActions WHERE actionId = ?", actionId, (err) => {
+  SQLdatabase.query("DELETE FROM userActions WHERE actionId = ?", actionId, (err) => {
     // if error
     if (err) {
       // respond with error status and error message
@@ -1122,7 +1134,7 @@ app.post('/getUserProfile', (req, res) => {
   //set up variables from the request body
   let { loggedInUsername, userProfileToGet }  = req.body;
   // check the database for any existing friendships containing both the logged in user and the profile in question
-  SQLdatabase.all("SELECT * FROM friendships WHERE (user1 = ? OR user2 = ?) AND (user1 = ? OR user2 = ?)", [ loggedInUsername, loggedInUsername, userProfileToGet, userProfileToGet ], (err, friendships) => {
+  SQLdatabase.query("SELECT * FROM friendships WHERE (user1 = ? OR user2 = ?) AND (user1 = ? OR user2 = ?)", [ loggedInUsername, loggedInUsername, userProfileToGet, userProfileToGet ], (err, friendships) => {
     // if error
     if (err) {
       // respond with error status and error message
@@ -1135,7 +1147,7 @@ app.post('/getUserProfile', (req, res) => {
     // otherwise prevent userData from showing   
     friendships.length > 0 || loggedInUsername === userProfileToGet ? isFriendsWithLoggedInUser = true : isFriendsWithLoggedInUser = false;
     // get the user data matching the profile in question by username
-    SQLdatabase.get(GET_USER_PROFILE_INFO_BY_USERNAME, userProfileToGet, (err, userData) => {
+    SQLdatabase.query(GET_USER_PROFILE_INFO_BY_USERNAME, userProfileToGet, (err, userData) => {
       // if error
       if (err) {
         // respond with error status and error message
@@ -1155,7 +1167,7 @@ app.post('/getAllImagesByUser', (req, res, next) => {
   //set up variables from the request body
   let user = req.body.user;
   // get all images from the images table where the owner username matches user in the request
-  SQLdatabase.all(GET_ALL_IMAGES_BY_USER, user, (err, images) => {
+  SQLdatabase.query(GET_ALL_IMAGES_BY_USER, user, (err, images) => {
     // if error
     if (err) {
       // respond with error status and error message
@@ -1173,7 +1185,7 @@ app.post('/getFeedByUser', (req, res) => {
   // set is friends with the logged in user to false by default
   let isFriendsWithLoggedInUser = false;
   // check the friendships table in the database for a friendShip that contains both the users
-  SQLdatabase.all(CHECK_THAT_USERS_ARE_FRIENDS, [ loggedInUsername, loggedInUsername, userProfileToGet, userProfileToGet ], (err, friendships) => {
+  SQLdatabase.query(CHECK_THAT_USERS_ARE_FRIENDS, [ loggedInUsername, loggedInUsername, userProfileToGet, userProfileToGet ], (err, friendships) => {
     if (err) {
       console.log("error at database with friendships");
       res.json("error at database with friendships");
@@ -1185,7 +1197,7 @@ app.post('/getFeedByUser', (req, res) => {
     if (circle === 'general') {
       // get post and user data from entries in the posts table, where the author or recipient of the post (for people posting on their wall) is
       // the user in question
-      SQLdatabase.all(GET_POSTS_BY_AUTHOR_OR_RECIPIENT, [ userProfileToGet, userProfileToGet ], (err, posts) => {
+      SQLdatabase.query(GET_POSTS_BY_AUTHOR_OR_RECIPIENT, [ userProfileToGet, userProfileToGet ], (err, posts) => {
         // if error
         if (err) {
           // respond with error status and error message
@@ -1202,7 +1214,7 @@ app.post('/getFeedByUser', (req, res) => {
           post.images = [];
           }); 
           // get image data where relative post matches the current iteration of post ids
-          SQLdatabase.all("SELECT images.imageLocation, images.postId FROM `images` WHERE postId IN  ("+postIds.join(',')+")", (err, images) => {           
+          SQLdatabase.query("SELECT images.imageLocation, images.postId FROM `images` WHERE postId IN  ("+postIds.join(',')+")", (err, images) => {           
           images.forEach(image => posts.forEach(post=> {image.postId === post.id ? post.images.push(image.imageLocation): '' }));     
           // respond with friendship status and posts
           res.json({
@@ -1213,7 +1225,7 @@ app.post('/getFeedByUser', (req, res) => {
       });
     } else {
       // otherwise get posts by specific circle
-      SQLdatabase.all(GET_POSTS_BY_AUTHOR_BY_CIRCLE, [ userProfileToGet, userProfileToGet ], (err, posts) => {
+      SQLdatabase.query(GET_POSTS_BY_AUTHOR_BY_CIRCLE, [ userProfileToGet, userProfileToGet ], (err, posts) => {
         // if error
         if (err) {
           // respond with error status and error message
@@ -1230,7 +1242,7 @@ app.post('/getFeedByUser', (req, res) => {
           post.images = [];
           }); 
           // get image data where relative post matches the current iteration of post ids  
-          SQLdatabase.all("SELECT images.imageLocation, images.postId FROM `images` WHERE postId IN  ("+postIds.join(',')+")", (err, images) => {           
+          SQLdatabase.query("SELECT images.imageLocation, images.postId FROM `images` WHERE postId IN  ("+postIds.join(',')+")", (err, images) => {           
           images.forEach(image => posts.forEach(post=> {image.postId === post.id ? post.images.push(image.imageLocation): '' }));
           res.json({
             // respond with friendship status and posts
@@ -1252,7 +1264,7 @@ app.post('/newMessage', (req, res) => {
   let { chatId, sender, message, recipient, user1, user2 } = req.body;
   
   // add a message to the database with the chatId, sender message and recipient
-  SQLdatabase.run("INSERT INTO messages (chatId, sender, message, recipient, date, seen) VALUES (?, ?, ?, ?, datetime(), ?)", [ chatId, sender, message, recipient, false], (err, rows) => {
+  SQLdatabase.query("INSERT INTO messages (chatId, sender, message, recipient, date, seen) VALUES (?, ?, ?, ?, datetime(), ?)", [ chatId, sender, message, recipient, false], (err, rows) => {
     // if error
     if (err) {
       // respond with error status and error message
@@ -1260,7 +1272,7 @@ app.post('/newMessage', (req, res) => {
       return;
     };
     if (sender === user1) {
-      SQLdatabase.run("UPDATE chats SET seenByUser2 = ? WHERE chatId = ?", [false, chatId], (err) => {
+      SQLdatabase.query("UPDATE chats SET seenByUser2 = ? WHERE chatId = ?", [false, chatId], (err) => {
         // if error
         if (err) {
           // respond with error status and error message
@@ -1271,7 +1283,7 @@ app.post('/newMessage', (req, res) => {
         res.json("success");
       });
     } else if (sender === user2) {
-      SQLdatabase.run("UPDATE chats SET seenByUser1 = ? WHERE chatId = ?", [false, chatId], (err) => {
+      SQLdatabase.query("UPDATE chats SET seenByUser1 = ? WHERE chatId = ?", [false, chatId], (err) => {
         // if error
         if (err) {
           // respond with error status and error message
@@ -1293,7 +1305,7 @@ app.post('/getAllUsersChats', (req, res) => {
    chats in the chats table where user1 or user2 matches
    the logged in users username, order results by the
     date in descending order*/
-  SQLdatabase.all(GET_USERS_CHATS, [ user, user, user, user ], (err, chatData) => {
+  SQLdatabase.query(GET_USERS_CHATS, [ user, user, user, user ], (err, chatData) => {
       // if error
       if (err) {
         // respond with error status and error message
@@ -1308,7 +1320,7 @@ app.post('/getChat', async (req, res) => {
   //set up variables from the request body
   let { user, chatId, partner } = req.body;
   if (chatId === false || chatId === undefined) {                                                                        
-    await SQLdatabase.get("SELECT chatId FROM chats WHERE ((user1 = ? OR user2 = ?) AND (user1 = ? OR user2 = ?))", [req.body.user, req.body.user, req.body.partner, req.body.partner], async function(err, result){
+    await SQLdatabase.query("SELECT chatId FROM chats WHERE ((user1 = ? OR user2 = ?) AND (user1 = ? OR user2 = ?))", [req.body.user, req.body.user, req.body.partner, req.body.partner], async function(err, result){
       // if error
       if (err) {
         // respond with error status and error message
@@ -1317,7 +1329,7 @@ app.post('/getChat', async (req, res) => {
       };     
       if (result === undefined) {
         // create a chat passing in logged in users username as sender, recipient, and message
-        SQLdatabase.run("INSERT INTO chats (user1, user2, seenByUser1, seenByUser2, lastActive) VALUES (?, ?, ?, ?, datetime())", [user, partner, true, false], async function(err) {
+        SQLdatabase.query("INSERT INTO chats (user1, user2, seenByUser1, seenByUser2, lastActive) VALUES (?, ?, ?, ?, datetime())", [user, partner, true, false], async function(err) {
           // if error
           if (err) {
             // respond with error status and error message
@@ -1331,7 +1343,7 @@ app.post('/getChat', async (req, res) => {
         chatId = result.chatId;
       }
       if (chatId) {
-        SQLdatabase.all(GET_CHAT_DATA_BY_CHAT_ID, [user, user, chatId], (err, chatData) => {
+        SQLdatabase.query(GET_CHAT_DATA_BY_CHAT_ID, [user, user, chatId], (err, chatData) => {
           // if error
           if (err) {
             // respond with error status and error message
@@ -1339,7 +1351,7 @@ app.post('/getChat', async (req, res) => {
             return;
           };
           // pull all messages from the messages table in the database by chatId above, ordered by date
-          SQLdatabase.all(GET_MESSAGES_BY_CHAT_ID, [chatId], (err, messages) => {
+          SQLdatabase.query(GET_MESSAGES_BY_CHAT_ID, [chatId], (err, messages) => {
             // if error
             if (err) {
               // respond with error status and error message
@@ -1356,7 +1368,7 @@ app.post('/getChat', async (req, res) => {
       }
     });  
   } else {
-      SQLdatabase.all(GET_CHAT_DATA_BY_CHAT_ID, [user, user, chatId], (err, chatData) => {
+      SQLdatabase.query(GET_CHAT_DATA_BY_CHAT_ID, [user, user, chatId], (err, chatData) => {
       // if error
       if (err) {
         // respond with error status and error message
@@ -1364,7 +1376,7 @@ app.post('/getChat', async (req, res) => {
         return;
       };
       // pull all messages from the messages table in the database by chatId above, ordered by date
-      SQLdatabase.all(GET_MESSAGES_BY_CHAT_ID, [chatId], (err, messages) => {
+      SQLdatabase.query(GET_MESSAGES_BY_CHAT_ID, [chatId], (err, messages) => {
         // if error
         if (err) {
           // respond with error status and error message
@@ -1390,7 +1402,7 @@ app.post('/setChatAsSeen', (req, res) => {
   } else if (user2 === user) {
     userToUpdate = "seenByUser2";
   }
-  SQLdatabase.run(`UPDATE chats SET ${userToUpdate} = ? WHERE chatId = ?`, [true, chatId], (err) => {
+  SQLdatabase.query(`UPDATE chats SET ${userToUpdate} = ? WHERE chatId = ?`, [true, chatId], (err) => {
     if (err) {
       // respond with error status and error message
       res.status(500).send(err.message);
@@ -1409,7 +1421,7 @@ app.post('/setNotificationAsSeen', (req, res) => {
   //set up variables from the request body
   let { actionId } = req.body;
   // set the userAction as seen in the userActions table found by actionId from the request
-  SQLdatabase.run("UPDATE userActions SET seen = true WHERE actionId = ?", actionId, (err) => {
+  SQLdatabase.query("UPDATE userActions SET seen = true WHERE actionId = ?", actionId, (err) => {
     // if error
     if (err) {
       // respond with error status and error message
@@ -1436,7 +1448,7 @@ app.post('/newPost', upload.array('imagesArray', 4), (req, res) => {
   };
   // OLD STYLE FUNCTION AT THE END FOR this.lastID SUPPORT (not supported by ES6 yet)
   // add post to posts table with corresponding username, circle, content, recipient, 0 likes, 0 dislikes, and strict status
-  SQLdatabase.run(ADD_POST_TO_POSTS, [ username, circle, postContent, recipient, 0, 0, postStrict], function(err){
+  SQLdatabase.query(ADD_POST_TO_POSTS, [ username, circle, postContent, recipient, 0, 0, postStrict], function(err){
     // if error
     if (err) {
       // respond with error status and error message
@@ -1451,7 +1463,7 @@ app.post('/newPost', upload.array('imagesArray', 4), (req, res) => {
       images.forEach(image => image.length > 0 ? 
         // insert the image into the images table with the logged in user as the owner, image name as location and the post ID
         //returned above as the relative post
-        SQLdatabase.run("INSERT INTO images (ownerUsername, imageLocation, postId) VALUES (?,?,?)", [username, image, postId],(err) => {
+        SQLdatabase.query("INSERT INTO images (ownerUsername, imageLocation, postId) VALUES (?,?,?)", [username, image, postId],(err) => {
           // if error
           if (err) {
             // respond with error status and error message
@@ -1476,7 +1488,7 @@ app.post('/votePost', (req, res) => {
   // message attached to the notification added to userActions
   let message = " reacted to your post!";
   // put an entry into the userActions table with the information pulled out of the request above
-  SQLdatabase.run("INSERT INTO userActions (type, sender, recipient, message, seen, approved, date, relativePost) VALUES (?,?,?,?,?,?, DATE(),?)", ["reaction", sender, recipient, message, false, false, postId], (err) => {
+  SQLdatabase.query("INSERT INTO userActions (type, sender, recipient, message, seen, approved, date, relativePost) VALUES (?,?,?,?,?,?, DATE(),?)", ["reaction", sender, recipient, message, false, false, postId], (err) => {
     // if error
     if (err) {
       // respond with error status and error message
@@ -1485,7 +1497,7 @@ app.post('/votePost', (req, res) => {
     };
   });
   // update the likes or dislikes on the post reacted to
-  SQLdatabase.run(UPDATE_POST_VOTES_BY_POST_ID, [like, dislike, postId], (err) => {
+  SQLdatabase.query(UPDATE_POST_VOTES_BY_POST_ID, [like, dislike, postId], (err) => {
     // if error
     if (err) {
       // respond with error status and error message
@@ -1500,7 +1512,7 @@ app.post('/votePost', (req, res) => {
 app.post('/clearNotifications', (req, res) => {
   //set up variables from the request body
   let user = req.body.user;
-  SQLdatabase.run("DELETE FROM userActions WHERE recipient = ? AND seen = ?", [user, true] , (err) => {
+  SQLdatabase.query("DELETE FROM userActions WHERE recipient = ? AND seen = ?", [user, true] , (err) => {
     // if error
     if (err) {
       // respond with error status and error message
@@ -1526,7 +1538,7 @@ app.post('/friendRequest', (req, res) => {
   // no relative post for friend request
   let relativePost = null;
   // check that a friend request doesnt already exist in the database
-  SQLdatabase.get("SELECT * FROM userActions WHERE type = ? AND sender = ?", [type, sender], (err, rows) => {
+  SQLdatabase.query("SELECT * FROM userActions WHERE type = ? AND sender = ?", [type, sender], (err, rows) => {
     if (err) {
       res.json(err);
       return;
@@ -1534,7 +1546,7 @@ app.post('/friendRequest', (req, res) => {
     // if nothing is found..
     if (!rows) {
       // insert a new user action into the database witht he above readied data
-      SQLdatabase.run("INSERT INTO userActions (type, sender, recipient, message, seen,approved, date, relativePost) VALUES(?,?,?,?,?,?,date(),?)", [type, sender, recipient, message, seen, false, relativePost] , (err, rows) => {
+      SQLdatabase.query("INSERT INTO userActions (type, sender, recipient, message, seen,approved, date, relativePost) VALUES(?,?,?,?,?,?,date(),?)", [type, sender, recipient, message, seen, false, relativePost] , (err, rows) => {
         if (err) {
           res.status(500).send(err.message);
           return;
@@ -1545,7 +1557,7 @@ app.post('/friendRequest', (req, res) => {
       // otherwise..
     } else {
       // retract existing friend request and delete from database
-      SQLdatabase.run("DELETE FROM userActions WHERE type = ? AND sender = ?", [type, sender], (err, rows) => {
+      SQLdatabase.query("DELETE FROM userActions WHERE type = ? AND sender = ?", [type, sender], (err, rows) => {
         if (err){
           res.json(err)
           return;
@@ -1563,7 +1575,7 @@ app.post('/confirmFriendRequest', (req, res) => {
   // set up type for finding in userActions
   let type = "friendRequest";
   // delete the existing friend request that contains the sender, recipient (the logged in user) and type friend request
-  SQLdatabase.run("DELETE FROM userActions WHERE sender = ? AND recipient = ? AND type = ?", [sender, recipient, type], (err) => {
+  SQLdatabase.query("DELETE FROM userActions WHERE sender = ? AND recipient = ? AND type = ?", [sender, recipient, type], (err) => {
     // if error
     if (err) {
       // respond with error status and error message
@@ -1571,7 +1583,7 @@ app.post('/confirmFriendRequest', (req, res) => {
       return;
     };
     // create a new entry into friendships containing the logged in user and the sender
-    SQLdatabase.run("INSERT INTO friendships (user1, user2) VALUES (?,?)", [sender, recipient], (err) => {
+    SQLdatabase.query("INSERT INTO friendships (user1, user2) VALUES (?,?)", [sender, recipient], (err) => {
       // if error
       if (err) {
         // respond with error status and error message
@@ -1590,7 +1602,7 @@ app.post('/refuseFriendRequest', (req, res) => {
   // set up type to find request in db
   let type = "friendRequest";
   // delete the corresponding friend request from the db where sender, recipient and type match
-  SQLdatabase.run("DELETE FROM userActions WHERE sender = ? AND recipient = ? AND type = ?", [sender, recipient, type], (err) => {
+  SQLdatabase.query("DELETE FROM userActions WHERE sender = ? AND recipient = ? AND type = ?", [sender, recipient, type], (err) => {
     // if error
     if (err) {
       // respond with error status and error message
